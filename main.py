@@ -30,7 +30,7 @@ def load_sprite_sheets(dir1, dir2, width, height, direction = False):
 
         sprites = []
         for i in range(sprite_sheet.get_width() // width):
-            surface = pygame.Surface((width, height), pygame.SRCAPHA, 32)
+            surface = pygame.Surface((width, height), pygame.SRCALPHA, 32)
             rect = pygame.Rect(i * width, 0, width, height)
             surface.blit(sprite_sheet, (0, 0), rect)
             sprites.append(pygame.transform.scale2x(surface))
@@ -48,12 +48,14 @@ class Player(pygame.sprite.Sprite): #inheriting from sprite for pixel accurate c
     COLOR = (255, 0, 0)
     GRAVITY = 1
     SPRITES = load_sprite_sheets("MainCharacters", "MaskDude", 32, 32, True)
+    ANIMATION_DELAY = 5
     
     def __init__(self, x, y, width, height) -> None:
+        super().__init__()
         self.rect = pygame.Rect(x, y, width, height)
         self.x_vel = 0
         self.y_vel = 0
-        self.mask = None
+        self.mask = None #mapping of pixels exists in sprite (which pixel exists to perform perfect pixel collision)
         #for showing animation later
         self.direction = "left" 
         self.animation_count = 0
@@ -77,10 +79,11 @@ class Player(pygame.sprite.Sprite): #inheriting from sprite for pixel accurate c
             self.animation_count = 0
     
     def loop(self, fps): #looping for each frame
-        self.y_vel += min(1, (self.fall_count / fps) * self.GRAVITY)
+        # self.y_vel += min(1, (self.fall_count / fps) * self.GRAVITY)
         self.move(self.x_vel, self.y_vel)
 
         self.fall_count += 1
+        self.update_sprite()
 
     def update_sprite(self):
         sprite_sheet = "idle" #default sprite
@@ -88,12 +91,34 @@ class Player(pygame.sprite.Sprite): #inheriting from sprite for pixel accurate c
             sprite_sheet = "run"
 
         sprite_sheet_name = sprite_sheet + "_" + self.direction
-        sprite = self.SPRITES[sprite_sheet_name]
-        
+        sprites = self.SPRITES[sprite_sheet_name]
+        sprite_index = (self.animation_count // self.ANIMATION_DELAY) % len(sprites)
+        self.sprite = sprites[sprite_index]
+        self.animation_count += 1
+        self.update()
+
+    def update(): #update rectangle according to sprite
+        self.rect = self.sprite.get_rect(topleft=(self.rect.x, self.rect.y))
+        self.mask = pygame.mask.from_surface(self.sprite)  #sprite uses mask
+
+
 
     def draw(self, window):
-        self.sprite = self.SPRITES["idle_" + self.direction]
         window.blit(self.sprite, (self.rect.x, self.rect.y))
+
+class Object(pygame.sprite.Sprite):
+    def __init__(self, x, y, width, height, name=None):
+        super().__init__()
+        self.rect = pygame.Rect(x, y, width, height)
+        self.image = pygame.Surface((width, height), pygame.SRCALPHA)  #srcalpha supports transparent images?
+        self.width = width
+        self.height = height
+        self.name = name
+    
+    def draw(self, window):
+        window.blit(self.image, (self.rect.x, self.rect.y))
+
+    
 
 
 def draw(window, player):
