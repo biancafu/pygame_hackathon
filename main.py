@@ -16,6 +16,9 @@ BG_IMG = pygame.transform.scale2x(pygame.image.load(os.path.join("imgs", "bg.jpg
 
 window = pygame.display.set_mode((WIN_WIDTH, WIN_HEIGHT))
 
+
+################### IMG HANDLING #####################
+
 def flip(sprites):
     return [pygame.transform.flip(sprite, True, False) for sprite in sprites] #true: flip x direction, false: don't flip y direction
 
@@ -49,7 +52,10 @@ def get_block(size):
     rect = pygame.Rect(96, 0, size, size)  #96, 0 is position of the part we want (top left)
     surface.blit(image, (0, 0), rect)
     return pygame.transform.scale2x(surface)
+
+#######################################################
     
+##################### CLASSES #########################
 
 class Player(pygame.sprite.Sprite): #inheriting from sprite for pixel accurate collision (use their methods)
     COLOR = (255, 0, 0)
@@ -68,6 +74,16 @@ class Player(pygame.sprite.Sprite): #inheriting from sprite for pixel accurate c
         self.animation_count = 0
         #for gravity
         self.fall_count = 0
+        #for jumping
+        self.jump_count = 0
+
+    def jump(self):
+        self.y_vel = -self.GRAVITY * 8 #speed of jump = 8 (can change)
+        self.animation_count = 0
+        self.jump_count += 1
+        
+        if self.jump_count == 1: #double jumping
+            self.fall_count = 0 #remove gravity for second jump
 
     def move(self, dx, dy):
         self.rect.x += dx
@@ -86,15 +102,32 @@ class Player(pygame.sprite.Sprite): #inheriting from sprite for pixel accurate c
             self.animation_count = 0
     
     def loop(self, fps): #looping for each frame
-        # self.y_vel += min(1, (self.fall_count / fps) * self.GRAVITY)
+        self.y_vel += min(1, (self.fall_count / fps) * self.GRAVITY)
         self.move(self.x_vel, self.y_vel)
 
         self.fall_count += 1
         self.update_sprite()
 
+    def landed(self): #need to reset gravity after landing
+        self.fall_count = 0
+        self.y_vel = 0
+        self.jump_count = 0
+
+    def hit_head(self):
+        self.count = 0
+        self.y_vel *= -1 #creating bounce back effect
+
+
     def update_sprite(self):
         sprite_sheet = "idle" #default sprite
-        if self.x_vel != 0:
+        if self.y_vel < 0: #moving up
+            if self.jump_count == 1:
+                sprite_sheet = "jump"
+            elif self.jump_count == 2:
+                sprite_sheet = "double_jump"
+        elif self.y_vel > self.GRAVITY * 2: #moving down (need certain amount to show fall animation)
+            sprite_sheet = "fall"
+        elif self.x_vel != 0:
             sprite_sheet = "run"
 
         sprite_sheet_name = sprite_sheet + "_" + self.direction
@@ -107,8 +140,6 @@ class Player(pygame.sprite.Sprite): #inheriting from sprite for pixel accurate c
     def update(self): #update rectangle according to sprite
         self.rect = self.sprite.get_rect(topleft=(self.rect.x, self.rect.y))
         self.mask = pygame.mask.from_surface(self.sprite)  #sprite uses mask
-
-
 
     def draw(self, window):
         window.blit(self.sprite, (self.rect.x, self.rect.y))
@@ -133,6 +164,37 @@ class Block(Object):
         self.mask = pygame.mask.from_surface(self.image)
 
 
+########################################################
+
+##################### MOVEMENTS ########################
+
+def handle_vertical_collision(player, objects, dy):
+    collided_objects = [] #keep track of collided objects and add rules to it later (traps, fire, .. diff effects)
+    for obj in objects:
+        if pygame.sprite.collide_mask(player, obj): #sprite class has collision method to detect collision
+            if dy > 0: #if falling down
+                player.rect.bottom = obj.rect.top  #make bottom of player == top of object colliding
+                player.landed()
+            elif dy < 0:
+                player.rect.top = obj.rect.bottom #so the player doesn't stay inside of the object (it will go below it)
+                player.hit_head()
+        
+        collided_objects.append(obj) 
+
+    return collided_objects
+
+def handle_move(player, objects):
+    keys = pygame.key.get_pressed()
+    
+    player.x_vel = 0 #so player doesn't move when key is lifted
+    if keys[pygame.K_LEFT]:
+        player.move_left(PLAYER_VEL)
+    if keys[pygame.K_RIGHT]:
+        player.move_right(PLAYER_VEL)
+
+    handle_vertical_collision(player, objects, player.y_vel)
+
+########################################################
 
 def draw(window, player, objects):
     #draw background
@@ -144,31 +206,6 @@ def draw(window, player, objects):
     player.draw(window)
 
     pygame.display.update()
-
-def handle_vertical_collision(player, objects, dy):
-    collided_objects = [] #keep track of collided objects and add rules to it later (traps, fire, .. diff effects)
-    for obj in objects:
-        if pygame.sprite.collide_mask(player, obj): #sprite class has collision method to detect collision
-            if dy > 0: #if falling down
-                player.rect.bottom = obj.top  #make bottom of player == top of object colliding
-                player.landed()
-            elif dy < 0:
-                player.rect.top = obj.rect.bottom #so the player doesn't stay inside of the object (it will go below it)
-                player.hit_head()
-        
-        collided_objects.append(obj) 
-        
-    return collided_objects()
-
-def handle_move(player):
-    keys = pygame.key.get_pressed()
-    
-    player.x_vel = 0 #so player doesn't move when key is lifted
-    if keys[pygame.K_LEFT]:
-        player.move_left(PLAYER_VEL)
-    if keys[pygame.K_RIGHT]:
-        player.move_right(PLAYER_VEL)
-
 
 def main(window):
     clock = pygame.time.Clock()
@@ -188,9 +225,14 @@ def main(window):
             if event.type == pygame.QUIT:
                 run = False
                 break
+
+            if event.type == pygame.KEYDOWN: #not putting in handle_move since for that u can hold down  key and continue movement
+                if event.key == pygame.K_SPACE and player.jump_count < 2:
+                    #resetting jump_count on landing, once landed, we can jump again
+                    player.jump()
         
         player.loop(FPS)
-        handle_move(player)
+        handle_move(player, floor)
         draw(window, player, floor)
 
     pygame.quit()
