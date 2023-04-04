@@ -42,7 +42,14 @@ def load_sprite_sheets(dir1, dir2, width, height, direction = False):
             all_sprites[image.replace(".png", "")] = sprites
     return all_sprites
 
-
+def get_block(size):
+    path = join("assets", "Terrain", "Terrain.png")
+    image = pygame.image.load(path).convert_alpha()
+    surface = pygame.Surface((size, size), pygame.SRCALPHA, 32)
+    rect = pygame.Rect(96, 0, size, size)  #96, 0 is position of the part we want (top left)
+    surface.blit(image, (0, 0), rect)
+    return pygame.transform.scale2x(surface)
+    
 
 class Player(pygame.sprite.Sprite): #inheriting from sprite for pixel accurate collision (use their methods)
     COLOR = (255, 0, 0)
@@ -97,7 +104,7 @@ class Player(pygame.sprite.Sprite): #inheriting from sprite for pixel accurate c
         self.animation_count += 1
         self.update()
 
-    def update(): #update rectangle according to sprite
+    def update(self): #update rectangle according to sprite
         self.rect = self.sprite.get_rect(topleft=(self.rect.x, self.rect.y))
         self.mask = pygame.mask.from_surface(self.sprite)  #sprite uses mask
 
@@ -118,15 +125,27 @@ class Object(pygame.sprite.Sprite):
     def draw(self, window):
         window.blit(self.image, (self.rect.x, self.rect.y))
 
-    
+class Block(Object):
+    def __init__(self, x, y, size):
+        super().__init__(x, y, size, size)
+        block = get_block(size)
+        self.image.blit(block, (0, 0))
+        self.mask = pygame.mask.from_surface(self.image)
 
 
-def draw(window, player):
+
+def draw(window, player, objects):
     #draw background
     window.blit(BG_IMG, (0,0)) #position 0,0 (top left)
+
+    for obj in objects:
+        obj.draw(window)
+
     player.draw(window)
 
     pygame.display.update()
+
+
 
 def handle_move(player):
     keys = pygame.key.get_pressed()
@@ -140,9 +159,14 @@ def handle_move(player):
 
 def main(window):
     clock = pygame.time.Clock()
-
-    player = Player(100, 500, 50, 50)
     
+    block_size = 96
+
+    #instantiate objects
+    player = Player(100, 500, 50, 50)
+    floor = [Block(i * block_size, WIN_HEIGHT - block_size, block_size) for i in range(-WIN_WIDTH // block_size, (WIN_WIDTH * 2)// block_size)]
+
+
     run = True
     while run:
         clock.tick(FPS) #running 60 frame/second
@@ -154,7 +178,7 @@ def main(window):
         
         player.loop(FPS)
         handle_move(player)
-        draw(window, player)
+        draw(window, player, floor)
 
     pygame.quit()
     quit()
