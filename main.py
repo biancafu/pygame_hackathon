@@ -145,7 +145,20 @@ def draw(window, player, objects):
 
     pygame.display.update()
 
-
+def handle_vertical_collision(player, objects, dy):
+    collided_objects = [] #keep track of collided objects and add rules to it later (traps, fire, .. diff effects)
+    for obj in objects:
+        if pygame.sprite.collide_mask(player, obj): #sprite class has collision method to detect collision
+            if dy > 0: #if falling down
+                player.rect.bottom = obj.top  #make bottom of player == top of object colliding
+                player.landed()
+            elif dy < 0:
+                player.rect.top = obj.rect.bottom #so the player doesn't stay inside of the object (it will go below it)
+                player.hit_head()
+        
+        collided_objects.append(obj) 
+        
+    return collided_objects()
 
 def handle_move(player):
     keys = pygame.key.get_pressed()
