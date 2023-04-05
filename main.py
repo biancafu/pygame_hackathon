@@ -159,6 +159,37 @@ class Player(pygame.sprite.Sprite): #inheriting from sprite for pixel accurate c
     def draw(self, window, offset_x):
         window.blit(self.sprite, (self.rect.x - offset_x, self.rect.y))
 
+class Police(pygame.sprite.Sprite):
+    COLOR = (255, 0, 0)
+    GRAVITY = 1
+    SPRITES = load_sprite_sheets("MainCharacters", "VirtualGuy", 32, 32, True)
+    ANIMATION_DELAY = 5
+
+    def __init__(self, x, y, width, height):
+        self.rect = pygame.Rect(x, y, width, height)
+        self.x_vel = 0
+        self.y_vel = 0
+        self.mask = None #mapping of pixels exists in sprite (which pixel exists to perform perfect pixel collision)
+        #for showing animation later
+        self.direction = "left" 
+        self.animation_count = 0
+        #for gravity
+        self.fall_count = 0
+    
+    def move(self, dx, dy):
+        self.rect.x += dx
+        self.rect.y +=dy
+
+    def loop(self, fps): #looping for each frame
+        self.y_vel += min(1, (self.fall_count / fps) * self.GRAVITY)
+        self.move(self.x_vel, self.y_vel)
+
+        self.fall_count += 1
+
+
+    def draw(self, window):
+        pygame.draw.rect(window, self.COLOR, self.rect)
+
 class Object(pygame.sprite.Sprite):
     def __init__(self, x, y, width, height, name=None):
         super().__init__()
@@ -263,7 +294,7 @@ def handle_move(player, objects):
 
 ########################################################
 
-def draw(window, player, objects, offset_x):
+def draw(window, player, objects, offset_x, police):
     #draw background
     window.blit(BG_IMG, (0,0)) #position 0,0 (top left)
 
@@ -271,6 +302,7 @@ def draw(window, player, objects, offset_x):
         obj.draw(window, offset_x)
 
     player.draw(window, offset_x)
+    police.draw(window)
 
     pygame.display.update()
 
@@ -281,6 +313,7 @@ def main(window):
 
     #instantiate objects
     player = Player(100, 500, 50, 50)
+    police = Police(50, 500, 50, 50)
     fire = Fire(300, WIN_HEIGHT - block_size - 64, 16, 32)
     fire.on()
     floor = [Block(i * block_size, WIN_HEIGHT - block_size, block_size) for i in range(-WIN_WIDTH // block_size, (WIN_WIDTH * 2)// block_size)]
@@ -307,7 +340,7 @@ def main(window):
         player.loop(FPS)
         fire.loop()
         handle_move(player, objects)
-        draw(window, player, objects, offset_x)
+        draw(window, player, objects, offset_x, police)
 
         if ((player.rect.right - offset_x >= WIN_WIDTH - scroll_area_width) and player.x_vel > 0) or (#moving to the right, off the screen
             (player.rect.left - offset_x <= scroll_area_width) and player.x_vel < 0): #moving to the left, off the screen
