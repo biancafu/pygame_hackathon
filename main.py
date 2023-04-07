@@ -11,6 +11,7 @@ WIN_WIDTH = 980
 WIN_HEIGHT = 720
 FPS = 60
 PLAYER_VEL = 5
+POLICE_VEL = 5
 
 BG_IMG = pygame.transform.scale2x(pygame.image.load(os.path.join("imgs", "bg.jpg")))
 
@@ -70,7 +71,7 @@ class Player(pygame.sprite.Sprite): #inheriting from sprite for pixel accurate c
         self.y_vel = 0
         self.mask = None #mapping of pixels exists in sprite (which pixel exists to perform perfect pixel collision)
         #for showing animation later
-        self.direction = "left" 
+        self.direction = "right" 
         self.animation_count = 0
         #for gravity
         self.fall_count = 0
@@ -165,7 +166,7 @@ class Police(pygame.sprite.Sprite):
     SPRITES = load_sprite_sheets("MainCharacters", "VirtualGuy", 32, 32, True)
     ANIMATION_DELAY = 5
 
-    def __init__(self, x, y, width, height):
+    def __init__(self, x, y, width, height, name="police"):
         super().__init__()
         self.rect = pygame.Rect(x, y, width, height)
         self.x_vel = 5
@@ -176,10 +177,23 @@ class Police(pygame.sprite.Sprite):
         self.animation_count = 0
         #for gravity
         self.fall_count = 0
+        self.name = name
     
     def move(self, dx, dy):
         self.rect.x += dx
         self.rect.y +=dy
+    
+    def move_left(self, vel):
+        self.x_vel = -vel
+        if self.direction != "left":
+            self.direction = "left"
+            self.animation_count = 0
+
+    def move_right(self, vel):
+        self.x_vel = vel
+        if self.direction != "right":
+            self.direction = "right"
+            self.animation_count = 0
 
     def loop(self, fps): #looping for each frame
         self.y_vel += min(1, (self.fall_count / fps) * self.GRAVITY)
@@ -217,8 +231,8 @@ class Police(pygame.sprite.Sprite):
         self.rect = self.sprite.get_rect(topleft=(self.rect.x, self.rect.y))
         self.mask = pygame.mask.from_surface(self.sprite)  #sprite uses mask
 
-    def draw(self, window):
-        window.blit(self.sprite, (self.rect.x, self.rect.y))
+    def draw(self, window, offset_x):
+        window.blit(self.sprite, (self.rect.x - offset_x, self.rect.y))
 
 class Object(pygame.sprite.Sprite):
     def __init__(self, x, y, width, height, name=None):
@@ -322,8 +336,22 @@ def handle_move(player, objects):
         if obj and obj.name == "fire":
             player.make_hit()
 
-def handle_police_move(police, objects):
-    vertical_collide = handle_vertical_collision(police, objects, police.y_vel)
+def handle_police_move(police, objects, player):
+    handle_vertical_collision(police, objects, police.y_vel)
+    collide_left = collide(player, [police], -1)
+    collide_right = collide(player, [police], 1)
+    to_check = [collide_left, collide_right]
+
+    for obj in to_check:
+        if obj and obj.name == "police":
+            player.make_hit()
+        elif police.rect.x >= player.rect.x:
+            police.x_vel = 0
+        else:
+            police.x_vel = 5
+
+
+
 
 ########################################################
 
@@ -335,7 +363,7 @@ def draw(window, player, objects, offset_x, police):
         obj.draw(window, offset_x)
 
     player.draw(window, offset_x)
-    police.draw(window)
+    police.draw(window, offset_x)
 
     pygame.display.update()
 
@@ -374,7 +402,7 @@ def main(window):
         police.loop(FPS)
         fire.loop()
         handle_move(player, objects)
-        handle_police_move(police, objects)
+        handle_police_move(police, objects, player)
         draw(window, player, objects, offset_x, police)
 
         if ((player.rect.right - offset_x >= WIN_WIDTH - scroll_area_width) and player.x_vel > 0) or (#moving to the right, off the screen
