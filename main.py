@@ -2,6 +2,7 @@ import pygame
 import os
 import time
 import random
+import math
 from os import listdir
 from os.path import isfile, join
 
@@ -169,8 +170,8 @@ class Police(pygame.sprite.Sprite):
     def __init__(self, x, y, width, height, name="police"):
         super().__init__()
         self.rect = pygame.Rect(x, y, width, height)
-        self.x_vel = 5
-        self.y_vel = 0
+        self.x_vel = 0
+        self.y_vel = 1
         self.mask = None #mapping of pixels exists in sprite (which pixel exists to perform perfect pixel collision)
         #for showing animation later
         self.direction = "right" 
@@ -178,27 +179,26 @@ class Police(pygame.sprite.Sprite):
         #for gravity
         self.fall_count = 0
         self.name = name
+        self.chase_back = False
     
     def move(self, dx, dy):
         self.rect.x += dx
         self.rect.y +=dy
-    
-    def move_left(self, vel):
-        self.x_vel = -vel
-        if self.direction != "left":
-            self.direction = "left"
-            self.animation_count = 0
 
-    def move_right(self, vel):
-        self.x_vel = vel
-        if self.direction != "right":
+    def move_towards_player(self, player):
+        dx = player.rect.x - self.rect.x
+        if dx > 0:
             self.direction = "right"
-            self.animation_count = 0
+        elif dx < 0:
+            self.direction = "left"
+        # Move along this normalized vector towards the player at current speed.
+        self.move(dx * 0.05, self.y_vel)
 
-    def loop(self, fps): #looping for each frame
+    def loop(self, fps, player): #looping for each frame
         self.y_vel += min(1, (self.fall_count / fps) * self.GRAVITY)
-        self.move(self.x_vel, self.y_vel)
-
+        # self.move(self.x_vel, self.y_vel)
+        #chasing
+        self.move_towards_player(player)
         self.fall_count += 1
 
         self.update_sprite()
@@ -345,11 +345,15 @@ def handle_police_move(police, objects, player):
     for obj in to_check:
         if obj and obj.name == "police":
             player.make_hit()
-        elif police.rect.x >= player.rect.x:
-            police.x_vel = 0
-        else:
-            police.x_vel = 5
-
+            #game over condition
+            print("game over")
+        # elif police.rect.x >= player.rect.x:
+        #     police.x_vel = 0
+        # #     police.chase_back = True
+        # # elif police.chase_back:
+        # #     police.x_vel = -5
+        # else:
+        #     police.x_vel = 5
 
 
 
@@ -373,9 +377,9 @@ def main(window):
     block_size = 96
 
     #instantiate objects
-    player = Player(100, 500, 50, 50)
+    player = Player(block_size * 3, WIN_HEIGHT - block_size * 4, 50, 50)
     police = Police(50, 500, 50, 50)
-    fire = Fire(300, WIN_HEIGHT - block_size - 64, 16, 32)
+    fire = Fire(700, WIN_HEIGHT - block_size - 64, 16, 32)
     fire.on()
     floor = [Block(i * block_size, WIN_HEIGHT - block_size, block_size) for i in range(-WIN_WIDTH // block_size, (WIN_WIDTH * 2)// block_size)]
     objects = [*floor, Block(0, WIN_HEIGHT - block_size * 2, block_size), 
@@ -399,7 +403,7 @@ def main(window):
                     player.jump()
         
         player.loop(FPS)
-        police.loop(FPS)
+        police.loop(FPS, player)
         fire.loop()
         handle_move(player, objects)
         handle_police_move(police, objects, player)
