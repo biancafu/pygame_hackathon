@@ -178,6 +178,7 @@ class Police(pygame.sprite.Sprite):
         #for gravity
         self.fall_count = 0
         self.name = name
+        self.chase_back = False
     
     def move(self, dx, dy):
         self.rect.x += dx
@@ -345,8 +346,13 @@ def handle_police_move(police, objects, player):
     for obj in to_check:
         if obj and obj.name == "police":
             player.make_hit()
-        elif police.rect.x >= player.rect.x:
+            #game over condition
+            print("game over")
+        elif police.rect.x >= player.rect.x and not police.chase_back:
             police.x_vel = 0
+        #     police.chase_back = True
+        # elif police.chase_back:
+        #     police.x_vel = -5
         else:
             police.x_vel = 5
 
@@ -373,9 +379,9 @@ def main(window):
     block_size = 96
 
     #instantiate objects
-    player = Player(100, 500, 50, 50)
+    player = Player(block_size * 3, WIN_HEIGHT - block_size * 4, 50, 50)
     police = Police(50, 500, 50, 50)
-    fire = Fire(300, WIN_HEIGHT - block_size - 64, 16, 32)
+    fire = Fire(700, WIN_HEIGHT - block_size - 64, 16, 32)
     fire.on()
     floor = [Block(i * block_size, WIN_HEIGHT - block_size, block_size) for i in range(-WIN_WIDTH // block_size, (WIN_WIDTH * 2)// block_size)]
     objects = [*floor, Block(0, WIN_HEIGHT - block_size * 2, block_size), 
