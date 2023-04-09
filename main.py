@@ -23,8 +23,6 @@ window = pygame.display.set_mode((WIN_WIDTH, WIN_HEIGHT))
 # define font for the text
 font = pygame.font.SysFont("Arial", 24)
 
-# initialize the player_lives variable to 2
-player_lives = 2
 
 
 ################### IMG HANDLING #####################
@@ -102,7 +100,10 @@ class Player(pygame.sprite.Sprite): #inheriting from sprite for pixel accurate c
     def make_hit(self):
         self.hit = True
         self.hit_count = 0
-        # self.lives -= 1
+        
+    def minus_life(self):
+        if self.lives > 0:
+            self.lives -= 1
 
     def move(self, dx, dy):
         self.rect.x += dx
@@ -355,12 +356,8 @@ def handle_move(player, objects):
     # check for collision with fire object
     for obj in objects:
       if isinstance(obj, Fire) and pygame.sprite.collide_mask(player, obj):
-        player.lives -= 1
-        if player.lives <= 0:
-          # game over logic
-          game_over(window)
-          return
-        else:
+        player.minus_life()
+        if player.lives > 0:
           #reset player position
           player.rect.x = 100
           player.rect.y = 100
@@ -383,16 +380,12 @@ def handle_police_move(police, objects, player):
     for obj in to_check:
         if obj and obj.name == "police":
             player.make_hit()
-            player.lives -= 1
-            if player_lives <= 0:
-                # game over logic
-                game_over(window)
-                return
-            else:
+            player.minus_life()
+            if player.lives > 0:
                 #reset player position
                 police.rect.x = 50
                 police.rect.y = 500
-            break
+                break
 
 def game_over(window):
     font = pygame.font.SysFont("Arial", 32)
