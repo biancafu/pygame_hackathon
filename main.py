@@ -387,7 +387,6 @@ def handle_police_move(police, objects, player):
                 #reset player position
                 police.rect.x = 50
                 police.rect.y = 500
-                break
 
 def game_over(window):
     font = pygame.font.SysFont("Arial", 32)
