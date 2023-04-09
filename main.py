@@ -85,6 +85,7 @@ class Player(pygame.sprite.Sprite): #inheriting from sprite for pixel accurate c
         #for hitting fire
         self.hit = False
         self.hit_count = 0
+        self.lives = 2
 
     def jump(self):
         self.y_vel = -self.GRAVITY * 8 #speed of jump = 8 (can change)
@@ -97,6 +98,7 @@ class Player(pygame.sprite.Sprite): #inheriting from sprite for pixel accurate c
     def make_hit(self):
         self.hit = True
         self.hit_count = 0
+        # self.lives -= 1
 
     def move(self, dx, dy):
         self.rect.x += dx
@@ -349,8 +351,8 @@ def handle_move(player, objects):
     # check for collision with fire object
     for obj in objects:
       if isinstance(obj, Fire) and pygame.sprite.collide_mask(player, obj):
-        player_lives -= 1
-        if player_lives <= 0:
+        player.lives -= 1
+        if player.lives <= 0:
           # game over logic
           game_over(window)
           return
@@ -368,7 +370,6 @@ def handle_move(player, objects):
 
 
 def handle_police_move(police, objects, player):
-    global player_lives
 
     handle_vertical_collision(police, objects, police.y_vel)
     collide_left = collide(player, [police], -1)
@@ -378,7 +379,7 @@ def handle_police_move(police, objects, player):
     for obj in to_check:
         if obj and obj.name == "police":
             player.make_hit()
-            player_lives -= 1
+            player.lives -= 1
             if player_lives <= 0:
                 # game over logic
                 game_over(window)
@@ -403,7 +404,7 @@ def game_over(window):
         window.blit(text_surface, text_rect)
         window.blit(restart_text, restart_rect)
         # add a delay before showing the game over screen
-        pygame.time.delay(1000)
+        pygame.time.delay(500)
         # update the displaye to show the new text
         pygame.display.update()
 
@@ -421,6 +422,10 @@ def game_over(window):
 def draw(window, player, objects, offset_x, police, bullets):
     #draw background
     window.blit(BG_IMG, (0,0)) #position 0,0 (top left)
+
+    # create text for lives
+    lives_text = font.render(f"Lives: {player.lives}", True, (255, 255, 255))
+    window.blit(lives_text, (10, 10))
 
     for obj in objects:
         obj.draw(window, offset_x)
@@ -497,7 +502,19 @@ def main(window):
     run = True
     while run:
         clock.tick(FPS) #running 60 frame/second
-        
+
+        if player.lives <= 0:
+          # game over
+          if game_over(window):
+            # reset player lives
+            player.lives = 2
+            # restart the game
+            main(window)
+          else:
+            # exit the loop
+            run = False
+            break
+
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 run = False
