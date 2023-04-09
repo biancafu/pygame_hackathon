@@ -3,6 +3,7 @@ import os
 import time
 import random
 import math
+import sys
 from os import listdir
 from os.path import isfile, join
 
@@ -64,6 +65,7 @@ def get_block(size):
 #######################################################
     
 ##################### CLASSES #########################
+
 
 class Player(pygame.sprite.Sprite): #inheriting from sprite for pixel accurate collision (use their methods)
     COLOR = (255, 0, 0)
@@ -385,7 +387,6 @@ def handle_police_move(police, objects, player):
                 #reset player position
                 police.rect.x = 50
                 police.rect.y = 500
-                break
 
 def game_over(window):
     font = pygame.font.SysFont("Arial", 32)
@@ -435,10 +436,51 @@ def draw(window, player, objects, offset_x, police, bullets):
 
     pygame.display.update()
 
-def main(window): 
-    global player_lives
 
-    clock = pygame.time.Clock()
+def main_menu(window):
+    while True:
+        window.blit(BG_IMG, (0,0))
+        instruction_image = pygame.image.load("keys.png")
+        window.blit(instruction_image, (260, 100))
+
+        # Set up the font
+        font = pygame.font.Font(None, 36)
+
+
+        mx, my = pygame.mouse.get_pos()
+        button_1 = pygame.Rect(400, 490, 200, 50)
+        # draw button rectangle
+        pygame.draw.rect(window, (255, 255, 255), button_1)
+
+        text_surface = font.render("Start Game", True, (0, 0, 0))
+        text_rect = text_surface.get_rect(center=button_1.center)
+        window.blit(text_surface, text_rect)
+
+        if button_1.collidepoint((mx, my)):
+            if click:
+                main(window)
+        
+        pygame.display.update()
+
+        click = False
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_ESCAPE:
+                    pygame.quit()
+                    sys.exit()
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if event.button == 1:
+                    click = True
+                    
+        pygame.display.update()
+        clock.tick(FPS)
+
+
+def main(window): 
     
     block_size = 96
 
@@ -477,7 +519,7 @@ def main(window):
                 if event.key == pygame.K_SPACE and player.jump_count < 2:
                     #resetting jump_count on landing, once landed, we can jump again
                     player.jump()
-                if event.key == pygame.K_s:
+                elif event.key == pygame.K_s:
                     if player.direction == "left":
                         facing = -1
                     else:
@@ -485,7 +527,8 @@ def main(window):
                         
                     if len(bullets) < 5: #only 5 bullets
                         bullets.append(projectile(round(player.rect.x + player.rect.width //2), round(player.rect.y + player.rect.height//2), 6, (0,0,0), facing))
-
+                elif event.key == pygame.K_ESCAPE:
+                    run = False
         for bullet in bullets:
                 bullet.x += bullet.vel
         
@@ -501,8 +544,6 @@ def main(window):
             offset_x += player.x_vel
 
 
-    pygame.quit()
-    quit()
 
-if __name__ == "__main__":
-    main(window)
+# main(window)
+main_menu(window)
