@@ -6,6 +6,8 @@ import math
 from os import listdir
 from os.path import isfile, join
 
+pygame.init()
+
 pygame.display.set_caption("pygame hackathon")
 #window dimension
 WIN_WIDTH = 980
@@ -17,6 +19,12 @@ POLICE_VEL = 5
 BG_IMG = pygame.transform.scale2x(pygame.image.load(os.path.join("imgs", "bg.jpg")))
 
 window = pygame.display.set_mode((WIN_WIDTH, WIN_HEIGHT))
+
+# define font for the text
+font = pygame.font.SysFont("Arial", 24)
+
+# initialize the player_lives variable to 2
+player_lives = 2
 
 
 ################### IMG HANDLING #####################
@@ -329,6 +337,8 @@ def collide(player, objects, dx):
 
 
 def handle_move(player, objects):
+    global player_lives
+    
     keys = pygame.key.get_pressed()
     
     player.x_vel = 0 #so player doesn't move when key is lifted
@@ -339,6 +349,20 @@ def handle_move(player, objects):
         player.move_left(PLAYER_VEL)
     if keys[pygame.K_RIGHT] and not collide_right:
         player.move_right(PLAYER_VEL)
+
+    # check for collision with fire object
+    for obj in objects:
+      if isinstance(obj, Fire) and pygame.sprite.collide_mask(player, obj):
+        player_lives -= 1
+        if player_lives <= 0:
+          # game over logic
+          game_over(window)
+          return
+        else:
+          #reset player position
+          player.rect.x = 100
+          player.rect.y = 100
+          break
 
     vertical_collide = handle_vertical_collision(player, objects, player.y_vel)
     to_check = [collide_left, collide_right, *vertical_collide]
@@ -365,7 +389,32 @@ def handle_police_move(police, objects, player):
         # else:
         #     police.x_vel = 5
 
+def game_over(window):
+    font = pygame.font.SysFont("Arial", 32)
+    
+    text_surface = font.render("GAME OVER", True, (255, 0, 0))
+    text_rect = text_surface.get_rect(center=(WIN_WIDTH // 2, WIN_HEIGHT // 2 - 20))
 
+    restart_text = font.render("Press R to restart", True, (255, 255, 255))
+    restart_rect = restart_text.get_rect(center=(WIN_WIDTH // 2, WIN_HEIGHT // 2 + 20))
+
+    while True:
+        # blit the text surfaces on the screen
+        window.blit(text_surface, text_rect)
+        window.blit(restart_text, restart_rect)
+        # add a delay before showing the game over screen
+        pygame.time.delay(1000)
+        # update the displaye to show the new text
+        pygame.display.update()
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+              pygame.quit()
+              quit()
+
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_r:
+                  return True
 
 ########################################################
 
@@ -385,6 +434,8 @@ def draw(window, player, objects, offset_x, police, bullets):
     pygame.display.update()
 
 def main(window): 
+    global player_lives
+
     clock = pygame.time.Clock()
     
     block_size = 96
@@ -405,6 +456,28 @@ def main(window):
     run = True
     while run:
         clock.tick(FPS) #running 60 frame/second
+
+        # create a text surface with the current numberof lives
+        pygame.init()
+        lives_text = font.render(f"Lives: {player_lives}", True, (255, 255, 255))
+
+        # blit the text surface onto the screen at the desired position
+        window.blit(lives_text, (10, 10))
+
+        # #update the display to show the new text
+        pygame.display.update()
+        
+        if player_lives <= 0:
+          # game over
+          if game_over(window):
+            # reset player lives
+            player_lives = 2
+            # restart the game
+            main(window)
+          else:
+            # exit the loop
+            run = False
+            break
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
