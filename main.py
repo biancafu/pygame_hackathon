@@ -7,6 +7,8 @@ import sys
 from os import listdir
 from os.path import isfile, join
 
+pygame.init()
+
 pygame.display.set_caption("pygame hackathon")
 #window dimension
 WIN_WIDTH = 980
@@ -18,12 +20,6 @@ POLICE_VEL = 5
 BG_IMG = pygame.transform.scale2x(pygame.image.load(os.path.join("imgs", "bg.jpg")))
 
 window = pygame.display.set_mode((WIN_WIDTH, WIN_HEIGHT))
-
-clock = pygame.time.Clock()
-### MENU ###
-pygame.init()
-
-click = False
 
 
 ################### IMG HANDLING #####################
