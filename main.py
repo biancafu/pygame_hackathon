@@ -19,50 +19,11 @@ BG_IMG = pygame.transform.scale2x(pygame.image.load(os.path.join("imgs", "bg.jpg
 
 window = pygame.display.set_mode((WIN_WIDTH, WIN_HEIGHT))
 
+clock = pygame.time.Clock()
 ### MENU ###
 pygame.init()
 
-def main_menu():
-    while True:
-
-        instruction_image = pygame.image.load("keys.png")
-        window.blit(instruction_image, (280, 100))
-
-        # Set up the font
-        font = pygame.font.Font(None, 36)
-
-        # Set up the start button
-        button_width = 200
-        button_height = 50
-        button_x = (WIN_WIDTH - button_width) / 2
-        button_y = (WIN_HEIGHT - button_height) / 2
-        button_color = (255, 255, 255)
-        button_text = 'Start Game'
-        font = pygame.font.Font(None, 30)
-        text_surface = font.render(button_text, True, (0, 0, 0))
-
-        # Set up the button offset
-        button_offset_y = 170
-
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                pygame.quit()
-                sys.exit()
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_ESCAPE:
-                    pygame.quit()
-                    sys.exit()
-            
-
-        # Draw the button
-        pygame.draw.rect(window, button_color, (button_x, button_y + button_offset_y, button_width, button_height))
-        window.blit(text_surface, (button_x + button_width/2 - text_surface.get_width()/2, button_y + button_offset_y + button_height/2 - text_surface.get_height()/2))
-
-        pygame.display.update()
-        clock = pygame.time.Clock()
-        clock.tick(60)
-
-main_menu() 
+click = False
 
 
 ################### IMG HANDLING #####################
@@ -431,8 +392,51 @@ def draw(window, player, objects, offset_x, police, bullets):
 
     pygame.display.update()
 
+
+def main_menu(window):
+    while True:
+        window.blit(BG_IMG, (0,0))
+        instruction_image = pygame.image.load("keys.png")
+        window.blit(instruction_image, (260, 100))
+
+        # Set up the font
+        font = pygame.font.Font(None, 36)
+
+
+        mx, my = pygame.mouse.get_pos()
+        button_1 = pygame.Rect(400, 490, 200, 50)
+        # draw button rectangle
+        pygame.draw.rect(window, (255, 255, 255), button_1)
+
+        text_surface = font.render("Start Game", True, (0, 0, 0))
+        text_rect = text_surface.get_rect(center=button_1.center)
+        window.blit(text_surface, text_rect)
+
+        if button_1.collidepoint((mx, my)):
+            if click:
+                main(window)
+        
+        pygame.display.update()
+
+        click = False
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_ESCAPE:
+                    pygame.quit()
+                    sys.exit()
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if event.button == 1:
+                    click = True
+                    
+        pygame.display.update()
+        clock.tick(FPS)
+
+
 def main(window): 
-    clock = pygame.time.Clock()
     
     block_size = 96
 
@@ -452,7 +456,7 @@ def main(window):
     run = True
     while run:
         clock.tick(FPS) #running 60 frame/second
-
+        
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 run = False
@@ -462,7 +466,7 @@ def main(window):
                 if event.key == pygame.K_SPACE and player.jump_count < 2:
                     #resetting jump_count on landing, once landed, we can jump again
                     player.jump()
-                if event.key == pygame.K_s:
+                elif event.key == pygame.K_s:
                     if player.direction == "left":
                         facing = -1
                     else:
@@ -470,7 +474,8 @@ def main(window):
                         
                     if len(bullets) < 5: #only 5 bullets
                         bullets.append(projectile(round(player.rect.x + player.rect.width //2), round(player.rect.y + player.rect.height//2), 6, (0,0,0), facing))
-
+                elif event.key == pygame.K_ESCAPE:
+                    run = False
         for bullet in bullets:
                 bullet.x += bullet.vel
         
@@ -486,8 +491,6 @@ def main(window):
             offset_x += player.x_vel
 
 
-    pygame.quit()
-    quit()
 
-if __name__ == "__main__":
-    main(window)
+# main(window)
+main_menu(window)
