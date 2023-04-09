@@ -333,6 +333,8 @@ def collide(player, objects, dx):
 
 
 def handle_move(player, objects):
+    global player_lives
+    
     keys = pygame.key.get_pressed()
     
     player.x_vel = 0 #so player doesn't move when key is lifted
@@ -343,6 +345,20 @@ def handle_move(player, objects):
         player.move_left(PLAYER_VEL)
     if keys[pygame.K_RIGHT] and not collide_right:
         player.move_right(PLAYER_VEL)
+
+    # check for collision with fire object
+    for obj in objects:
+      if isinstance(obj, Fire) and pygame.sprite.collide_mask(player, obj):
+        player_lives -= 1
+        if player_lives <= 0:
+          # game over logic
+          game_over(window)
+          return
+        else:
+          #reset player position
+          player.rect.x = 100
+          player.rect.y = 100
+          break
 
     vertical_collide = handle_vertical_collision(player, objects, player.y_vel)
     to_check = [collide_left, collide_right, *vertical_collide]
@@ -369,7 +385,32 @@ def handle_police_move(police, objects, player):
         # else:
         #     police.x_vel = 5
 
+def game_over(window):
+    font = pygame.font.SysFont("Arial", 32)
+    
+    text_surface = font.render("GAME OVER", True, (255, 0, 0))
+    text_rect = text_surface.get_rect(center=(WIN_WIDTH // 2, WIN_HEIGHT // 2 - 20))
 
+    restart_text = font.render("Press R to restart", True, (255, 255, 255))
+    restart_rect = restart_text.get_rect(center=(WIN_WIDTH // 2, WIN_HEIGHT // 2 + 20))
+
+    while True:
+        # blit the text surfaces on the screen
+        window.blit(text_surface, text_rect)
+        window.blit(restart_text, restart_rect)
+        # add a delay before showing the game over screen
+        pygame.time.delay(1000)
+        # update the displaye to show the new text
+        pygame.display.update()
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+              pygame.quit()
+              quit()
+
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_r:
+                  return True
 
 ########################################################
 
