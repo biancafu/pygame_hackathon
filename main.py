@@ -358,7 +358,7 @@ def handle_move(player, objects):
     # check for collision with fire object
     for obj in objects:
       if isinstance(obj, Fire) and pygame.sprite.collide_mask(player, obj):
-        player.minus_life()
+        player.lives -= 1
         if player.lives > 0:
           #reset player position
           player.rect.x = 100
@@ -505,9 +505,6 @@ def main(window):
         if player.lives <= 0:
           # game over
           if game_over(window):
-            # reset player lives
-            player.lives = 2
-            # restart the game
             main(window)
           else:
             # exit the loop
