@@ -6,6 +6,8 @@ import math
 from os import listdir
 from os.path import isfile, join
 
+pygame.init()
+
 pygame.display.set_caption("pygame hackathon")
 #window dimension
 WIN_WIDTH = 980
@@ -17,6 +19,12 @@ POLICE_VEL = 5
 BG_IMG = pygame.transform.scale2x(pygame.image.load(os.path.join("imgs", "bg.jpg")))
 
 window = pygame.display.set_mode((WIN_WIDTH, WIN_HEIGHT))
+
+# define font for the text
+font = pygame.font.SysFont("Arial", 24)
+
+# initialize the player_lives variable to 2
+player_lives = 2
 
 
 ################### IMG HANDLING #####################
@@ -385,6 +393,8 @@ def draw(window, player, objects, offset_x, police, bullets):
     pygame.display.update()
 
 def main(window): 
+    global player_lives
+
     clock = pygame.time.Clock()
     
     block_size = 96
@@ -405,6 +415,16 @@ def main(window):
     run = True
     while run:
         clock.tick(FPS) #running 60 frame/second
+
+        # create a text surface with the current numberof lives
+        pygame.init()
+        lives_text = font.render(f"Lives: {player_lives}", True, (255, 255, 255))
+
+        # blit the text surface onto the screen at the desired position
+        window.blit(lives_text, (10, 10))
+
+        # #update the display to show the new text
+        pygame.display.update()
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
