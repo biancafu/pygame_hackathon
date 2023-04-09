@@ -282,7 +282,17 @@ class Fire(Object):
         if self.animation_count // self.ANIMATION_DELAY > len(sprites):
             self.animation_count = 0 #since fire is static, we need to reset it this way
 
+class projectile(object):
+    def __init__(self,x,y,radius,color,facing):
+        self.x = x
+        self.y = y
+        self.radius = radius
+        self.color = color
+        self.facing = facing
+        self.vel = 8 * facing
 
+    def draw(self, window, offset_x):
+        pygame.draw.circle(window, self.color, (self.x - offset_x,self.y), self.radius)
 
 ########################################################
 
@@ -359,19 +369,22 @@ def handle_police_move(police, objects, player):
 
 ########################################################
 
-def draw(window, player, objects, offset_x, police):
+def draw(window, player, objects, offset_x, police, bullets):
     #draw background
     window.blit(BG_IMG, (0,0)) #position 0,0 (top left)
 
     for obj in objects:
         obj.draw(window, offset_x)
+    
+    for bullet in bullets:
+        bullet.draw(window, offset_x)
 
     player.draw(window, offset_x)
     police.draw(window, offset_x)
 
     pygame.display.update()
 
-def main(window):
+def main(window): 
     clock = pygame.time.Clock()
     
     block_size = 96
@@ -379,6 +392,7 @@ def main(window):
     #instantiate objects
     player = Player(block_size * 3, WIN_HEIGHT - block_size * 4, 50, 50)
     police = Police(50, 500, 50, 50)
+    bullets = []
     fire = Fire(700, WIN_HEIGHT - block_size - 64, 16, 32)
     fire.on()
     floor = [Block(i * block_size, WIN_HEIGHT - block_size, block_size) for i in range(-WIN_WIDTH // block_size, (WIN_WIDTH * 2)// block_size)]
@@ -401,13 +415,24 @@ def main(window):
                 if event.key == pygame.K_SPACE and player.jump_count < 2:
                     #resetting jump_count on landing, once landed, we can jump again
                     player.jump()
+                if event.key == pygame.K_s:
+                    if player.direction == "left":
+                        facing = -1
+                    else:
+                        facing = 1
+                        
+                    if len(bullets) < 5: #only 5 bullets
+                        bullets.append(projectile(round(player.rect.x + player.rect.width //2), round(player.rect.y + player.rect.height//2), 6, (0,0,0), facing))
+
+        for bullet in bullets:
+                bullet.x += bullet.vel
         
         player.loop(FPS)
         police.loop(FPS, player)
         fire.loop()
         handle_move(player, objects)
         handle_police_move(police, objects, player)
-        draw(window, player, objects, offset_x, police)
+        draw(window, player, objects, offset_x, police, bullets)
 
         if ((player.rect.right - offset_x >= WIN_WIDTH - scroll_area_width) and player.x_vel > 0) or (#moving to the right, off the screen
             (player.rect.left - offset_x <= scroll_area_width) and player.x_vel < 0): #moving to the left, off the screen
