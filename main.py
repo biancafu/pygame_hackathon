@@ -370,7 +370,10 @@ def handle_move(player, objects):
         if obj and obj.name == "fire":
             player.make_hit()
 
+
 def handle_police_move(police, objects, player):
+    global player_lives
+
     handle_vertical_collision(police, objects, police.y_vel)
     collide_left = collide(player, [police], -1)
     collide_right = collide(player, [police], 1)
@@ -379,15 +382,16 @@ def handle_police_move(police, objects, player):
     for obj in to_check:
         if obj and obj.name == "police":
             player.make_hit()
-            #game over condition
-            print("game over")
-        # elif police.rect.x >= player.rect.x:
-        #     police.x_vel = 0
-        # #     police.chase_back = True
-        # # elif police.chase_back:
-        # #     police.x_vel = -5
-        # else:
-        #     police.x_vel = 5
+            player_lives -= 1
+            if player_lives <= 0:
+                # game over logic
+                game_over(window)
+                return
+            else:
+                #reset player position
+                police.rect.x = 50
+                police.rect.y = 500
+            break
 
 def game_over(window):
     font = pygame.font.SysFont("Arial", 32)
