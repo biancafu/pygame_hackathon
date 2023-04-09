@@ -7,6 +7,7 @@ import sys
 from os import listdir
 from os.path import isfile, join
 
+clock = pygame.time.Clock()
 pygame.init()
 
 pygame.display.set_caption("pygame hackathon")
