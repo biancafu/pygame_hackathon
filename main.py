@@ -3,6 +3,7 @@ import os
 import time
 import random
 import math
+import sys
 from os import listdir
 from os.path import isfile, join
 
@@ -17,6 +18,51 @@ POLICE_VEL = 5
 BG_IMG = pygame.transform.scale2x(pygame.image.load(os.path.join("imgs", "bg.jpg")))
 
 window = pygame.display.set_mode((WIN_WIDTH, WIN_HEIGHT))
+
+### MENU ###
+pygame.init()
+
+def main_menu():
+    while True:
+
+        instruction_image = pygame.image.load("keys.png")
+        window.blit(instruction_image, (280, 100))
+
+        # Set up the font
+        font = pygame.font.Font(None, 36)
+
+        # Set up the start button
+        button_width = 200
+        button_height = 50
+        button_x = (WIN_WIDTH - button_width) / 2
+        button_y = (WIN_HEIGHT - button_height) / 2
+        button_color = (255, 255, 255)
+        button_text = 'Start Game'
+        font = pygame.font.Font(None, 30)
+        text_surface = font.render(button_text, True, (0, 0, 0))
+
+        # Set up the button offset
+        button_offset_y = 170
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_ESCAPE:
+                    pygame.quit()
+                    sys.exit()
+            
+
+        # Draw the button
+        pygame.draw.rect(window, button_color, (button_x, button_y + button_offset_y, button_width, button_height))
+        window.blit(text_surface, (button_x + button_width/2 - text_surface.get_width()/2, button_y + button_offset_y + button_height/2 - text_surface.get_height()/2))
+
+        pygame.display.update()
+        clock = pygame.time.Clock()
+        clock.tick(60)
+
+main_menu() 
 
 
 ################### IMG HANDLING #####################
@@ -58,6 +104,7 @@ def get_block(size):
 #######################################################
     
 ##################### CLASSES #########################
+
 
 class Player(pygame.sprite.Sprite): #inheriting from sprite for pixel accurate collision (use their methods)
     COLOR = (255, 0, 0)
