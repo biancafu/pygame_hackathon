@@ -71,7 +71,7 @@ def get_block(size):
 class Player(pygame.sprite.Sprite): #inheriting from sprite for pixel accurate collision (use their methods)
     COLOR = (255, 0, 0)
     GRAVITY = 1
-    SPRITES = load_sprite_sheets("MainCharacters", "MaskDude", 32, 32, True)
+    SPRITES = load_sprite_sheets("MainCharacters", "NinjaFrog", 32, 32, True)
     ANIMATION_DELAY = 5
     
     def __init__(self, x, y, width, height) -> None:
@@ -178,14 +178,14 @@ class Player(pygame.sprite.Sprite): #inheriting from sprite for pixel accurate c
 class Police(pygame.sprite.Sprite):
     COLOR = (255, 0, 0)
     GRAVITY = 1
-    SPRITES = load_sprite_sheets("MainCharacters", "VirtualGuy", 32, 32, True)
+    SPRITES = load_sprite_sheets("MainCharacters", "Police", 32, 32, True)
     ANIMATION_DELAY = 5
 
     def __init__(self, x, y, width, height, name="police"):
         super().__init__()
         self.rect = pygame.Rect(x, y, width, height)
         self.x_vel = 0
-        self.y_vel = 1
+        self.y_vel = 0
         self.mask = None #mapping of pixels exists in sprite (which pixel exists to perform perfect pixel collision)
         #for showing animation later
         self.direction = "right" 
@@ -198,19 +198,24 @@ class Police(pygame.sprite.Sprite):
     def move(self, dx, dy):
         self.rect.x += dx
         self.rect.y +=dy
-
+  
+            
     def move_towards_player(self, player):
         dx = player.rect.x - self.rect.x
-        if dx > 0:
+        self.x_vel = dx * 0.05
+        if dx > 19:
             self.direction = "right"
-        elif dx < 0:
+        elif dx < -19:
             self.direction = "left"
+        elif dx >=0 and dx <= 19:
+            self.x_vel = 0
+
         # Move along this normalized vector towards the player at current speed.
-        self.move(dx * 0.05, self.y_vel)
+        self.move(self.x_vel, self.y_vel)
+        # self.move(dx * 0.05, self.y_vel)
 
     def loop(self, fps, player): #looping for each frame
         self.y_vel += min(1, (self.fall_count / fps) * self.GRAVITY)
-        # self.move(self.x_vel, self.y_vel)
         #chasing
         self.move_towards_player(player)
         self.fall_count += 1
@@ -233,6 +238,9 @@ class Police(pygame.sprite.Sprite):
             sprite_sheet = "fall"
         elif self.x_vel != 0:
             sprite_sheet = "run"
+            print(self.animation_count)
+
+            
 
         sprite_sheet_name = sprite_sheet + "_" + self.direction
         sprites = self.SPRITES[sprite_sheet_name]
@@ -365,7 +373,6 @@ def collide(player, objects, dx):
 
 
 def handle_move(player, objects):
-    global player_lives
     
     keys = pygame.key.get_pressed()
     
@@ -516,6 +523,9 @@ def main(window):
     floor = [Block(i * block_size, WIN_HEIGHT - block_size, block_size) for i in range(-WIN_WIDTH // block_size, (WIN_WIDTH * 2)// block_size)]
     objects = [*floor, Block(0, WIN_HEIGHT - block_size * 2, block_size), 
                Block(block_size * 3, WIN_HEIGHT - block_size * 4, block_size),
+               Block(block_size * 4, WIN_HEIGHT - block_size * 4, block_size),
+               Block(block_size * 5, WIN_HEIGHT - block_size * 4, block_size),
+               Block(block_size * 6, WIN_HEIGHT - block_size * 4, block_size),
                fire]
     offset_x = 0
     scroll_area_width = 320
