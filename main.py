@@ -296,17 +296,39 @@ class Fire(Object):
         if self.animation_count // self.ANIMATION_DELAY > len(sprites):
             self.animation_count = 0 #since fire is static, we need to reset it this way
 
-class projectile(object):
-    def __init__(self,x,y,radius,color,facing):
+class Projectile(Object):
+    ANIMATION_DELAY = 3
+
+    def __init__(self, x, y, width, height, facing):
+        super().__init__(x, y, width, height, "bullet")
+        self.projectile = load_sprite_sheets("Traps", "Sand Mud Ice", 16, 16)
+        self.image = self.projectile["Ice_Particle"][0]
+        self.mask = pygame.mask.from_surface(self.image)
         self.x = x
         self.y = y
-        self.radius = radius
-        self.color = color
         self.facing = facing
         self.vel = 8 * facing
+        self.animation_count = 0
+        self.animation_name = "Ice_Particle"
 
-    def draw(self, window, offset_x):
-        pygame.draw.circle(window, self.color, (self.x - offset_x,self.y), self.radius)
+    def move(self, dx):
+        self.rect.x += dx
+
+    def loop(self, fps): #looping for each frame
+        self.move(self.vel)
+        self.update_sprite()
+
+    def update_sprite(self):
+        sprites = self.projectile[self.animation_name]
+        sprite_index = (self.animation_count // self.ANIMATION_DELAY) % len(sprites)
+        self.image = sprites[sprite_index]
+        self.animation_count += 1
+        #update
+        self.rect = self.image.get_rect(topleft=(self.rect.x, self.rect.y))
+        self.mask = pygame.mask.from_surface(self.image)  #sprite uses mask
+
+        if self.animation_count // self.ANIMATION_DELAY > len(sprites):
+            self.animation_count = 0
 
 ########################################################
 
@@ -527,15 +549,17 @@ def main(window):
                         facing = 1
                         
                     if len(bullets) < 5: #only 5 bullets
-                        bullets.append(projectile(round(player.rect.x + player.rect.width //2), round(player.rect.y + player.rect.height//2), 6, (0,0,0), facing))
+                        bullets.append(Projectile(round(player.rect.x + player.rect.width //2), round(player.rect.y + player.rect.height//2), 6, 6, facing))
                 elif event.key == pygame.K_ESCAPE:
                     run = False
         for bullet in bullets:
                 bullet.x += bullet.vel
+                bullet.loop(FPS)
         
         player.loop(FPS)
         police.loop(FPS, player)
         fire.loop()
+        
         handle_move(player, objects)
         handle_police_move(police, objects, player)
         draw(window, player, objects, offset_x, police, bullets)
