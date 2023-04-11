@@ -71,7 +71,7 @@ def get_block(size):
 class Player(pygame.sprite.Sprite): #inheriting from sprite for pixel accurate collision (use their methods)
     COLOR = (255, 0, 0)
     GRAVITY = 1
-    SPRITES = load_sprite_sheets("MainCharacters", "Police", 32, 32, True)
+    SPRITES = load_sprite_sheets("MainCharacters", "NinjaFrog", 32, 32, True)
     ANIMATION_DELAY = 5
     
     def __init__(self, x, y, width, height) -> None:
@@ -193,20 +193,31 @@ class Police(pygame.sprite.Sprite):
         #for gravity
         self.fall_count = 0
         self.name = name
-        self.chase_back = False
+        #hit by bullet
+        self.hit = False
+        self.hit_count = 0
+
+    def make_hit(self):
+        self.hit = True
+        self.hit_count = 0
     
     def move(self, dx, dy):
         self.rect.x += dx
         self.rect.y +=dy
-  
             
     def move_towards_player(self, player):
-        dx = player.rect.x - self.rect.x
-        self.x_vel = dx * 0.05
-        if dx > 19:
+        if player.rect.x > 10000:
+            dx = player.rect.x - self.rect.x
+            # self.x_vel = dx * 0.05
+        else: dx = 0
+        if self.hit:
+            self.x_vel = 0
+        elif dx > 19:
             self.direction = "right"
+            self.x_vel = 4
         elif dx < -19:
             self.direction = "left"
+            self.x_vel = -4
         elif dx >=0 and dx <= 19:
             self.x_vel = 0
 
@@ -218,8 +229,14 @@ class Police(pygame.sprite.Sprite):
         self.y_vel += min(1, (self.fall_count / fps) * self.GRAVITY)
         #chasing
         self.move_towards_player(player)
-        self.fall_count += 1
 
+        if self.hit:
+            self.hit_count += 1
+        if self.hit_count > fps*2:
+            self.hit = False
+            self.hit_count = 0
+
+        self.fall_count += 1
         self.update_sprite()
 
     def landed(self): #need to reset gravity after landing
@@ -229,7 +246,9 @@ class Police(pygame.sprite.Sprite):
 
     def update_sprite(self):
         sprite_sheet = "idle" #default sprite
-        if self.y_vel < 0: #moving up
+        if self.hit:
+            sprite_sheet = "hit"
+        elif self.y_vel < 0: #moving up
             if self.jump_count == 1:
                 sprite_sheet = "jump"
             elif self.jump_count == 2:
@@ -400,12 +419,14 @@ def handle_move(player, objects):
             player.make_hit()
 
 
-def handle_police_move(police, objects, player):
+def handle_police_move(police, objects, player, bullets):
 
     handle_vertical_collision(police, objects, police.y_vel)
-    collide_left = collide(player, [police], -1)
-    collide_right = collide(player, [police], 1)
-    to_check = [collide_left, collide_right]
+    collide_player_left = collide(player, [police], -POLICE_VEL)
+    collide_player_right = collide(player, [police], POLICE_VEL)
+    collide_bullet_left = collide(police, bullets, -POLICE_VEL)
+    collide_bullet_right = collide(police, bullets, POLICE_VEL)
+    to_check = [collide_player_left, collide_player_right, collide_bullet_left, collide_bullet_right]
 
     for obj in to_check:
         if obj and obj.name == "police":
@@ -413,8 +434,11 @@ def handle_police_move(police, objects, player):
             player.minus_life()
             if player.lives > 0:
                 #reset player position
-                police.rect.x = 50
+                police.rect.x = -100
                 police.rect.y = 500
+        if obj and obj.name == "bullet":
+            police.make_hit()
+            
 
 def game_over(window):
     font = pygame.font.SysFont("Arial", 32)
@@ -496,10 +520,6 @@ def main_menu(window):
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_ESCAPE:
-                    pygame.quit()
-                    sys.exit()
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == 1:
                     click = True
@@ -514,7 +534,7 @@ def main(window):
 
     #instantiate objects
     player = Player(block_size * 3, WIN_HEIGHT - block_size * 4, 50, 50)
-    police = Police(50, 500, 50, 50)
+    police = Police(-200, 500, 50, 50)
     bullets = []
     fire = Fire(700, WIN_HEIGHT - block_size - 64, 16, 32)
     fire.on()
@@ -527,11 +547,10 @@ def main(window):
                fire]
     offset_x = 0
     scroll_area_width = 320
-
     run = True
+
     while run:
         clock.tick(FPS) #running 60 frame/second
-
         if player.lives <= 0:
           # game over
           if game_over(window):
@@ -569,14 +588,16 @@ def main(window):
         fire.loop()
         
         handle_move(player, objects)
-        handle_police_move(police, objects, player)
+        handle_police_move(police, objects, player, bullets)
         draw(window, player, objects, offset_x, police, bullets)
 
         if ((player.rect.right - offset_x >= WIN_WIDTH - scroll_area_width) and player.x_vel > 0) or (#moving to the right, off the screen
             (player.rect.left - offset_x <= scroll_area_width) and player.x_vel < 0): #moving to the left, off the screen
             offset_x += player.x_vel
 
+    pygame.quit()
+    quit()
 
-
-# main(window)
+# if __name__ == "__main__":
+#     main(window)
 main_menu(window)
