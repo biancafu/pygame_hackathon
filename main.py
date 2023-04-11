@@ -71,7 +71,7 @@ def get_block(size):
 class Player(pygame.sprite.Sprite): #inheriting from sprite for pixel accurate collision (use their methods)
     COLOR = (255, 0, 0)
     GRAVITY = 1
-    SPRITES = load_sprite_sheets("MainCharacters", "NinjaFrog", 32, 32, True)
+    SPRITES = load_sprite_sheets("MainCharacters", "PinkMan", 32, 32, True)
     ANIMATION_DELAY = 5
     
     def __init__(self, x, y, width, height) -> None:
@@ -133,6 +133,7 @@ class Player(pygame.sprite.Sprite): #inheriting from sprite for pixel accurate c
         if self.hit_count > fps*2:
             self.hit = False
             self.hit_count = 0
+
 
         self.fall_count += 1
         self.update_sprite()
@@ -206,7 +207,7 @@ class Police(pygame.sprite.Sprite):
         self.rect.y +=dy
             
     def move_towards_player(self, player):
-        if player.rect.x > 10000:
+        if player.rect.x > 100:
             dx = player.rect.x - self.rect.x
             # self.x_vel = dx * 0.05
         else: dx = 0
@@ -403,20 +404,26 @@ def handle_move(player, objects):
         player.move_right(PLAYER_VEL)
 
     # check for collision with fire object
-    for obj in objects:
-      if isinstance(obj, Fire) and pygame.sprite.collide_mask(player, obj):
-        player.lives -= 1
-        if player.lives > 0:
-          #reset player position
-          player.rect.x = 100
-          player.rect.y = 100
-          break
+    # for obj in objects:
+    #   if isinstance(obj, Fire) and pygame.sprite.collide_mask(player, obj):
+    #     player.lives -= 1
+    #     if player.lives > 0:
+    #       #reset player position
+    #       player.rect.x = 100
+    #       player.rect.y = 100
+    #       break
 
     vertical_collide = handle_vertical_collision(player, objects, player.y_vel)
     to_check = [collide_left, collide_right, *vertical_collide]
     for obj in to_check:
         if obj and obj.name == "fire":
             player.make_hit()
+            player.minus_life()
+            if player.lives > 0:
+                #reset player position
+                player.rect.x -= 150
+                player.rect.y = 100
+                break
 
 
 def handle_police_move(police, objects, player, bullets):
