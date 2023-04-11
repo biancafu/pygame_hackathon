@@ -259,7 +259,6 @@ class Police(pygame.sprite.Sprite):
             sprite_sheet = "fall"
         elif self.x_vel != 0:
             sprite_sheet = "run"
-            print(self.animation_count)
 
         sprite_sheet_name = sprite_sheet + "_" + self.direction
         sprites = self.SPRITES[sprite_sheet_name]
@@ -446,6 +445,7 @@ def handle_police_move(police, objects, player, bullets):
                 police.rect.y = 500
         if obj and obj.name == "bullet":
             police.make_hit()
+            return obj
             
 
 def game_over(window):
@@ -596,7 +596,10 @@ def main(window):
         fire.loop()
         
         handle_move(player, objects)
-        handle_police_move(police, objects, player, bullets)
+        collided_bullet = handle_police_move(police, objects, player, bullets)
+        #make bullet disappear after collision
+        if collided_bullet:
+            bullets.remove(collided_bullet)
         draw(window, player, objects, offset_x, police, bullets)
 
         if ((player.rect.right - offset_x >= WIN_WIDTH - scroll_area_width) and player.x_vel > 0) or (#moving to the right, off the screen
