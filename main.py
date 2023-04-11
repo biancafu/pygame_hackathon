@@ -71,6 +71,7 @@ def get_block(size):
 class Player(pygame.sprite.Sprite): #inheriting from sprite for pixel accurate collision (use their methods)
     COLOR = (255, 0, 0)
     GRAVITY = 1
+
     SPRITES = load_sprite_sheets("MainCharacters", "Cat", 32, 32, True)
     ANIMATION_DELAY = 5
     
@@ -134,6 +135,7 @@ class Player(pygame.sprite.Sprite): #inheriting from sprite for pixel accurate c
             self.hit = False
             self.hit_count = 0
 
+
         self.fall_count += 1
         self.update_sprite()
 
@@ -178,14 +180,14 @@ class Player(pygame.sprite.Sprite): #inheriting from sprite for pixel accurate c
 class Police(pygame.sprite.Sprite):
     COLOR = (255, 0, 0)
     GRAVITY = 1
-    SPRITES = load_sprite_sheets("MainCharacters", "VirtualGuy", 32, 32, True)
+    SPRITES = load_sprite_sheets("MainCharacters", "Police", 32, 32, True)
     ANIMATION_DELAY = 5
 
     def __init__(self, x, y, width, height, name="police"):
         super().__init__()
         self.rect = pygame.Rect(x, y, width, height)
         self.x_vel = 0
-        self.y_vel = 1
+        self.y_vel = 0
         self.mask = None #mapping of pixels exists in sprite (which pixel exists to perform perfect pixel collision)
         #for showing animation later
         self.direction = "right" 
@@ -193,28 +195,50 @@ class Police(pygame.sprite.Sprite):
         #for gravity
         self.fall_count = 0
         self.name = name
-        self.chase_back = False
+        #hit by bullet
+        self.hit = False
+        self.hit_count = 0
+
+    def make_hit(self):
+        self.hit = True
+        self.hit_count = 0
     
     def move(self, dx, dy):
         self.rect.x += dx
         self.rect.y +=dy
-
+            
     def move_towards_player(self, player):
-        dx = player.rect.x - self.rect.x
-        if dx > 0:
+        if player.rect.x > 100:
+            dx = player.rect.x - self.rect.x
+            # self.x_vel = dx * 0.05
+        else: dx = 0
+        if self.hit:
+            self.x_vel = 0
+        elif dx > 19:
             self.direction = "right"
-        elif dx < 0:
+            self.x_vel = 4
+        elif dx < -19:
             self.direction = "left"
+            self.x_vel = -4
+        elif dx >=0 and dx <= 19:
+            self.x_vel = 0
+
         # Move along this normalized vector towards the player at current speed.
-        self.move(dx * 0.05, self.y_vel)
+        self.move(self.x_vel, self.y_vel)
+        # self.move(dx * 0.05, self.y_vel)
 
     def loop(self, fps, player): #looping for each frame
         self.y_vel += min(1, (self.fall_count / fps) * self.GRAVITY)
-        # self.move(self.x_vel, self.y_vel)
         #chasing
         self.move_towards_player(player)
-        self.fall_count += 1
 
+        if self.hit:
+            self.hit_count += 1
+        if self.hit_count > fps*2:
+            self.hit = False
+            self.hit_count = 0
+
+        self.fall_count += 1
         self.update_sprite()
 
     def landed(self): #need to reset gravity after landing
@@ -224,7 +248,9 @@ class Police(pygame.sprite.Sprite):
 
     def update_sprite(self):
         sprite_sheet = "idle" #default sprite
-        if self.y_vel < 0: #moving up
+        if self.hit:
+            sprite_sheet = "hit"
+        elif self.y_vel < 0: #moving up
             if self.jump_count == 1:
                 sprite_sheet = "jump"
             elif self.jump_count == 2:
@@ -233,6 +259,7 @@ class Police(pygame.sprite.Sprite):
             sprite_sheet = "fall"
         elif self.x_vel != 0:
             sprite_sheet = "run"
+            print(self.animation_count)
 
         sprite_sheet_name = sprite_sheet + "_" + self.direction
         sprites = self.SPRITES[sprite_sheet_name]
@@ -365,7 +392,6 @@ def collide(player, objects, dx):
 
 
 def handle_move(player, objects):
-    global player_lives
     
     keys = pygame.key.get_pressed()
     
@@ -379,28 +405,36 @@ def handle_move(player, objects):
         player.move_right(PLAYER_VEL)
 
     # check for collision with fire object
-    for obj in objects:
-      if isinstance(obj, Fire) and pygame.sprite.collide_mask(player, obj):
-        player.lives -= 1
-        if player.lives > 0:
-          #reset player position
-          player.rect.x = 100
-          player.rect.y = 100
-          break
+    # for obj in objects:
+    #   if isinstance(obj, Fire) and pygame.sprite.collide_mask(player, obj):
+    #     player.lives -= 1
+    #     if player.lives > 0:
+    #       #reset player position
+    #       player.rect.x = 100
+    #       player.rect.y = 100
+    #       break
 
     vertical_collide = handle_vertical_collision(player, objects, player.y_vel)
     to_check = [collide_left, collide_right, *vertical_collide]
     for obj in to_check:
         if obj and obj.name == "fire":
             player.make_hit()
+            player.minus_life()
+            if player.lives > 0:
+                #reset player position
+                player.rect.x -= 150
+                player.rect.y = 100
+                break
 
 
-def handle_police_move(police, objects, player):
+def handle_police_move(police, objects, player, bullets):
 
     handle_vertical_collision(police, objects, police.y_vel)
-    collide_left = collide(player, [police], -1)
-    collide_right = collide(player, [police], 1)
-    to_check = [collide_left, collide_right]
+    collide_player_left = collide(player, [police], -POLICE_VEL)
+    collide_player_right = collide(player, [police], POLICE_VEL)
+    collide_bullet_left = collide(police, bullets, -POLICE_VEL)
+    collide_bullet_right = collide(police, bullets, POLICE_VEL)
+    to_check = [collide_player_left, collide_player_right, collide_bullet_left, collide_bullet_right]
 
     for obj in to_check:
         if obj and obj.name == "police":
@@ -408,8 +442,11 @@ def handle_police_move(police, objects, player):
             player.minus_life()
             if player.lives > 0:
                 #reset player position
-                police.rect.x = 50
+                police.rect.x = -100
                 police.rect.y = 500
+        if obj and obj.name == "bullet":
+            police.make_hit()
+            
 
 def game_over(window):
     font = pygame.font.SysFont("Arial", 32)
@@ -491,10 +528,6 @@ def main_menu(window):
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_ESCAPE:
-                    pygame.quit()
-                    sys.exit()
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == 1:
                     click = True
@@ -509,21 +542,23 @@ def main(window):
 
     #instantiate objects
     player = Player(block_size * 3, WIN_HEIGHT - block_size * 4, 50, 50)
-    police = Police(50, 500, 50, 50)
+    police = Police(-200, 500, 50, 50)
     bullets = []
     fire = Fire(700, WIN_HEIGHT - block_size - 64, 16, 32)
     fire.on()
     floor = [Block(i * block_size, WIN_HEIGHT - block_size, block_size) for i in range(-WIN_WIDTH // block_size, (WIN_WIDTH * 2)// block_size)]
     objects = [*floor, Block(0, WIN_HEIGHT - block_size * 2, block_size), 
                Block(block_size * 3, WIN_HEIGHT - block_size * 4, block_size),
+               Block(block_size * 4, WIN_HEIGHT - block_size * 4, block_size),
+               Block(block_size * 5, WIN_HEIGHT - block_size * 4, block_size),
+               Block(block_size * 6, WIN_HEIGHT - block_size * 4, block_size),
                fire]
     offset_x = 0
     scroll_area_width = 320
-
     run = True
+
     while run:
         clock.tick(FPS) #running 60 frame/second
-
         if player.lives <= 0:
           # game over
           if game_over(window):
@@ -561,14 +596,16 @@ def main(window):
         fire.loop()
         
         handle_move(player, objects)
-        handle_police_move(police, objects, player)
+        handle_police_move(police, objects, player, bullets)
         draw(window, player, objects, offset_x, police, bullets)
 
         if ((player.rect.right - offset_x >= WIN_WIDTH - scroll_area_width) and player.x_vel > 0) or (#moving to the right, off the screen
             (player.rect.left - offset_x <= scroll_area_width) and player.x_vel < 0): #moving to the left, off the screen
             offset_x += player.x_vel
 
+    pygame.quit()
+    quit()
 
-
-# main(window)
+# if __name__ == "__main__":
+#     main(window)
 main_menu(window)
