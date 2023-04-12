@@ -615,5 +615,5 @@ async def main(window):
 
 # if __name__ == "__main__":
 #     main(window)
-asyncio.run(main())
+asyncio.run(main(window))
 # main_menu(window)
