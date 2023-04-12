@@ -4,6 +4,7 @@ import time
 import random
 import math
 import sys
+import asyncio
 from os import listdir
 from os.path import isfile, join
 
@@ -536,7 +537,7 @@ def main_menu(window):
         clock.tick(FPS)
 
 
-def main(window): 
+async def main(window): 
     
     block_size = 96
 
@@ -546,8 +547,9 @@ def main(window):
     bullets = []
     fire = Fire(700, WIN_HEIGHT - block_size - 64, 16, 32)
     fire.on()
-    floor = [Block(i * block_size, WIN_HEIGHT - block_size, block_size) for i in range(-WIN_WIDTH // block_size, (WIN_WIDTH * 2)// block_size)]
+    floor = [Block(i * block_size, WIN_HEIGHT - block_size, block_size) for i in range(-WIN_WIDTH // block_size, (WIN_WIDTH * 5)// block_size)]
     objects = [*floor, Block(0, WIN_HEIGHT - block_size * 2, block_size), 
+               Block(block_size, WIN_HEIGHT - block_size * 3, block_size), 
                Block(block_size * 3, WIN_HEIGHT - block_size * 4, block_size),
                Block(block_size * 4, WIN_HEIGHT - block_size * 4, block_size),
                Block(block_size * 5, WIN_HEIGHT - block_size * 4, block_size),
@@ -605,10 +607,13 @@ def main(window):
         if ((player.rect.right - offset_x >= WIN_WIDTH - scroll_area_width) and player.x_vel > 0) or (#moving to the right, off the screen
             (player.rect.left - offset_x <= scroll_area_width) and player.x_vel < 0): #moving to the left, off the screen
             offset_x += player.x_vel
+    
+    await asyncio.sleep(0)
 
     pygame.quit()
     quit()
 
 # if __name__ == "__main__":
 #     main(window)
-main_menu(window)
+asyncio.run(main())
+# main_menu(window)
