@@ -608,10 +608,7 @@ async def main(window):
 
         if button_1.collidepoint((mx, my)):
             if click:
-                main_game(window)
-
-        await asyncio.sleep(0)
-        pygame.display.update()
+                await main_game(window)
 
         click = False
 
@@ -685,7 +682,7 @@ def main_game(window):
         if player.lives <= 0:
           # game over
           if game_over(window):
-            main(window)
+            game(window)
           else:
             # exit the loop
             run = False
