@@ -6,6 +6,7 @@ import math
 import sys
 from os import listdir
 from os.path import isfile, join
+import asyncio
 
 clock = pygame.time.Clock()
 pygame.init()
@@ -586,7 +587,7 @@ def draw(window, player, objects, offset_x, police, bullets, collectibles):
     pygame.display.update()
 
 
-def main(window):
+async def main(window):
     while True:
         window.blit(BG_IMG, (0,0))
         instruction_image = pygame.image.load("keys.png")
@@ -622,6 +623,7 @@ def main(window):
                     click = True
                     
         pygame.display.update()
+        await asyncio.sleep(0)
         clock.tick(FPS)
 
 
@@ -743,8 +745,10 @@ def main_game(window):
             (player.rect.left - offset_x <= scroll_area_width) and player.x_vel < 0): #moving to the left, off the screen
             offset_x += player.x_vel
 
+    
     pygame.quit()
     quit()
 
-if __name__ == "__main__":
-    main(window)
+# if __name__ == "__main__":
+#     main(window)
+asyncio.run(main(window))
