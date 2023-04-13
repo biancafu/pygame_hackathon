@@ -385,12 +385,12 @@ class Heart(Object):
     def __init__(self, x, y, width, height):
         super().__init__(x, y, width, height, "heart")
         self.heart = load_sprite_sheets("Items", "Lives", 16, 16)
-        self.image = self.heart["heart"][0]
+        self.image = self.heart["dumpling"][0]
         self.mask = pygame.mask.from_surface(self.image)
         self.x = x
         self.y = y
         self.animation_count = 0
-        self.animation_name = "heart"
+        self.animation_name = "dumpling"
 
 
     def loop(self): #looping for each frame
