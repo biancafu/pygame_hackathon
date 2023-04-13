@@ -122,11 +122,6 @@ class Player(pygame.sprite.Sprite): #inheriting from sprite for pixel accurate c
         #collectibles
         self.add_speed = False
         self.add_speed_count = 0
-        self.decrease_speed = False
-        self.decrease_speed_count = 0
-        #level
-        self.level = 1
-
 
     def jump(self):
         self.y_vel = -self.GRAVITY * 8 #speed of jump = 8 (can change)
@@ -707,6 +702,10 @@ def draw(window, player, objects, offset_x, police, bullets, collectibles, desti
     lives_text = font.render(f"Lives: {player.lives}", True, (255, 255, 255))
     window.blit(lives_text, (10, 10))
 
+    # create text for score
+    score_text = font.render(f"Score: {player.score}", True, (255, 255, 255))
+    window.blit(score_text, (100, 10))
+
     for obj in objects:
         obj.draw(window, offset_x)
     
@@ -767,6 +766,9 @@ def main(window):
     
     block_size = 96
 
+    #initialize score variable
+    score = 0
+
     #instantiate objects
     player = Player(block_size * 3, WIN_HEIGHT - block_size * 4, 50, 50)
     police = Police(-200, 500, 50, 50)
@@ -776,7 +778,8 @@ def main(window):
     heart1 = Heart(block_size * 3, WIN_HEIGHT - block_size * 5, 16, 16)
     heart2 = Heart(block_size * 5, WIN_HEIGHT - block_size * 5, 16, 16)
     speed = Speed(900, WIN_HEIGHT - block_size - 64, 32, 32)
-    collectibles = [heart1, heart2, speed]
+    pineapple = Pineapple(block_size * 8, WIN_HEIGHT - block_size * 5, 16, 16)
+    collectibles = [heart1, heart2, speed, pineapple]
     #blocks and traps
     blocks = []
     # create a list of traps with random positions
@@ -878,17 +881,7 @@ def main(window):
                 # match collectible.name:
                 #     case "heart":
                 #         player.lives += 1
-        
-        #level up: destination detection
-        if player.rect.x > destination.rect.right:
-            player.level += 1
-            print(player.level)
-            #reset player position
-            player.rect.x = 0
-            player.rect.y = WIN_HEIGHT - block_size * 4
-            offset_x = 0
-            level_transition(window, player)
-            
+                
 
         player.loop(FPS)
         police.loop(FPS, player)
