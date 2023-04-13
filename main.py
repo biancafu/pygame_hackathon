@@ -446,6 +446,32 @@ class Speed(Object):
         if self.animation_count // self.ANIMATION_DELAY > len(sprites):
             self.animation_count = 0
 
+class Pineapple(Object):
+    ANIMATION_DELAY = 5
+
+    def __init__(self, x, y, width, height):
+        super().__init__(x, y, width, height, "pineapple")
+        self.heart = load_sprite_sheets("Items", "Fruits", 32, 32)
+        self.image = self.heart["Pineapple"][0]
+        self.mask = pygame.mask.from_surface(self.image)
+        self.x = x
+        self.y = y
+        self.animation_count = 0
+        self.animation_name = "Pineapple"
+
+    def loop(self): #looping for each frame
+
+        sprites = self.heart[self.animation_name]
+        sprite_index = (self.animation_count // self.ANIMATION_DELAY) % len(sprites)
+        self.image = sprites[sprite_index]
+        self.animation_count += 1
+        #update
+        self.rect = self.image.get_rect(topleft=(self.rect.x, self.rect.y))
+        self.mask = pygame.mask.from_surface(self.image)  #sprite uses mask
+
+        if self.animation_count // self.ANIMATION_DELAY > len(sprites):
+            self.animation_count = 0
+
 ########################################################
 
 ##################### MOVEMENTS ########################
@@ -638,7 +664,8 @@ def main(window):
     heart1 = Heart(block_size * 3, WIN_HEIGHT - block_size * 5, 16, 16)
     heart2 = Heart(block_size * 5, WIN_HEIGHT - block_size * 5, 16, 16)
     speed = Speed(900, WIN_HEIGHT - block_size - 64, 32, 32)
-    collectibles = [heart1, heart2, speed]
+    pineapple = Pineapple(block_size * 8, WIN_HEIGHT - block_size * 5, 16, 16)
+    collectibles = [heart1, heart2, speed, pineapple]
     #blocks and traps
     blocks = []
     # create a list of traps with random positions
