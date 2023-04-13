@@ -411,7 +411,7 @@ class Heart(Object):
 class Trap(Object):
     def __init__(self, x, y, width, height):
         super().__init__(x, y, width, height, "trap")
-        self.trap = load_sprite_sheets("Traps", "Spikes", width, height)
+        self.trap = load_sprite_sheets("Traps", "Banana", width, height)
         self.image = self.trap["Idle"][0]
     
     def change_image(self, state):
