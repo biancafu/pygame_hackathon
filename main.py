@@ -98,6 +98,8 @@ class Player(pygame.sprite.Sprite): #inheriting from sprite for pixel accurate c
         #collectibles
         self.add_speed = False
         self.add_speed_count = 0
+        #score
+        self.score = 0
 
     def jump(self):
         self.y_vel = -self.GRAVITY * 8 #speed of jump = 8 (can change)
@@ -597,6 +599,10 @@ def draw(window, player, objects, offset_x, police, bullets, collectibles):
     lives_text = font.render(f"Lives: {player.lives}", True, (255, 255, 255))
     window.blit(lives_text, (10, 10))
 
+    # create text for score
+    score_text = font.render(f"Score: {player.score}", True, (255, 255, 255))
+    window.blit(score_text, (100, 10))
+
     for obj in objects:
         obj.draw(window, offset_x)
     
@@ -655,6 +661,9 @@ def main(window):
     
     block_size = 96
 
+    #initialize score variable
+    score = 0
+
     #instantiate objects
     player = Player(block_size * 3, WIN_HEIGHT - block_size * 4, 50, 50)
     police = Police(-200, 500, 50, 50)
@@ -664,7 +673,7 @@ def main(window):
     heart1 = Heart(block_size * 3, WIN_HEIGHT - block_size * 5, 16, 16)
     heart2 = Heart(block_size * 5, WIN_HEIGHT - block_size * 5, 16, 16)
     speed = Speed(900, WIN_HEIGHT - block_size - 64, 32, 32)
-    pineapple = Pineapple(block_size * 8, WIN_HEIGHT - block_size * 5, 16, 16)
+    pineapple = Pineapple(block_size * 6, WIN_HEIGHT - block_size * 5, 16, 16)
     collectibles = [heart1, heart2, speed, pineapple]
     #blocks and traps
     blocks = []
@@ -751,6 +760,8 @@ def main(window):
                 # match collectible.name:
                 #     case "heart":
                 #         player.lives += 1
+                elif collectible.name == "pineapple":
+                    player.score += 1
                 
 
         player.loop(FPS)
