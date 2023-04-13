@@ -406,6 +406,20 @@ class Heart(Object):
         if self.animation_count // self.ANIMATION_DELAY > len(sprites):
             self.animation_count = 0
 
+
+
+class Trap(Object):
+    def __init__(self, x, y, width, height):
+        super().__init__(x, y, width, height, "trap")
+        self.trap = load_sprite_sheets("Traps", "Spikes", width, height)
+        self.image = self.trap["Idle"][0]
+    
+    def change_image(self, state):
+        self.image = self.trap[state][0] 
+        # can change trap's image to any state in the sprite sheet
+        # ie. trap.change_image("Active")
+
+
 class Speed(Object):
     ANIMATION_DELAY = 5
 
@@ -431,6 +445,7 @@ class Speed(Object):
 
         if self.animation_count // self.ANIMATION_DELAY > len(sprites):
             self.animation_count = 0
+
 ########################################################
 
 ##################### MOVEMENTS ########################
@@ -625,6 +640,28 @@ def main(window):
     speed = Speed(900, WIN_HEIGHT - block_size - 64, 32, 32)
     collectibles = [heart1, heart2, speed]
     #blocks and traps
+    blocks = []
+    # create a list of traps with random positions
+    traps = []
+    placed_traps = set()  # set to keep track of placed trap coordinates
+    for i in range(5):  # create 5 traps
+      while True:
+        x = random.randint(block_size * 4, WIN_WIDTH - block_size * 4)  # generate a random x coordinate within a range
+        y = WIN_HEIGHT - block_size - 30  # set y-coordinate to floor level
+        # check if there's a block at this position
+        for block in blocks:
+            if block.x <= x <= block.x + block.width and block.y <= y <= block.y + block.height:
+                # there's a block at this position, adjust y-coordinate
+                y = block.y - 43
+                break  # stop iterating over blocks since we found one that overlaps
+        # check if the coordinates are already taken by another trap
+        if (x,y) not in placed_traps:        
+          # add the trap to the list and add its coordinates to the placed set
+          trap = Trap(x, y, 16, 32)
+          trap.change_image("Idle")
+          traps.append(trap)
+          placed_traps.add((x, y))
+          break # found an available coordinate, break out of the loop
     fire = Fire(700, WIN_HEIGHT - block_size - 64, 16, 32)
     fire.on()
     floor = [Block(i * block_size, WIN_HEIGHT - block_size, block_size) for i in range(-WIN_WIDTH // block_size, (WIN_WIDTH * 5)// block_size)]
@@ -633,10 +670,8 @@ def main(window):
                Block(block_size * 4, WIN_HEIGHT - block_size * 4, block_size),
                Block(block_size * 5, WIN_HEIGHT - block_size * 4, block_size),
                Block(block_size * 6, WIN_HEIGHT - block_size * 4, block_size),
-               fire]
+               *traps, fire]
     
-    
-
     offset_x = 0
     scroll_area_width = 320
     run = True
