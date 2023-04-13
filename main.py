@@ -629,9 +629,11 @@ def main(window):
             collectible.loop()
             if player.rect.colliderect(collectible.rect):
                 collectibles.remove(collectible)
-                match collectible.name:
-                    case "heart":
-                        player.lives += 1
+                if collectible.name == "heart":
+                    player.lives += 1
+                # match collectible.name:
+                #     case "heart":
+                #         player.lives += 1
                 
 
         player.loop(FPS)
