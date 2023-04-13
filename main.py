@@ -65,7 +65,7 @@ def get_block(size):
 
 #######################################################
     
-##################### CLASSES #########################
+##################### USER/ENEMY #########################
 
 
 class Player(pygame.sprite.Sprite): #inheriting from sprite for pixel accurate collision (use their methods)
@@ -91,8 +91,13 @@ class Player(pygame.sprite.Sprite): #inheriting from sprite for pixel accurate c
         #for hitting fire
         self.hit = False
         self.hit_count = 0
+        #lives
         self.lives = 2
+        #bullets
         self.bullets = 5
+        #collectibles
+        self.add_speed = False
+        self.add_speed_count = 0
 
     def jump(self):
         self.y_vel = -self.GRAVITY * 8 #speed of jump = 8 (can change)
@@ -130,11 +135,20 @@ class Player(pygame.sprite.Sprite): #inheriting from sprite for pixel accurate c
         self.y_vel += min(1, (self.fall_count / fps) * self.GRAVITY)
         self.move(self.x_vel, self.y_vel)
 
+        #hit for 2 seconds
         if self.hit:
             self.hit_count += 1
         if self.hit_count > fps*2:
             self.hit = False
             self.hit_count = 0
+        
+        #add speed for 3 seconds
+        if self.add_speed:
+            self.add_speed_count += 1
+        if self.add_speed_count > fps*1:
+            self.add_speed = False
+            self.add_speed_count = 0
+
 
 
         self.fall_count += 1
@@ -275,6 +289,10 @@ class Police(pygame.sprite.Sprite):
     def draw(self, window, offset_x):
         window.blit(self.sprite, (self.rect.x - offset_x, self.rect.y))
 
+###############################################################
+
+##################### OBJECTS/TRAPS/WEAPONS ###################
+
 class Object(pygame.sprite.Sprite):
     def __init__(self, x, y, width, height, name=None):
         super().__init__()
@@ -357,6 +375,10 @@ class Projectile(Object):
         if self.animation_count // self.ANIMATION_DELAY > len(sprites):
             self.animation_count = 0
 
+########################################################
+
+##################### COLLECTIBLES ######################
+
 class Heart(Object):
     ANIMATION_DELAY = 10
 
@@ -384,6 +406,31 @@ class Heart(Object):
         if self.animation_count // self.ANIMATION_DELAY > len(sprites):
             self.animation_count = 0
 
+class Speed(Object):
+    ANIMATION_DELAY = 5
+
+    def __init__(self, x, y, width, height):
+        super().__init__(x, y, width, height, "speed")
+        self.heart = load_sprite_sheets("Items", "Fruits", 16, 16)
+        self.image = self.heart["Cherries"][0]
+        self.mask = pygame.mask.from_surface(self.image)
+        self.x = x
+        self.y = y
+        self.animation_count = 0
+        self.animation_name = "Cherries"
+
+    def loop(self): #looping for each frame
+
+        sprites = self.heart[self.animation_name]
+        sprite_index = (self.animation_count // self.ANIMATION_DELAY) % len(sprites)
+        self.image = sprites[sprite_index]
+        self.animation_count += 1
+        #update
+        self.rect = self.image.get_rect(topleft=(self.rect.x, self.rect.y))
+        self.mask = pygame.mask.from_surface(self.image)  #sprite uses mask
+
+        if self.animation_count // self.ANIMATION_DELAY > len(sprites):
+            self.animation_count = 0
 ########################################################
 
 ##################### MOVEMENTS ########################
@@ -426,10 +473,15 @@ def handle_move(player, objects):
     collide_left = collide(player, objects, -PLAYER_VEL* 2)
     collide_right = collide(player, objects, PLAYER_VEL* 2)
 
+    if player.add_speed:
+        player_velocity = 15
+    else:
+        player_velocity = PLAYER_VEL
+
     if keys[pygame.K_LEFT] and not collide_left:
-        player.move_left(PLAYER_VEL)
+        player.move_left(player_velocity)
     if keys[pygame.K_RIGHT] and not collide_right:
-        player.move_right(PLAYER_VEL)
+        player.move_right(player_velocity)
 
 
     vertical_collide = handle_vertical_collision(player, objects, player.y_vel)
@@ -570,11 +622,12 @@ def main(window):
     #collectibles
     heart1 = Heart(block_size * 3, WIN_HEIGHT - block_size * 5, 16, 16)
     heart2 = Heart(block_size * 5, WIN_HEIGHT - block_size * 5, 16, 16)
-    collectibles = [heart1, heart2]
+    speed = Speed(900, WIN_HEIGHT - block_size - 64, 32, 32)
+    collectibles = [heart1, heart2, speed]
     #blocks and traps
     fire = Fire(700, WIN_HEIGHT - block_size - 64, 16, 32)
     fire.on()
-    floor = [Block(i * block_size, WIN_HEIGHT - block_size, block_size) for i in range(-WIN_WIDTH // block_size, (WIN_WIDTH * 2)// block_size)]
+    floor = [Block(i * block_size, WIN_HEIGHT - block_size, block_size) for i in range(-WIN_WIDTH // block_size, (WIN_WIDTH * 5)// block_size)]
     objects = [*floor, Block(0, WIN_HEIGHT - block_size * 2, block_size), 
                Block(block_size * 3, WIN_HEIGHT - block_size * 4, block_size),
                Block(block_size * 4, WIN_HEIGHT - block_size * 4, block_size),
@@ -631,6 +684,8 @@ def main(window):
                 collectibles.remove(collectible)
                 if collectible.name == "heart":
                     player.lives += 1
+                elif collectible.name == "speed":
+                    player.add_speed = True
                 # match collectible.name:
                 #     case "heart":
                 #         player.lives += 1
