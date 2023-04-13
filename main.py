@@ -56,10 +56,10 @@ def load_sprite_sheets(dir1, dir2, width, height, direction = False):
     return all_sprites
 
 def get_block(size):
-    path = join("assets", "Terrain", "Terrain.png")
+    path = join("assets", "Terrain", "Test.png")
     image = pygame.image.load(path).convert_alpha()
     surface = pygame.Surface((size, size), pygame.SRCALPHA, 32)
-    rect = pygame.Rect(96, 0, size, size)  #96, 0 is position of the part we want (top left)
+    rect = pygame.Rect(0, 0, size, size)  #96, 0 is position of the part we want (top left)
     surface.blit(image, (0, 0), rect)
     return pygame.transform.scale2x(surface)
 
@@ -421,7 +421,7 @@ class Trap(Object):
 
 
 class Speed(Object):
-    ANIMATION_DELAY = 5
+    ANIMATION_DELAY = 10
 
     def __init__(self, x, y, width, height):
         super().__init__(x, y, width, height, "speed")
