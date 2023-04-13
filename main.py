@@ -425,17 +425,17 @@ class Speed(Object):
 
     def __init__(self, x, y, width, height):
         super().__init__(x, y, width, height, "speed")
-        self.heart = load_sprite_sheets("Items", "Potion", 32, 32)
-        self.image = self.heart["poison"][0]
+        self.speed = load_sprite_sheets("Items", "Potion", 32, 32)
+        self.image = self.speed["bbt"][0]
         self.mask = pygame.mask.from_surface(self.image)
         self.x = x
         self.y = y
         self.animation_count = 0
-        self.animation_name = "poison"
+        self.animation_name = "bbt"
 
     def loop(self): #looping for each frame
 
-        sprites = self.heart[self.animation_name]
+        sprites = self.speed[self.animation_name]
         sprite_index = (self.animation_count // self.ANIMATION_DELAY) % len(sprites)
         self.image = sprites[sprite_index]
         self.animation_count += 1
@@ -586,7 +586,7 @@ def draw(window, player, objects, offset_x, police, bullets, collectibles):
     pygame.display.update()
 
 
-def main_menu(window):
+def main(window):
     while True:
         window.blit(BG_IMG, (0,0))
         instruction_image = pygame.image.load("keys.png")
@@ -607,7 +607,7 @@ def main_menu(window):
 
         if button_1.collidepoint((mx, my)):
             if click:
-                main(window)
+                main_game(window)
         
         pygame.display.update()
 
@@ -625,7 +625,7 @@ def main_menu(window):
         clock.tick(FPS)
 
 
-def main(window): 
+def main_game(window): 
     
     block_size = 96
 
@@ -641,12 +641,16 @@ def main(window):
     collectibles = [heart1, heart2, speed]
     #blocks and traps
     blocks = []
+    fire = Fire(700, WIN_HEIGHT - block_size - 64, 16, 32)
+    fire.on()
+    floor = [Block(i * block_size, WIN_HEIGHT - block_size, block_size) for i in range(-WIN_WIDTH // block_size, (WIN_WIDTH * 5)// block_size)]
     # create a list of traps with random positions
     traps = []
     placed_traps = set()  # set to keep track of placed trap coordinates
+    
     for i in range(5):  # create 5 traps
       while True:
-        x = random.randint(block_size * 4, WIN_WIDTH - block_size * 4)  # generate a random x coordinate within a range
+        x = random.randint(block_size * 4, WIN_WIDTH * 5 - block_size * 4)  # generate a random x coordinate within a range
         y = WIN_HEIGHT - block_size - 30  # set y-coordinate to floor level
         # check if there's a block at this position
         for block in blocks:
@@ -662,15 +666,13 @@ def main(window):
           traps.append(trap)
           placed_traps.add((x, y))
           break # found an available coordinate, break out of the loop
-    fire = Fire(700, WIN_HEIGHT - block_size - 64, 16, 32)
-    fire.on()
-    floor = [Block(i * block_size, WIN_HEIGHT - block_size, block_size) for i in range(-WIN_WIDTH // block_size, (WIN_WIDTH * 5)// block_size)]
     objects = [*floor, Block(0, WIN_HEIGHT - block_size * 2, block_size), 
-               Block(block_size * 3, WIN_HEIGHT - block_size * 4, block_size),
-               Block(block_size * 4, WIN_HEIGHT - block_size * 4, block_size),
-               Block(block_size * 5, WIN_HEIGHT - block_size * 4, block_size),
-               Block(block_size * 6, WIN_HEIGHT - block_size * 4, block_size),
-               *traps, fire]
+                Block(block_size * 3, WIN_HEIGHT - block_size * 4, block_size),
+                Block(block_size * 4, WIN_HEIGHT - block_size * 4, block_size),
+                Block(block_size * 5, WIN_HEIGHT - block_size * 4, block_size),
+                Block(block_size * 6, WIN_HEIGHT - block_size * 4, block_size),
+                *traps, fire]
+
     
     offset_x = 0
     scroll_area_width = 320
@@ -744,6 +746,5 @@ def main(window):
     pygame.quit()
     quit()
 
-# if __name__ == "__main__":
-#     main(window)
-main_menu(window)
+if __name__ == "__main__":
+    main(window)
