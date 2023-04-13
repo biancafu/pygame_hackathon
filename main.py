@@ -16,7 +16,7 @@ WIN_WIDTH = 980
 WIN_HEIGHT = 720
 FPS = 60
 PLAYER_VEL = 5
-POLICE_VEL = 5
+POLICE_VEL = 4
 
 BG_IMG = pygame.transform.scale2x(pygame.image.load(os.path.join("imgs", "bg.jpg")))
 
@@ -217,10 +217,10 @@ class Police(pygame.sprite.Sprite):
             self.x_vel = 0
         elif dx > 19:
             self.direction = "right"
-            self.x_vel = 4
+            self.x_vel = POLICE_VEL
         elif dx < -19:
             self.direction = "left"
-            self.x_vel = -4
+            self.x_vel = -POLICE_VEL
         elif dx >=0 and dx <= 19:
             self.x_vel = 0
 
