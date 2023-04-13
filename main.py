@@ -92,6 +92,7 @@ class Player(pygame.sprite.Sprite): #inheriting from sprite for pixel accurate c
         self.hit = False
         self.hit_count = 0
         self.lives = 2
+        self.bullets = 5
 
     def jump(self):
         self.y_vel = -self.GRAVITY * 8 #speed of jump = 8 (can change)
@@ -356,6 +357,33 @@ class Projectile(Object):
         if self.animation_count // self.ANIMATION_DELAY > len(sprites):
             self.animation_count = 0
 
+class Heart(Object):
+    ANIMATION_DELAY = 10
+
+    def __init__(self, x, y, width, height):
+        super().__init__(x, y, width, height, "heart")
+        self.heart = load_sprite_sheets("Items", "Lives", 16, 16)
+        self.image = self.heart["heart"][0]
+        self.mask = pygame.mask.from_surface(self.image)
+        self.x = x
+        self.y = y
+        self.animation_count = 0
+        self.animation_name = "heart"
+
+
+    def loop(self): #looping for each frame
+
+        sprites = self.heart[self.animation_name]
+        sprite_index = (self.animation_count // self.ANIMATION_DELAY) % len(sprites)
+        self.image = sprites[sprite_index]
+        self.animation_count += 1
+        #update
+        self.rect = self.image.get_rect(topleft=(self.rect.x, self.rect.y))
+        self.mask = pygame.mask.from_surface(self.image)  #sprite uses mask
+
+        if self.animation_count // self.ANIMATION_DELAY > len(sprites):
+            self.animation_count = 0
+
 ########################################################
 
 ##################### MOVEMENTS ########################
@@ -403,15 +431,6 @@ def handle_move(player, objects):
     if keys[pygame.K_RIGHT] and not collide_right:
         player.move_right(PLAYER_VEL)
 
-    # check for collision with fire object
-    # for obj in objects:
-    #   if isinstance(obj, Fire) and pygame.sprite.collide_mask(player, obj):
-    #     player.lives -= 1
-    #     if player.lives > 0:
-    #       #reset player position
-    #       player.rect.x = 100
-    #       player.rect.y = 100
-    #       break
 
     vertical_collide = handle_vertical_collision(player, objects, player.y_vel)
     to_check = [collide_left, collide_right, *vertical_collide]
@@ -477,7 +496,7 @@ def game_over(window):
 
 ########################################################
 
-def draw(window, player, objects, offset_x, police, bullets):
+def draw(window, player, objects, offset_x, police, bullets, collectibles):
     #draw background
     window.blit(BG_IMG, (0,0)) #position 0,0 (top left)
 
@@ -490,6 +509,9 @@ def draw(window, player, objects, offset_x, police, bullets):
     
     for bullet in bullets:
         bullet.draw(window, offset_x)
+
+    for collectible in collectibles:
+        collectible.draw(window, offset_x)
 
     player.draw(window, offset_x)
     police.draw(window, offset_x)
@@ -543,7 +565,13 @@ def main(window):
     #instantiate objects
     player = Player(block_size * 3, WIN_HEIGHT - block_size * 4, 50, 50)
     police = Police(-200, 500, 50, 50)
+    #weapons
     bullets = []
+    #collectibles
+    heart1 = Heart(block_size * 3, WIN_HEIGHT - block_size * 5, 16, 16)
+    heart2 = Heart(block_size * 5, WIN_HEIGHT - block_size * 5, 16, 16)
+    collectibles = [heart1, heart2]
+    #blocks and traps
     fire = Fire(700, WIN_HEIGHT - block_size - 64, 16, 32)
     fire.on()
     floor = [Block(i * block_size, WIN_HEIGHT - block_size, block_size) for i in range(-WIN_WIDTH // block_size, (WIN_WIDTH * 2)// block_size)]
@@ -553,6 +581,9 @@ def main(window):
                Block(block_size * 5, WIN_HEIGHT - block_size * 4, block_size),
                Block(block_size * 6, WIN_HEIGHT - block_size * 4, block_size),
                fire]
+    
+    
+
     offset_x = 0
     scroll_area_width = 320
     run = True
@@ -583,14 +614,26 @@ def main(window):
                     else:
                         facing = 1
                         
-                    if len(bullets) < 5: #only 5 bullets
+                    if player.bullets > 0: #only 5 bullets
                         bullets.append(Projectile(round(player.rect.x + player.rect.width //2), round(player.rect.y + player.rect.height//2), 6, 6, facing))
+                        player.bullets -= 1
                 elif event.key == pygame.K_ESCAPE:
                     run = False
+
         for bullet in bullets:
                 bullet.x += bullet.vel
                 bullet.loop(FPS)
         
+        #collectibles detection
+        for collectible in collectibles:
+            collectible.loop()
+            if player.rect.colliderect(collectible.rect):
+                collectibles.remove(collectible)
+                match collectible.name:
+                    case "heart":
+                        player.lives += 1
+                
+
         player.loop(FPS)
         police.loop(FPS, player)
         fire.loop()
@@ -600,7 +643,7 @@ def main(window):
         #make bullet disappear after collision
         if collided_bullet:
             bullets.remove(collided_bullet)
-        draw(window, player, objects, offset_x, police, bullets)
+        draw(window, player, objects, offset_x, police, bullets, collectibles)
 
         if ((player.rect.right - offset_x >= WIN_WIDTH - scroll_area_width) and player.x_vel > 0) or (#moving to the right, off the screen
             (player.rect.left - offset_x <= scroll_area_width) and player.x_vel < 0): #moving to the left, off the screen
