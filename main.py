@@ -609,7 +609,8 @@ async def main(window):
         if button_1.collidepoint((mx, my)):
             if click:
                 main_game(window)
-        
+
+        await asyncio.sleep(0)
         pygame.display.update()
 
         click = False
@@ -621,9 +622,8 @@ async def main(window):
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == 1:
                     click = True
-                    
+        await asyncio.sleep(0)        
         pygame.display.update()
-        await asyncio.sleep(0)
         clock.tick(FPS)
 
 
