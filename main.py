@@ -507,6 +507,36 @@ class CollectibleBullets(Object):
 
         if self.animation_count // self.ANIMATION_DELAY > len(sprites):
             self.animation_count = 0
+
+########################################################
+
+##################### START/END ######################
+
+class Destination(Object):
+    ANIMATION_DELAY = 10
+
+    def __init__(self, x, y, width, height):
+        super().__init__(x, y, width, height, "destination")
+        self.speed = load_sprite_sheets("Items", "Destination", 64, 64)
+        self.image = self.speed["idle"][0]
+        self.mask = pygame.mask.from_surface(self.image)
+        self.x = x
+        self.y = y
+        self.animation_count = 0
+        self.animation_name = "idle"
+
+    def loop(self): #looping for each frame
+
+        sprites = self.speed[self.animation_name]
+        sprite_index = (self.animation_count // self.ANIMATION_DELAY) % len(sprites)
+        self.image = sprites[sprite_index]
+        self.animation_count += 1
+        #update
+        self.rect = self.image.get_rect(topleft=(self.rect.x, self.rect.y))
+        self.mask = pygame.mask.from_surface(self.image)  #sprite uses mask
+
+        if self.animation_count // self.ANIMATION_DELAY > len(sprites):
+            self.animation_count = 0
 ########################################################
 
 ##################### MOVEMENTS ########################
@@ -703,7 +733,6 @@ def main(window):
                     click = True
                     
         pygame.display.update()
-        clock.tick(FPS)
 
 
 def main_game(window): 
@@ -720,6 +749,7 @@ def main_game(window):
     heart2 = Heart(block_size * 5, WIN_HEIGHT - block_size * 5, 16, 16)
     speed = Speed(900, WIN_HEIGHT - block_size - 64, 32, 32)
     collectibles_bullets = CollectibleBullets(1100, WIN_HEIGHT - block_size - 64, 32, 32)
+    destination = Destination(1500, WIN_HEIGHT - block_size - 128, 32, 32)
     collectibles = [heart1, heart2, speed, collectibles_bullets]
     #blocks and traps
     blocks = []
@@ -843,22 +873,7 @@ def main_game(window):
                 # match collectible.name:
                 #     case "heart":
                 #         player.lives += 1
-        
-        #level up: destination detection
-        if player.rect.x > destination.rect.right:
-            pygame.time.wait(500)
-            player.level += 1
-            offset_x = 0
-
-            #reset player position
-            player.rect.x = 0
-            player.rect.y = WIN_HEIGHT - block_size * 4
-            #reset police position
-            police.rect.x = -200
-            police.rect.y = 500
-
-            level_transition(window, player)
-            
+                
 
         player.loop(FPS)
         police.loop(FPS, player)
