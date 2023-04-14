@@ -124,6 +124,8 @@ class Player(pygame.sprite.Sprite): #inheriting from sprite for pixel accurate c
         self.add_speed_count = 0
         self.decrease_speed = False
         self.decrease_speed_count = 0
+        #level
+        self.level = 1
 
 
     def jump(self):
@@ -505,6 +507,36 @@ class CollectibleBullets(Object):
 
         if self.animation_count // self.ANIMATION_DELAY > len(sprites):
             self.animation_count = 0
+
+########################################################
+
+##################### START/END ######################
+
+class Destination(Object):
+    ANIMATION_DELAY = 10
+
+    def __init__(self, x, y, width, height):
+        super().__init__(x, y, width, height, "destination")
+        self.speed = load_sprite_sheets("Items", "Destination", 64, 64)
+        self.image = self.speed["idle"][0]
+        self.mask = pygame.mask.from_surface(self.image)
+        self.x = x
+        self.y = y
+        self.animation_count = 0
+        self.animation_name = "idle"
+
+    def loop(self): #looping for each frame
+
+        sprites = self.speed[self.animation_name]
+        sprite_index = (self.animation_count // self.ANIMATION_DELAY) % len(sprites)
+        self.image = sprites[sprite_index]
+        self.animation_count += 1
+        #update
+        self.rect = self.image.get_rect(topleft=(self.rect.x, self.rect.y))
+        self.mask = pygame.mask.from_surface(self.image)  #sprite uses mask
+
+        if self.animation_count // self.ANIMATION_DELAY > len(sprites):
+            self.animation_count = 0
 ########################################################
 
 ##################### MOVEMENTS ########################
@@ -590,7 +622,7 @@ def handle_police_move(police, objects, player, bullets):
             player.make_hit()
             player.minus_life()
             if player.lives > 0:
-                #reset player position
+                #reset police position
                 police.rect.x = -100
                 police.rect.y = 500
         if obj and obj.name == "bullet":
@@ -625,9 +657,22 @@ def game_over(window):
                 if event.key == pygame.K_r:
                   return True
 
+
+def level_transition(window, player):
+
+    window.fill((0, 0, 0))
+    level_text = font.render("Level {}".format(player.level), True, (255, 255, 255))
+    level_rect = level_text.get_rect(center=(WIN_WIDTH/2, WIN_HEIGHT/2))
+    window.blit(level_text, level_rect)
+
+    pygame.display.update()
+    # Wait for a moment
+    pygame.time.wait(1500)
+
+
 ########################################################
 
-def draw(window, player, objects, offset_x, police, bullets, collectibles):
+def draw(window, player, objects, offset_x, police, bullets, collectibles, destination):
     #draw background
     window.blit(BG_IMG, (0,0)) #position 0,0 (top left)
 
@@ -643,6 +688,8 @@ def draw(window, player, objects, offset_x, police, bullets, collectibles):
 
     for collectible in collectibles:
         collectible.draw(window, offset_x)
+    
+    destination.draw(window, offset_x)
 
     player.draw(window, offset_x)
     police.draw(window, offset_x)
@@ -686,7 +733,6 @@ def main(window):
                     click = True
                     
         pygame.display.update()
-        clock.tick(FPS)
 
 
 def main_game(window): 
@@ -703,6 +749,7 @@ def main_game(window):
     heart2 = Heart(block_size * 5, WIN_HEIGHT - block_size * 5, 16, 16)
     speed = Speed(900, WIN_HEIGHT - block_size - 64, 32, 32)
     collectibles_bullets = CollectibleBullets(1100, WIN_HEIGHT - block_size - 64, 32, 32)
+    destination = Destination(1500, WIN_HEIGHT - block_size - 128, 32, 32)
     collectibles = [heart1, heart2, speed, collectibles_bullets]
     #blocks and traps
     blocks = []
@@ -743,7 +790,7 @@ def main_game(window):
     offset_x = 0
     scroll_area_width = 320
     run = True
-
+    level_transition(window, player)
     while run:
         clock.tick(FPS) #running 60 frame/second
         if player.lives <= 0:
@@ -794,7 +841,17 @@ def main_game(window):
                 # match collectible.name:
                 #     case "heart":
                 #         player.lives += 1
-                
+        
+        #level up: destination detection
+        if player.rect.x > destination.rect.right:
+            player.level += 1
+            print(player.level)
+            #reset player position
+            player.rect.x = 0
+            player.rect.y = WIN_HEIGHT - block_size * 4
+            offset_x = 0
+            level_transition(window, player)
+            
 
         player.loop(FPS)
         police.loop(FPS, player)
@@ -805,7 +862,7 @@ def main_game(window):
         #make bullet disappear after collision
         if collided_bullet:
             bullets.remove(collided_bullet)
-        draw(window, player, objects, offset_x, police, bullets, collectibles)
+        draw(window, player, objects, offset_x, police, bullets, collectibles, destination)
 
         if ((player.rect.right - offset_x >= WIN_WIDTH - scroll_area_width) and player.x_vel > 0) or (#moving to the right, off the screen
             (player.rect.left - offset_x <= scroll_area_width) and player.x_vel < 0): #moving to the left, off the screen
