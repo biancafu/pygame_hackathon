@@ -98,6 +98,9 @@ class Player(pygame.sprite.Sprite): #inheriting from sprite for pixel accurate c
         #collectibles
         self.add_speed = False
         self.add_speed_count = 0
+        self.decrease_speed = False
+        self.decrease_speed_count = 0
+
 
     def jump(self):
         self.y_vel = -self.GRAVITY * 8 #speed of jump = 8 (can change)
@@ -142,12 +145,18 @@ class Player(pygame.sprite.Sprite): #inheriting from sprite for pixel accurate c
             self.hit = False
             self.hit_count = 0
         
-        #add speed for 3 seconds
+        #add speed for 1 seconds
         if self.add_speed:
             self.add_speed_count += 1
         if self.add_speed_count > fps*1:
             self.add_speed = False
             self.add_speed_count = 0
+        #decrease speed for 1 second
+        if self.decrease_speed:
+            self.decrease_speed_count += 1
+        if self.decrease_speed_count > fps*2:
+            self.decrease_speed = False
+            self.decrease_speed_count = 0
 
 
 
@@ -375,6 +384,20 @@ class Projectile(Object):
         if self.animation_count // self.ANIMATION_DELAY > len(sprites):
             self.animation_count = 0
 
+    
+
+class Trap(Object):
+    def __init__(self, x, y, width, height):
+        super().__init__(x, y, width, height, "trap")
+        self.trap = load_sprite_sheets("Traps", "Banana", width, height)
+        self.image = self.trap["Idle"][0]
+    
+    def change_image(self, state):
+        self.image = self.trap[state][0] 
+        # can change trap's image to any state in the sprite sheet
+        # ie. trap.change_image("Active")
+
+
 ########################################################
 
 ##################### COLLECTIBLES ######################
@@ -407,19 +430,6 @@ class Heart(Object):
             self.animation_count = 0
 
 
-
-class Trap(Object):
-    def __init__(self, x, y, width, height):
-        super().__init__(x, y, width, height, "trap")
-        self.trap = load_sprite_sheets("Traps", "Banana", width, height)
-        self.image = self.trap["Idle"][0]
-    
-    def change_image(self, state):
-        self.image = self.trap[state][0] 
-        # can change trap's image to any state in the sprite sheet
-        # ie. trap.change_image("Active")
-
-
 class Speed(Object):
     ANIMATION_DELAY = 10
 
@@ -446,6 +456,31 @@ class Speed(Object):
         if self.animation_count // self.ANIMATION_DELAY > len(sprites):
             self.animation_count = 0
 
+class CollectibleBullets(Object):
+    ANIMATION_DELAY = 10
+
+    def __init__(self, x, y, width, height):
+        super().__init__(x, y, width, height, "speed")
+        self.speed = load_sprite_sheets("Items", "Potion", 32, 32)
+        self.image = self.speed["bbt"][0]
+        self.mask = pygame.mask.from_surface(self.image)
+        self.x = x
+        self.y = y
+        self.animation_count = 0
+        self.animation_name = "bbt"
+
+    def loop(self): #looping for each frame
+
+        sprites = self.speed[self.animation_name]
+        sprite_index = (self.animation_count // self.ANIMATION_DELAY) % len(sprites)
+        self.image = sprites[sprite_index]
+        self.animation_count += 1
+        #update
+        self.rect = self.image.get_rect(topleft=(self.rect.x, self.rect.y))
+        self.mask = pygame.mask.from_surface(self.image)  #sprite uses mask
+
+        if self.animation_count // self.ANIMATION_DELAY > len(sprites):
+            self.animation_count = 0
 ########################################################
 
 ##################### MOVEMENTS ########################
@@ -490,6 +525,8 @@ def handle_move(player, objects):
 
     if player.add_speed:
         player_velocity = 15
+    elif player.decrease_speed:
+        player_velocity = 3
     else:
         player_velocity = PLAYER_VEL
 
@@ -510,6 +547,9 @@ def handle_move(player, objects):
                 player.rect.x -= 150
                 player.rect.y = 100
                 break
+        elif obj and obj.name == "trap":
+            player.decrease_speed = True
+
 
 
 def handle_police_move(police, objects, player, bullets):
@@ -643,7 +683,7 @@ def main_game(window):
     blocks = []
     fire = Fire(700, WIN_HEIGHT - block_size - 64, 16, 32)
     fire.on()
-    floor = [Block(i * block_size, WIN_HEIGHT - block_size, block_size) for i in range(-WIN_WIDTH // block_size, (WIN_WIDTH * 5)// block_size)]
+    floor = [Block(i * block_size, WIN_HEIGHT - block_size, block_size) for i in range(-WIN_WIDTH // block_size, (WIN_WIDTH * 20)// block_size)]
     # create a list of traps with random positions
     traps = []
     placed_traps = set()  # set to keep track of placed trap coordinates
@@ -666,7 +706,8 @@ def main_game(window):
           traps.append(trap)
           placed_traps.add((x, y))
           break # found an available coordinate, break out of the loop
-    objects = [*floor, Block(0, WIN_HEIGHT - block_size * 2, block_size), 
+    objects = [*floor, 
+                Block(0, WIN_HEIGHT - block_size * 2, block_size), 
                 Block(block_size * 3, WIN_HEIGHT - block_size * 4, block_size),
                 Block(block_size * 4, WIN_HEIGHT - block_size * 4, block_size),
                 Block(block_size * 5, WIN_HEIGHT - block_size * 4, block_size),
@@ -683,7 +724,7 @@ def main_game(window):
         if player.lives <= 0:
           # game over
           if game_over(window):
-            main(window)
+            main_game(window)
           else:
             # exit the loop
             run = False
