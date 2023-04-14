@@ -484,14 +484,14 @@ class CollectibleBullets(Object):
     ANIMATION_DELAY = 10
 
     def __init__(self, x, y, width, height):
-        super().__init__(x, y, width, height, "speed")
+        super().__init__(x, y, width, height, "collectibles_bullets")
         self.speed = load_sprite_sheets("Items", "Potion", 32, 32)
-        self.image = self.speed["bbt"][0]
+        self.image = self.speed["poison"][0]
         self.mask = pygame.mask.from_surface(self.image)
         self.x = x
         self.y = y
         self.animation_count = 0
-        self.animation_name = "bbt"
+        self.animation_name = "poison"
 
     def loop(self): #looping for each frame
 
@@ -702,7 +702,8 @@ def main_game(window):
     heart1 = Heart(block_size * 3, WIN_HEIGHT - block_size * 5, 16, 16)
     heart2 = Heart(block_size * 5, WIN_HEIGHT - block_size * 5, 16, 16)
     speed = Speed(900, WIN_HEIGHT - block_size - 64, 32, 32)
-    collectibles = [heart1, heart2, speed]
+    collectibles_bullets = CollectibleBullets(1100, WIN_HEIGHT - block_size - 64, 32, 32)
+    collectibles = [heart1, heart2, speed, collectibles_bullets]
     #blocks and traps
     blocks = []
     fire = Fire(700, WIN_HEIGHT - block_size - 64, 16, 32)
@@ -788,6 +789,8 @@ def main_game(window):
                     player.lives += 1
                 elif collectible.name == "speed":
                     player.add_speed = True
+                elif collectible.name == "collectibles_bullets":
+                    player.bullets += 3
                 # match collectible.name:
                 #     case "heart":
                 #         player.lives += 1
