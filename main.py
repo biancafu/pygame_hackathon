@@ -493,65 +493,7 @@ class CollectibleBullets(Object):
         self.x = x
         self.y = y
         self.animation_count = 0
-        self.animation_name = "poison"
-
-    def loop(self): #looping for each frame
-
-        sprites = self.speed[self.animation_name]
-        sprite_index = (self.animation_count // self.ANIMATION_DELAY) % len(sprites)
-        self.image = sprites[sprite_index]
-        self.animation_count += 1
-        #update
-        self.rect = self.image.get_rect(topleft=(self.rect.x, self.rect.y))
-        self.mask = pygame.mask.from_surface(self.image)  #sprite uses mask
-
-        if self.animation_count // self.ANIMATION_DELAY > len(sprites):
-            self.animation_count = 0
-########################################################
-
-##################### START/END ######################
-
-class Destination(Object):
-    ANIMATION_DELAY = 10
-
-    def __init__(self, x, y, width, height):
-        super().__init__(x, y, width, height, "destination")
-        self.speed = load_sprite_sheets("Items", "Destination", 64, 64)
-        self.image = self.speed["idle"][0]
-        self.mask = pygame.mask.from_surface(self.image)
-        self.x = x
-        self.y = y
-        self.animation_count = 0
-        self.animation_name = "idle"
-
-    def loop(self): #looping for each frame
-
-        sprites = self.speed[self.animation_name]
-        sprite_index = (self.animation_count // self.ANIMATION_DELAY) % len(sprites)
-        self.image = sprites[sprite_index]
-        self.animation_count += 1
-        #update
-        self.rect = self.image.get_rect(topleft=(self.rect.x, self.rect.y))
-        self.mask = pygame.mask.from_surface(self.image)  #sprite uses mask
-
-        if self.animation_count // self.ANIMATION_DELAY > len(sprites):
-            self.animation_count = 0
-########################################################
-
-##################### START/END ######################
-
-class Destination(Object):
-    ANIMATION_DELAY = 10
-
-    def __init__(self, x, y, width, height):
-        super().__init__(x, y, width, height, "destination")
-        self.speed = load_sprite_sheets("Items", "Destination", 64, 64)
-        self.image = self.speed["idle"][0]
-        self.mask = pygame.mask.from_surface(self.image)
-        self.x = x
-        self.y = y
-        self.animation_count = 0
-        self.animation_name = "idle"
+        self.animation_name = "bbt"
 
     def loop(self): #looping for each frame
 
@@ -777,7 +719,8 @@ def main_game(window):
     heart1 = Heart(block_size * 3, WIN_HEIGHT - block_size * 5, 16, 16)
     heart2 = Heart(block_size * 5, WIN_HEIGHT - block_size * 5, 16, 16)
     speed = Speed(900, WIN_HEIGHT - block_size - 64, 32, 32)
-    collectibles = [heart1, heart2, speed]
+    collectibles_bullets = CollectibleBullets(1100, WIN_HEIGHT - block_size - 64, 32, 32)
+    collectibles = [heart1, heart2, speed, collectibles_bullets]
     #blocks and traps
     blocks = []
     fire = Fire(700, WIN_HEIGHT - block_size - 64, 16, 32)
