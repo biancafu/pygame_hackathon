@@ -734,65 +734,140 @@ def main(window):
                     
         pygame.display.update()
 
+def level_design(block_size):
+    design = {}
+    objects = []
+    collectibles = []
+    destinations = []
+    for j in range(0,4):
+        if j == 0:
+            objects.append(0)
+            collectibles.append(0)
+            destinations.append(0)
+        if j == 1:
+            blocks = []
+            traps = []
+            heart1 = Heart(block_size * 3, WIN_HEIGHT - block_size * 5, 16, 16)
+            heart2 = Heart(block_size * 5, WIN_HEIGHT - block_size * 5, 16, 16)
+            speed = Speed(900, WIN_HEIGHT - block_size - 64, 32, 32)
+            collectibles_bullets = CollectibleBullets(1100, WIN_HEIGHT - block_size - 64, 32, 32)
+            #blocks and traps
+            fire = Fire(700, WIN_HEIGHT - block_size - 64, 16, 32)
+            fire.on()
+            floor = [Block(i * block_size, WIN_HEIGHT - block_size, block_size) for i in range(-WIN_WIDTH // block_size, (WIN_WIDTH * 20)// block_size)]
+
+            placed_traps = set()  # set to keep track of placed trap coordinates
+        
+            for i in range(5):  # create 5 traps
+                while True:
+                    x = random.randint(block_size * 4, WIN_WIDTH * 5 - block_size * 4)  # generate a random x coordinate within a range
+                    y = WIN_HEIGHT - block_size - 30  # set y-coordinate to floor level
+                    # check if there's a block at this position
+                    for block in blocks:
+                        if block.x <= x <= block.x + block.width and block.y <= y <= block.y + block.height:
+                            # there's a block at this position, adjust y-coordinate
+                            y = block.y - 43
+                            break  # stop iterating over blocks since we found one that overlaps
+                    # check if the coordinates are already taken by another trap
+                    if (x,y) not in placed_traps:        
+                    # add the trap to the list and add its coordinates to the placed set
+                        trap = Trap(x, y, 16, 32)
+                        trap.change_image("Idle")
+                        traps.append(trap)
+                        placed_traps.add((x, y))
+                        break # found an available coordinate, break out of the loop
+            #design
+            objects.append([*floor, 
+                        Block(0, WIN_HEIGHT - block_size * 2, block_size), 
+                        Block(block_size * 3, WIN_HEIGHT - block_size * 4, block_size),
+                        Block(block_size * 4, WIN_HEIGHT - block_size * 4, block_size),
+                        Block(block_size * 5, WIN_HEIGHT - block_size * 4, block_size),
+                        Block(block_size * 6, WIN_HEIGHT - block_size * 4, block_size),
+                        *traps, fire])
+            destinations.append(Destination(1500, WIN_HEIGHT - block_size - 128, 32, 32))
+            collectibles.append([heart1, heart2, speed, collectibles_bullets])
+        if j == 2:
+            blocks = []
+            traps = []
+            heart1 = Heart(block_size * 3, WIN_HEIGHT - block_size * 5, 16, 16)
+            heart2 = Heart(block_size * 7, WIN_HEIGHT - block_size * 5, 16, 16)
+            speed = Speed(900, WIN_HEIGHT - block_size - 64, 32, 32)
+            collectibles_bullets = CollectibleBullets(1100, WIN_HEIGHT - block_size - 64, 32, 32)
+            #blocks and traps
+            fire = Fire(700, WIN_HEIGHT - block_size - 64, 16, 32)
+            fire.on()
+            floor = [Block(i * block_size, WIN_HEIGHT - block_size, block_size) for i in range(-WIN_WIDTH // block_size, (WIN_WIDTH * 20)// block_size)]
+
+            placed_traps = set()  # set to keep track of placed trap coordinates
+        
+            for i in range(5):  # create 5 traps
+                while True:
+                    x = random.randint(block_size * 4, WIN_WIDTH * 5 - block_size * 4)  # generate a random x coordinate within a range
+                    y = WIN_HEIGHT - block_size - 30  # set y-coordinate to floor level
+                    # check if there's a block at this position
+                    for block in blocks:
+                        if block.x <= x <= block.x + block.width and block.y <= y <= block.y + block.height:
+                            # there's a block at this position, adjust y-coordinate
+                            y = block.y - 43
+                            break  # stop iterating over blocks since we found one that overlaps
+                    # check if the coordinates are already taken by another trap
+                    if (x,y) not in placed_traps:        
+                    # add the trap to the list and add its coordinates to the placed set
+                        trap = Trap(x, y, 16, 32)
+                        trap.change_image("Idle")
+                        traps.append(trap)
+                        placed_traps.add((x, y))
+                        break # found an available coordinate, break out of the loop
+            #design
+            objects.append([*floor, 
+                        Block(0, WIN_HEIGHT - block_size * 2, block_size), 
+                        Block(block_size * 3, WIN_HEIGHT - block_size * 4, block_size),
+                        Block(block_size * 4, WIN_HEIGHT - block_size * 4, block_size),
+                        Block(block_size * 5, WIN_HEIGHT - block_size * 4, block_size),
+                        Block(block_size * 6, WIN_HEIGHT - block_size * 4, block_size),
+                        *traps, fire])
+            destinations.append(Destination(1500, WIN_HEIGHT - block_size - 128, 32, 32))
+            collectibles.append([heart1, heart2, speed, collectibles_bullets])
+
+    design["objects"] = objects
+    design["collectibles"] = collectibles
+    design["destinations"] = destinations
+    return design
+
+
 
 def main_game(window): 
     
     block_size = 96
-
     #instantiate objects (same for every level)
     player = Player(block_size * 3, WIN_HEIGHT - block_size * 4, 50, 50)
     police = Police(-200, 500, 50, 50)
     bullets = []
-    blocks = []
-    traps = []
-    objects = []
-    #collectibles
-    heart1 = Heart(block_size * 3, WIN_HEIGHT - block_size * 5, 16, 16)
-    heart2 = Heart(block_size * 5, WIN_HEIGHT - block_size * 5, 16, 16)
-    speed = Speed(900, WIN_HEIGHT - block_size - 64, 32, 32)
-    collectibles_bullets = CollectibleBullets(1100, WIN_HEIGHT - block_size - 64, 32, 32)
-    destination = Destination(1500, WIN_HEIGHT - block_size - 128, 32, 32)
-    collectibles = [heart1, heart2, speed, collectibles_bullets]
-    #blocks and traps
-    fire = Fire(700, WIN_HEIGHT - block_size - 64, 16, 32)
-    fire.on()
-    floor = [Block(i * block_size, WIN_HEIGHT - block_size, block_size) for i in range(-WIN_WIDTH // block_size, (WIN_WIDTH * 20)// block_size)]
-    # create a list of traps with random positions
-    placed_traps = set()  # set to keep track of placed trap coordinates
-    
-    for i in range(5):  # create 5 traps
-      while True:
-        x = random.randint(block_size * 4, WIN_WIDTH * 5 - block_size * 4)  # generate a random x coordinate within a range
-        y = WIN_HEIGHT - block_size - 30  # set y-coordinate to floor level
-        # check if there's a block at this position
-        for block in blocks:
-            if block.x <= x <= block.x + block.width and block.y <= y <= block.y + block.height:
-                # there's a block at this position, adjust y-coordinate
-                y = block.y - 43
-                break  # stop iterating over blocks since we found one that overlaps
-        # check if the coordinates are already taken by another trap
-        if (x,y) not in placed_traps:        
-          # add the trap to the list and add its coordinates to the placed set
-          trap = Trap(x, y, 16, 32)
-          trap.change_image("Idle")
-          traps.append(trap)
-          placed_traps.add((x, y))
-          break # found an available coordinate, break out of the loop
-    objects = [*floor, 
-                Block(0, WIN_HEIGHT - block_size * 2, block_size), 
-                Block(block_size * 3, WIN_HEIGHT - block_size * 4, block_size),
-                Block(block_size * 4, WIN_HEIGHT - block_size * 4, block_size),
-                Block(block_size * 5, WIN_HEIGHT - block_size * 4, block_size),
-                Block(block_size * 6, WIN_HEIGHT - block_size * 4, block_size),
-                *traps, fire]
 
-    
+    design = level_design(block_size)
+    all_objects = design["objects"]
+    all_collectibles = design["collectibles"]
+    all_destinations = design["destinations"]
+    print(all_collectibles)
+
     offset_x = 0
     scroll_area_width = 320
     run = True
     level_transition(window, player)
     while run:
         clock.tick(FPS) #running 60 frame/second
+
+        if player.level < len(all_objects):
+            objects = all_objects[player.level]
+            collectibles = all_collectibles[player.level]
+            destination = all_destinations[player.level]
+        else:
+            #you win screen
+            objects = []
+            collectibles = []
+            destination = all_destinations[1]
+            pass
+        
         if player.lives <= 0:
           # game over
           if game_over(window):
@@ -860,7 +935,7 @@ def main_game(window):
 
         player.loop(FPS)
         police.loop(FPS, player)
-        fire.loop()
+        # fire.loop()
         
         handle_move(player, objects)
         collided_bullet = handle_police_move(police, objects, player, bullets)
