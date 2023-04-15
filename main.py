@@ -1,3 +1,27 @@
+# MIT License
+
+# Copyright (c) 2023 Bianca Fu
+# Copyright (c) 2023 Tiffany Leong
+# Copyright (c) 2023 Thy Nguyen
+
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
+
 import pygame
 import os
 import time
@@ -56,10 +80,10 @@ def load_sprite_sheets(dir1, dir2, width, height, direction = False):
     return all_sprites
 
 def get_block(size):
-    path = join("assets", "Terrain", "Terrain.png")
+    path = join("assets", "Terrain", "Test.png")
     image = pygame.image.load(path).convert_alpha()
     surface = pygame.Surface((size, size), pygame.SRCALPHA, 32)
-    rect = pygame.Rect(96, 0, size, size)  #96, 0 is position of the part we want (top left)
+    rect = pygame.Rect(0, 0, size, size)  #96, 0 is position of the part we want (top left)
     surface.blit(image, (0, 0), rect)
     return pygame.transform.scale2x(surface)
 
@@ -98,8 +122,15 @@ class Player(pygame.sprite.Sprite): #inheriting from sprite for pixel accurate c
         #collectibles
         self.add_speed = False
         self.add_speed_count = 0
+
         #score
         self.score = 0
+
+        self.decrease_speed = False
+        self.decrease_speed_count = 0
+        #level
+        self.level = 1
+
 
     def jump(self):
         self.y_vel = -self.GRAVITY * 8 #speed of jump = 8 (can change)
@@ -144,12 +175,18 @@ class Player(pygame.sprite.Sprite): #inheriting from sprite for pixel accurate c
             self.hit = False
             self.hit_count = 0
         
-        #add speed for 3 seconds
+        #add speed for 1 seconds
         if self.add_speed:
             self.add_speed_count += 1
         if self.add_speed_count > fps*1:
             self.add_speed = False
             self.add_speed_count = 0
+        #decrease speed for 1 second
+        if self.decrease_speed:
+            self.decrease_speed_count += 1
+        if self.decrease_speed_count > fps*2:
+            self.decrease_speed = False
+            self.decrease_speed_count = 0
 
 
 
@@ -377,6 +414,20 @@ class Projectile(Object):
         if self.animation_count // self.ANIMATION_DELAY > len(sprites):
             self.animation_count = 0
 
+    
+
+class Trap(Object):
+    def __init__(self, x, y, width, height):
+        super().__init__(x, y, width, height, "trap")
+        self.trap = load_sprite_sheets("Traps", "Banana", width, height)
+        self.image = self.trap["Idle"][0]
+    
+    def change_image(self, state):
+        self.image = self.trap[state][0] 
+        # can change trap's image to any state in the sprite sheet
+        # ie. trap.change_image("Active")
+
+
 ########################################################
 
 ##################### COLLECTIBLES ######################
@@ -387,12 +438,12 @@ class Heart(Object):
     def __init__(self, x, y, width, height):
         super().__init__(x, y, width, height, "heart")
         self.heart = load_sprite_sheets("Items", "Lives", 16, 16)
-        self.image = self.heart["heart"][0]
+        self.image = self.heart["dumpling"][0]
         self.mask = pygame.mask.from_surface(self.image)
         self.x = x
         self.y = y
         self.animation_count = 0
-        self.animation_name = "heart"
+        self.animation_name = "dumpling"
 
 
     def loop(self): #looping for each frame
@@ -409,35 +460,48 @@ class Heart(Object):
             self.animation_count = 0
 
 
-
-class Trap(Object):
-    def __init__(self, x, y, width, height):
-        super().__init__(x, y, width, height, "trap")
-        self.trap = load_sprite_sheets("Traps", "Spikes", width, height)
-        self.image = self.trap["Idle"][0]
-    
-    def change_image(self, state):
-        self.image = self.trap[state][0] 
-        # can change trap's image to any state in the sprite sheet
-        # ie. trap.change_image("Active")
-
-
 class Speed(Object):
-    ANIMATION_DELAY = 5
+    ANIMATION_DELAY = 10
 
     def __init__(self, x, y, width, height):
         super().__init__(x, y, width, height, "speed")
-        self.heart = load_sprite_sheets("Items", "Fruits", 16, 16)
-        self.image = self.heart["Cherries"][0]
+        self.speed = load_sprite_sheets("Items", "Potion", 32, 32)
+        self.image = self.speed["bbt"][0]
         self.mask = pygame.mask.from_surface(self.image)
         self.x = x
         self.y = y
         self.animation_count = 0
-        self.animation_name = "Cherries"
+        self.animation_name = "bbt"
 
     def loop(self): #looping for each frame
 
-        sprites = self.heart[self.animation_name]
+        sprites = self.speed[self.animation_name]
+        sprite_index = (self.animation_count // self.ANIMATION_DELAY) % len(sprites)
+        self.image = sprites[sprite_index]
+        self.animation_count += 1
+        #update
+        self.rect = self.image.get_rect(topleft=(self.rect.x, self.rect.y))
+        self.mask = pygame.mask.from_surface(self.image)  #sprite uses mask
+
+        if self.animation_count // self.ANIMATION_DELAY > len(sprites):
+            self.animation_count = 0
+
+class CollectibleBullets(Object):
+    ANIMATION_DELAY = 10
+
+    def __init__(self, x, y, width, height):
+        super().__init__(x, y, width, height, "collectibles_bullets")
+        self.speed = load_sprite_sheets("Items", "Potion", 32, 32)
+        self.image = self.speed["poison"][0]
+        self.mask = pygame.mask.from_surface(self.image)
+        self.x = x
+        self.y = y
+        self.animation_count = 0
+        self.animation_name = "poison"
+
+    def loop(self): #looping for each frame
+
+        sprites = self.speed[self.animation_name]
         sprite_index = (self.animation_count // self.ANIMATION_DELAY) % len(sprites)
         self.image = sprites[sprite_index]
         self.animation_count += 1
@@ -474,6 +538,35 @@ class Pineapple(Object):
         if self.animation_count // self.ANIMATION_DELAY > len(sprites):
             self.animation_count = 0
 
+########################################################
+
+##################### START/END ######################
+
+class Destination(Object):
+    ANIMATION_DELAY = 10
+
+    def __init__(self, x, y, width, height):
+        super().__init__(x, y, width, height, "destination")
+        self.speed = load_sprite_sheets("Items", "Destination", 64, 64)
+        self.image = self.speed["idle"][0]
+        self.mask = pygame.mask.from_surface(self.image)
+        self.x = x
+        self.y = y
+        self.animation_count = 0
+        self.animation_name = "idle"
+
+    def loop(self): #looping for each frame
+
+        sprites = self.speed[self.animation_name]
+        sprite_index = (self.animation_count // self.ANIMATION_DELAY) % len(sprites)
+        self.image = sprites[sprite_index]
+        self.animation_count += 1
+        #update
+        self.rect = self.image.get_rect(topleft=(self.rect.x, self.rect.y))
+        self.mask = pygame.mask.from_surface(self.image)  #sprite uses mask
+
+        if self.animation_count // self.ANIMATION_DELAY > len(sprites):
+            self.animation_count = 0
 ########################################################
 
 ##################### MOVEMENTS ########################
@@ -518,6 +611,8 @@ def handle_move(player, objects):
 
     if player.add_speed:
         player_velocity = 15
+    elif player.decrease_speed:
+        player_velocity = 3
     else:
         player_velocity = PLAYER_VEL
 
@@ -538,6 +633,9 @@ def handle_move(player, objects):
                 player.rect.x -= 150
                 player.rect.y = 100
                 break
+        elif obj and obj.name == "trap":
+            player.decrease_speed = True
+
 
 
 def handle_police_move(police, objects, player, bullets):
@@ -554,7 +652,7 @@ def handle_police_move(police, objects, player, bullets):
             player.make_hit()
             player.minus_life()
             if player.lives > 0:
-                #reset player position
+                #reset police position
                 police.rect.x = -100
                 police.rect.y = 500
         if obj and obj.name == "bullet":
@@ -589,9 +687,22 @@ def game_over(window):
                 if event.key == pygame.K_r:
                   return True
 
+
+def level_transition(window, player):
+
+    window.fill((0, 0, 0))
+    level_text = font.render("Level {}".format(player.level), True, (255, 255, 255))
+    level_rect = level_text.get_rect(center=(WIN_WIDTH/2, WIN_HEIGHT/2))
+    window.blit(level_text, level_rect)
+
+    pygame.display.update()
+    # Wait for a moment
+    pygame.time.wait(1500)
+
+
 ########################################################
 
-def draw(window, player, objects, offset_x, police, bullets, collectibles):
+def draw(window, player, objects, offset_x, police, bullets, collectibles, destination):
     #draw background
     window.blit(BG_IMG, (0,0)) #position 0,0 (top left)
 
@@ -611,6 +722,8 @@ def draw(window, player, objects, offset_x, police, bullets, collectibles):
 
     for collectible in collectibles:
         collectible.draw(window, offset_x)
+    
+    destination.draw(window, offset_x)
 
     player.draw(window, offset_x)
     police.draw(window, offset_x)
@@ -618,106 +731,153 @@ def draw(window, player, objects, offset_x, police, bullets, collectibles):
     pygame.display.update()
 
 
-def main_menu(window):
-    while True:
-        window.blit(BG_IMG, (0,0))
-        instruction_image = pygame.image.load("keys.png")
-        window.blit(instruction_image, (260, 100))
+def level_design(block_size):
+    design = {}
+    objects = []
+    collectibles = []
+    destinations = []
+    for j in range(0,4):
+        if j == 0:
+            objects.append(0)
+            collectibles.append(0)
+            destinations.append(0)
+        if j == 1:
+            blocks = []
+            traps = []
+            heart1 = Heart(block_size * 3, WIN_HEIGHT - block_size * 5, 16, 16)
+            heart2 = Heart(block_size * 5, WIN_HEIGHT - block_size * 5, 16, 16)
+            pineapple = Pineapple(block_size * 6, WIN_HEIGHT - block_size * 5, 16, 16)
+            speed = Speed(900, WIN_HEIGHT - block_size - 64, 32, 32)
+            collectibles_bullets = CollectibleBullets(1100, WIN_HEIGHT - block_size - 64, 32, 32)
+            #blocks and traps
+            fire = Fire(700, WIN_HEIGHT - block_size - 64, 16, 32)
+            fire.on()
+            floor = [Block(i * block_size, WIN_HEIGHT - block_size, block_size) for i in range(-WIN_WIDTH // block_size, (WIN_WIDTH * 20)// block_size)]
 
-        # Set up the font
-        font = pygame.font.Font(None, 36)
-
-
-        mx, my = pygame.mouse.get_pos()
-        button_1 = pygame.Rect(400, 490, 200, 50)
-        # draw button rectangle
-        pygame.draw.rect(window, (255, 255, 255), button_1)
-
-        text_surface = font.render("Start Game", True, (0, 0, 0))
-        text_rect = text_surface.get_rect(center=button_1.center)
-        window.blit(text_surface, text_rect)
-
-        if button_1.collidepoint((mx, my)):
-            if click:
-                main(window)
+            placed_traps = set()  # set to keep track of placed trap coordinates
         
-        pygame.display.update()
+            for i in range(5):  # create 5 traps
+                while True:
+                    x = random.randint(block_size * 4, WIN_WIDTH * 5 - block_size * 4)  # generate a random x coordinate within a range
+                    y = WIN_HEIGHT - block_size - 30  # set y-coordinate to floor level
+                    # check if there's a block at this position
+                    for block in blocks:
+                        if block.x <= x <= block.x + block.width and block.y <= y <= block.y + block.height:
+                            # there's a block at this position, adjust y-coordinate
+                            y = block.y - 43
+                            break  # stop iterating over blocks since we found one that overlaps
+                    # check if the coordinates are already taken by another trap
+                    if (x,y) not in placed_traps:        
+                    # add the trap to the list and add its coordinates to the placed set
+                        trap = Trap(x, y, 16, 32)
+                        trap.change_image("Idle")
+                        traps.append(trap)
+                        placed_traps.add((x, y))
+                        break # found an available coordinate, break out of the loop
+            #design
+            objects.append([*floor, 
+                        Block(0, WIN_HEIGHT - block_size * 2, block_size), 
+                        Block(block_size * 3, WIN_HEIGHT - block_size * 4, block_size),
+                        Block(block_size * 4, WIN_HEIGHT - block_size * 4, block_size),
+                        Block(block_size * 5, WIN_HEIGHT - block_size * 4, block_size),
+                        Block(block_size * 6, WIN_HEIGHT - block_size * 4, block_size),
+                        *traps, fire])
+            destinations.append(Destination(1500, WIN_HEIGHT - block_size - 128, 32, 32))
+            collectibles.append([heart1, heart2, speed, collectibles_bullets])
+        if j == 2:
+            blocks = []
+            traps = []
+            heart1 = Heart(block_size * 3, WIN_HEIGHT - block_size * 5, 16, 16)
+            heart2 = Heart(block_size * 7, WIN_HEIGHT - block_size * 5, 16, 16)
+            speed = Speed(900, WIN_HEIGHT - block_size - 64, 32, 32)
+            collectibles_bullets = CollectibleBullets(1100, WIN_HEIGHT - block_size - 64, 32, 32)
+            #blocks and traps
+            fire = Fire(700, WIN_HEIGHT - block_size - 64, 16, 32)
+            fire.on()
+            floor = [Block(i * block_size, WIN_HEIGHT - block_size, block_size) for i in range(-WIN_WIDTH // block_size, (WIN_WIDTH * 20)// block_size)]
 
-        click = False
+            placed_traps = set()  # set to keep track of placed trap coordinates
+        
+            for i in range(5):  # create 5 traps
+                while True:
+                    x = random.randint(block_size * 4, WIN_WIDTH * 5 - block_size * 4)  # generate a random x coordinate within a range
+                    y = WIN_HEIGHT - block_size - 30  # set y-coordinate to floor level
+                    # check if there's a block at this position
+                    for block in blocks:
+                        if block.x <= x <= block.x + block.width and block.y <= y <= block.y + block.height:
+                            # there's a block at this position, adjust y-coordinate
+                            y = block.y - 43
+                            break  # stop iterating over blocks since we found one that overlaps
+                    # check if the coordinates are already taken by another trap
+                    if (x,y) not in placed_traps:        
+                    # add the trap to the list and add its coordinates to the placed set
+                        trap = Trap(x, y, 16, 32)
+                        trap.change_image("Idle")
+                        traps.append(trap)
+                        placed_traps.add((x, y))
+                        break # found an available coordinate, break out of the loop
+            #design
+            objects.append([*floor, 
+                        Block(0, WIN_HEIGHT - block_size * 2, block_size), 
+                        Block(block_size * 3, WIN_HEIGHT - block_size * 4, block_size),
+                        Block(block_size * 4, WIN_HEIGHT - block_size * 4, block_size),
+                        Block(block_size * 5, WIN_HEIGHT - block_size * 4, block_size),
+                        Block(block_size * 6, WIN_HEIGHT - block_size * 4, block_size),
+                        *traps, fire])
+            destinations.append(Destination(1500, WIN_HEIGHT - block_size - 128, 32, 32))
+            collectibles.append([heart1, heart2, speed, collectibles_bullets, pineapple])
 
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                pygame.quit()
-                sys.exit()
-            if event.type == pygame.MOUSEBUTTONDOWN:
-                if event.button == 1:
-                    click = True
-                    
-        pygame.display.update()
-        clock.tick(FPS)
+    design["objects"] = objects
+    design["collectibles"] = collectibles
+    design["destinations"] = destinations
+    return design
 
 
-def main(window): 
+
+def main_game(window): 
     
     block_size = 96
 
     #initialize score variable
     score = 0
 
-    #instantiate objects
+
+    #instantiate objects (same for every level)
+
     player = Player(block_size * 3, WIN_HEIGHT - block_size * 4, 50, 50)
     police = Police(-200, 500, 50, 50)
-    #weapons
     bullets = []
-    #collectibles
-    heart1 = Heart(block_size * 3, WIN_HEIGHT - block_size * 5, 16, 16)
-    heart2 = Heart(block_size * 5, WIN_HEIGHT - block_size * 5, 16, 16)
-    speed = Speed(900, WIN_HEIGHT - block_size - 64, 32, 32)
-    pineapple = Pineapple(block_size * 6, WIN_HEIGHT - block_size * 5, 16, 16)
-    collectibles = [heart1, heart2, speed, pineapple]
-    #blocks and traps
-    blocks = []
-    # create a list of traps with random positions
-    traps = []
-    placed_traps = set()  # set to keep track of placed trap coordinates
-    for i in range(5):  # create 5 traps
-      while True:
-        x = random.randint(block_size * 4, WIN_WIDTH - block_size * 4)  # generate a random x coordinate within a range
-        y = WIN_HEIGHT - block_size - 30  # set y-coordinate to floor level
-        # check if there's a block at this position
-        for block in blocks:
-            if block.x <= x <= block.x + block.width and block.y <= y <= block.y + block.height:
-                # there's a block at this position, adjust y-coordinate
-                y = block.y - 43
-                break  # stop iterating over blocks since we found one that overlaps
-        # check if the coordinates are already taken by another trap
-        if (x,y) not in placed_traps:        
-          # add the trap to the list and add its coordinates to the placed set
-          trap = Trap(x, y, 16, 32)
-          trap.change_image("Idle")
-          traps.append(trap)
-          placed_traps.add((x, y))
-          break # found an available coordinate, break out of the loop
-    fire = Fire(700, WIN_HEIGHT - block_size - 64, 16, 32)
-    fire.on()
-    floor = [Block(i * block_size, WIN_HEIGHT - block_size, block_size) for i in range(-WIN_WIDTH // block_size, (WIN_WIDTH * 5)// block_size)]
-    objects = [*floor, Block(0, WIN_HEIGHT - block_size * 2, block_size), 
-               Block(block_size * 3, WIN_HEIGHT - block_size * 4, block_size),
-               Block(block_size * 4, WIN_HEIGHT - block_size * 4, block_size),
-               Block(block_size * 5, WIN_HEIGHT - block_size * 4, block_size),
-               Block(block_size * 6, WIN_HEIGHT - block_size * 4, block_size),
-               *traps, fire]
+
+    design = level_design(block_size)
+    all_objects = design["objects"]
+    all_collectibles = design["collectibles"]
+    all_destinations = design["destinations"]
+
     
     offset_x = 0
     scroll_area_width = 320
     run = True
-
+    level_transition(window, player)
     while run:
         clock.tick(FPS) #running 60 frame/second
+
+        if player.level < len(all_objects):
+            objects = all_objects[player.level]
+            collectibles = all_collectibles[player.level]
+            destination = all_destinations[player.level]
+
+            #fire
+            objects[-1].loop()
+        else:
+            #you win screen
+            objects = []
+            collectibles = []
+            destination = all_destinations[1]
+
         if player.lives <= 0:
           # game over
           if game_over(window):
-            main(window)
+            main_game(window)
           else:
             # exit the loop
             run = False
@@ -757,23 +917,37 @@ def main(window):
                     player.lives += 1
                 elif collectible.name == "speed":
                     player.add_speed = True
-                # match collectible.name:
-                #     case "heart":
-                #         player.lives += 1
+                elif collectible.name == "collectibles_bullets":
+                    player.bullets += 3
                 elif collectible.name == "pineapple":
                     player.score += 1
                 
 
+        #level up: destination detection
+        if player.rect.x > destination.rect.right:
+            pygame.time.wait(500)
+            player.level += 1
+            offset_x = 0
+
+            #reset player position
+            player.rect.x = 0
+            player.rect.y = WIN_HEIGHT - block_size * 4
+            #reset police position
+            police.rect.x = -200
+            police.rect.y = 500
+
+            level_transition(window, player)
+
+
         player.loop(FPS)
         police.loop(FPS, player)
-        fire.loop()
-        
+
         handle_move(player, objects)
         collided_bullet = handle_police_move(police, objects, player, bullets)
         #make bullet disappear after collision
         if collided_bullet:
             bullets.remove(collided_bullet)
-        draw(window, player, objects, offset_x, police, bullets, collectibles)
+        draw(window, player, objects, offset_x, police, bullets, collectibles, destination)
 
         if ((player.rect.right - offset_x >= WIN_WIDTH - scroll_area_width) and player.x_vel > 0) or (#moving to the right, off the screen
             (player.rect.left - offset_x <= scroll_area_width) and player.x_vel < 0): #moving to the left, off the screen
@@ -782,6 +956,44 @@ def main(window):
     pygame.quit()
     quit()
 
-# if __name__ == "__main__":
-#     main(window)
-main_menu(window)
+
+def main(window):
+    while True:
+        window.blit(BG_IMG, (0,0))
+        instruction_image = pygame.image.load("keys.png")
+        window.blit(instruction_image, (260, 100))
+
+        # Set up the font
+        font = pygame.font.Font(None, 36)
+
+
+        mx, my = pygame.mouse.get_pos()
+        button_1 = pygame.Rect(400, 490, 200, 50)
+        # draw button rectangle
+        pygame.draw.rect(window, (255, 255, 255), button_1)
+
+        text_surface = font.render("Start Game", True, (0, 0, 0))
+        text_rect = text_surface.get_rect(center=button_1.center)
+        window.blit(text_surface, text_rect)
+
+        if button_1.collidepoint((mx, my)):
+            if click:
+                main_game(window)
+        
+        pygame.display.update()
+
+        click = False
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if event.button == 1:
+                    click = True
+                    
+        pygame.display.update()
+
+
+if __name__ == "__main__":
+    main(window)
