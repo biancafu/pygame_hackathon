@@ -697,11 +697,27 @@ def draw(window, player, objects, offset_x, police, bullets, collectibles, desti
     pygame.display.update()
 
 
-def main(window):
-    while True:
-        window.blit(BG_IMG, (0,0))
-        instruction_image = pygame.image.load("keys.png")
-        window.blit(instruction_image, (260, 100))
+def level_design(block_size):
+    design = {}
+    objects = []
+    collectibles = []
+    destinations = []
+    for j in range(0,4):
+        if j == 0:
+            objects.append(0)
+            collectibles.append(0)
+            destinations.append(0)
+        if j == 1:
+            blocks = []
+            traps = []
+            heart1 = Heart(block_size * 3, WIN_HEIGHT - block_size * 5, 16, 16)
+            heart2 = Heart(block_size * 5, WIN_HEIGHT - block_size * 5, 16, 16)
+            speed = Speed(900, WIN_HEIGHT - block_size - 64, 32, 32)
+            collectibles_bullets = CollectibleBullets(1100, WIN_HEIGHT - block_size - 64, 32, 32)
+            #blocks and traps
+            fire = Fire(700, WIN_HEIGHT - block_size - 64, 16, 32)
+            fire.on()
+            floor = [Block(i * block_size, WIN_HEIGHT - block_size, block_size) for i in range(-WIN_WIDTH // block_size, (WIN_WIDTH * 20)// block_size)]
 
         # Set up the font
         font = pygame.font.Font(None, 36)
@@ -756,7 +772,7 @@ def main_game(window):
     #blocks and traps
     fire = Fire(700, WIN_HEIGHT - block_size - 64, 16, 32)
     fire.on()
-    floor = [Block(i * block_size, WIN_HEIGHT - block_size, block_size) for i in range(-WIN_WIDTH // block_size, (WIN_WIDTH * 5)// block_size)]
+    floor = [Block(i * block_size, WIN_HEIGHT - block_size, block_size) for i in range(-WIN_WIDTH // block_size, (WIN_WIDTH * 20)// block_size)]
     # create a list of traps with random positions
     placed_traps = set()  # set to keep track of placed trap coordinates
     
@@ -778,7 +794,8 @@ def main_game(window):
           traps.append(trap)
           placed_traps.add((x, y))
           break # found an available coordinate, break out of the loop
-    objects = [*floor, Block(0, WIN_HEIGHT - block_size * 2, block_size), 
+    objects = [*floor, 
+                Block(0, WIN_HEIGHT - block_size * 2, block_size), 
                 Block(block_size * 3, WIN_HEIGHT - block_size * 4, block_size),
                 Block(block_size * 4, WIN_HEIGHT - block_size * 4, block_size),
                 Block(block_size * 5, WIN_HEIGHT - block_size * 4, block_size),
