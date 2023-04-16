@@ -122,6 +122,10 @@ class Player(pygame.sprite.Sprite): #inheriting from sprite for pixel accurate c
         #collectibles
         self.add_speed = False
         self.add_speed_count = 0
+
+        #score
+        self.score = 0
+
         self.decrease_speed = False
         self.decrease_speed_count = 0
         #level
@@ -509,6 +513,32 @@ class CollectibleBullets(Object):
         if self.animation_count // self.ANIMATION_DELAY > len(sprites):
             self.animation_count = 0
 
+class Pineapple(Object):
+    ANIMATION_DELAY = 5
+
+    def __init__(self, x, y, width, height):
+        super().__init__(x, y, width, height, "pineapple")
+        self.heart = load_sprite_sheets("Items", "Fruits", 32, 32)
+        self.image = self.heart["Pineapple"][0]
+        self.mask = pygame.mask.from_surface(self.image)
+        self.x = x
+        self.y = y
+        self.animation_count = 0
+        self.animation_name = "Pineapple"
+
+    def loop(self): #looping for each frame
+
+        sprites = self.heart[self.animation_name]
+        sprite_index = (self.animation_count // self.ANIMATION_DELAY) % len(sprites)
+        self.image = sprites[sprite_index]
+        self.animation_count += 1
+        #update
+        self.rect = self.image.get_rect(topleft=(self.rect.x, self.rect.y))
+        self.mask = pygame.mask.from_surface(self.image)  #sprite uses mask
+
+        if self.animation_count // self.ANIMATION_DELAY > len(sprites):
+            self.animation_count = 0
+
 ########################################################
 
 ##################### START/END ######################
@@ -681,6 +711,10 @@ def draw(window, player, objects, offset_x, police, bullets, collectibles, desti
     lives_text = font.render(f"Lives: {player.lives}", True, (255, 255, 255))
     window.blit(lives_text, (10, 10))
 
+    # create text for score
+    score_text = font.render(f"Score: {player.score}", True, (255, 255, 255))
+    window.blit(score_text, (100, 10))
+
     for obj in objects:
         obj.draw(window, offset_x)
     
@@ -713,7 +747,8 @@ def level_design(block_size):
             blocks = []
             traps = []
             heart1 = Heart(block_size * 3, WIN_HEIGHT - block_size * 5, 16, 16)
-            heart2 = Heart(block_size * 7, WIN_HEIGHT - block_size * 5, 16, 16)
+            heart2 = Heart(block_size * 5, WIN_HEIGHT - block_size * 5, 16, 16)
+            pineapple = Pineapple(block_size * 6, WIN_HEIGHT - block_size * 5, 16, 16)
             speed = Speed(900, WIN_HEIGHT - block_size - 64, 32, 32)
             collectibles_bullets = CollectibleBullets(1100, WIN_HEIGHT - block_size - 64, 32, 32)
             #blocks and traps
@@ -837,7 +872,13 @@ def level_design(block_size):
 def main_game(window): 
     
     block_size = 96
+
+    #initialize score variable
+    score = 0
+
+
     #instantiate objects (same for every level)
+
     player = Player(block_size * 3, WIN_HEIGHT - block_size * 4, 50, 50)
     police = Police(-200, 500, 50, 50)
     bullets = []
@@ -846,6 +887,7 @@ def main_game(window):
     all_objects = design["objects"]
     all_collectibles = design["collectibles"]
     all_destinations = design["destinations"]
+
     
     offset_x = 0
     scroll_area_width = 320
@@ -912,10 +954,10 @@ def main_game(window):
                     player.add_speed = True
                 elif collectible.name == "collectibles_bullets":
                     player.bullets += 3
-                # match collectible.name:
-                #     case "heart":
-                #         player.lives += 1
-        
+                elif collectible.name == "pineapple":
+                    player.score += 1
+                
+
         #level up: destination detection
         if player.rect.x > destination.rect.right:
             pygame.time.wait(500)
@@ -930,7 +972,7 @@ def main_game(window):
             police.rect.y = 500
 
             level_transition(window, player)
-            
+
 
         player.loop(FPS)
         police.loop(FPS, player)
