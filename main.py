@@ -525,7 +525,7 @@ class Pineapple(Object):
 
     def __init__(self, x, y, width, height):
         super().__init__(x, y, width, height, "pineapple")
-        self.heart = load_sprite_sheets("Items", "Fruits", 24, 24)
+        self.heart = load_sprite_sheets("Items", "Fruits", 16, 16)
         self.image = self.heart["Pineapple"][0]
         self.mask = pygame.mask.from_surface(self.image)
         self.x = x
