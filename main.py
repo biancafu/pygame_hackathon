@@ -42,13 +42,13 @@ FPS = 60
 PLAYER_VEL = 5
 POLICE_VEL = 4
 
-BG_IMG = pygame.transform.scale2x(pygame.image.load(os.path.join("imgs", "bg.jpg")))
 
 window = pygame.display.set_mode((WIN_WIDTH, WIN_HEIGHT))
 
 # define font for the text
 font = pygame.font.SysFont("Arial", 24)
 
+BG_IMG = pygame.transform.scale2x(pygame.image.load(os.path.join("imgs", "bg.jpg")).convert_alpha())
 
 
 ################### IMG HANDLING #####################
@@ -279,6 +279,7 @@ class Police(pygame.sprite.Sprite):
 
     def loop(self, fps, player): #looping for each frame
         self.y_vel += min(1, (self.fall_count / fps) * self.GRAVITY)
+
         #chasing
         self.move_towards_player(player)
 
@@ -696,7 +697,6 @@ def draw(window, player, objects, offset_x, police, bullets, collectibles, desti
 
     pygame.display.update()
 
-
 def level_design(block_size):
     design = {}
     objects = []
@@ -708,10 +708,12 @@ def level_design(block_size):
             collectibles.append(0)
             destinations.append(0)
         if j == 1:
+            pass
+        if j == 2:
             blocks = []
             traps = []
             heart1 = Heart(block_size * 3, WIN_HEIGHT - block_size * 5, 16, 16)
-            heart2 = Heart(block_size * 5, WIN_HEIGHT - block_size * 5, 16, 16)
+            heart2 = Heart(block_size * 7, WIN_HEIGHT - block_size * 5, 16, 16)
             speed = Speed(900, WIN_HEIGHT - block_size - 64, 32, 32)
             collectibles_bullets = CollectibleBullets(1100, WIN_HEIGHT - block_size - 64, 32, 32)
             #blocks and traps
@@ -719,88 +721,78 @@ def level_design(block_size):
             fire.on()
             floor = [Block(i * block_size, WIN_HEIGHT - block_size, block_size) for i in range(-WIN_WIDTH // block_size, (WIN_WIDTH * 20)// block_size)]
 
-        # Set up the font
-        font = pygame.font.Font(None, 36)
-
-
-        mx, my = pygame.mouse.get_pos()
-        button_1 = pygame.Rect(400, 490, 200, 50)
-        # draw button rectangle
-        pygame.draw.rect(window, (255, 255, 255), button_1)
-
-        text_surface = font.render("Start Game", True, (0, 0, 0))
-        text_rect = text_surface.get_rect(center=button_1.center)
-        window.blit(text_surface, text_rect)
-
-        if button_1.collidepoint((mx, my)):
-            if click:
-                main_game(window)
+            placed_traps = set()  # set to keep track of placed trap coordinates
         
-        pygame.display.update()
+            for i in range(5):  # create 5 traps
+                while True:
+                    x = random.randint(block_size * 4, WIN_WIDTH * 5 - block_size * 4)  # generate a random x coordinate within a range
+                    y = WIN_HEIGHT - block_size - 30  # set y-coordinate to floor level
+                    # check if there's a block at this position
+                    for block in blocks:
+                        if block.x <= x <= block.x + block.width and block.y <= y <= block.y + block.height:
+                            # there's a block at this position, adjust y-coordinate
+                            y = block.y - 43
+                            break  # stop iterating over blocks since we found one that overlaps
+                    # check if the coordinates are already taken by another trap
+                    if (x,y) not in placed_traps:        
+                    # add the trap to the list and add its coordinates to the placed set
+                        trap = Trap(x, y, 16, 32)
+                        trap.change_image("Idle")
+                        traps.append(trap)
+                        placed_traps.add((x, y))
+                        break # found an available coordinate, break out of the loop
+            #design
+            objects.append([*floor, 
+                        Block(0, WIN_HEIGHT - block_size * 2, block_size), 
+                        Block(block_size * 3, WIN_HEIGHT - block_size * 4, block_size),
+                        Block(block_size * 4, WIN_HEIGHT - block_size * 4, block_size),
+                        Block(block_size * 5, WIN_HEIGHT - block_size * 4, block_size),
+                        Block(block_size * 6, WIN_HEIGHT - block_size * 4, block_size),
+                        *traps, fire])
+            destinations.append(Destination(1500, WIN_HEIGHT - block_size - 128, 32, 32))
+            collectibles.append([heart1, heart2, speed, collectibles_bullets])
+        if j == 2:
+            blocks = []
+            traps = []
+            heart1 = Heart(block_size * 3, WIN_HEIGHT - block_size * 5, 16, 16)
+            heart2 = Heart(block_size * 7, WIN_HEIGHT - block_size * 5, 16, 16)
+            speed = Speed(900, WIN_HEIGHT - block_size - 64, 32, 32)
+            collectibles_bullets = CollectibleBullets(1100, WIN_HEIGHT - block_size - 64, 32, 32)
+            #blocks and traps
+            fire = Fire(700, WIN_HEIGHT - block_size - 64, 16, 32)
+            fire.on()
+            floor = [Block(i * block_size, WIN_HEIGHT - block_size, block_size) for i in range(-WIN_WIDTH // block_size, (WIN_WIDTH * 20)// block_size)]
 
-        click = False
-
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                pygame.quit()
-                sys.exit()
-            if event.type == pygame.MOUSEBUTTONDOWN:
-                if event.button == 1:
-                    click = True
-                    
-        pygame.display.update()
-
-
-def main_game(window): 
-    
-    block_size = 96
-
-    #instantiate objects (same for every level)
-    player = Player(block_size * 3, WIN_HEIGHT - block_size * 4, 50, 50)
-    police = Police(-200, 500, 50, 50)
-    bullets = []
-    blocks = []
-    traps = []
-    objects = []
-    #collectibles
-    heart1 = Heart(block_size * 3, WIN_HEIGHT - block_size * 5, 16, 16)
-    heart2 = Heart(block_size * 5, WIN_HEIGHT - block_size * 5, 16, 16)
-    speed = Speed(900, WIN_HEIGHT - block_size - 64, 32, 32)
-    collectibles_bullets = CollectibleBullets(1100, WIN_HEIGHT - block_size - 64, 32, 32)
-    destination = Destination(1500, WIN_HEIGHT - block_size - 128, 32, 32)
-    collectibles = [heart1, heart2, speed, collectibles_bullets]
-    #blocks and traps
-    fire = Fire(700, WIN_HEIGHT - block_size - 64, 16, 32)
-    fire.on()
-    floor = [Block(i * block_size, WIN_HEIGHT - block_size, block_size) for i in range(-WIN_WIDTH // block_size, (WIN_WIDTH * 20)// block_size)]
-    # create a list of traps with random positions
-    placed_traps = set()  # set to keep track of placed trap coordinates
-    
-    for i in range(5):  # create 5 traps
-      while True:
-        x = random.randint(block_size * 4, WIN_WIDTH * 5 - block_size * 4)  # generate a random x coordinate within a range
-        y = WIN_HEIGHT - block_size - 30  # set y-coordinate to floor level
-        # check if there's a block at this position
-        for block in blocks:
-            if block.x <= x <= block.x + block.width and block.y <= y <= block.y + block.height:
-                # there's a block at this position, adjust y-coordinate
-                y = block.y - 43
-                break  # stop iterating over blocks since we found one that overlaps
-        # check if the coordinates are already taken by another trap
-        if (x,y) not in placed_traps:        
-          # add the trap to the list and add its coordinates to the placed set
-          trap = Trap(x, y, 16, 32)
-          trap.change_image("Idle")
-          traps.append(trap)
-          placed_traps.add((x, y))
-          break # found an available coordinate, break out of the loop
-    objects = [*floor, 
-                Block(0, WIN_HEIGHT - block_size * 2, block_size), 
-                Block(block_size * 3, WIN_HEIGHT - block_size * 4, block_size),
-                Block(block_size * 4, WIN_HEIGHT - block_size * 4, block_size),
-                Block(block_size * 5, WIN_HEIGHT - block_size * 4, block_size),
-                Block(block_size * 6, WIN_HEIGHT - block_size * 4, block_size),
-                *traps, fire]
+            placed_traps = set()  # set to keep track of placed trap coordinates
+        
+            for i in range(5):  # create 5 traps
+                while True:
+                    x = random.randint(block_size * 4, WIN_WIDTH * 5 - block_size * 4)  # generate a random x coordinate within a range
+                    y = WIN_HEIGHT - block_size - 30  # set y-coordinate to floor level
+                    # check if there's a block at this position
+                    for block in blocks:
+                        if block.x <= x <= block.x + block.width and block.y <= y <= block.y + block.height:
+                            # there's a block at this position, adjust y-coordinate
+                            y = block.y - 43
+                            break  # stop iterating over blocks since we found one that overlaps
+                    # check if the coordinates are already taken by another trap
+                    if (x,y) not in placed_traps:        
+                    # add the trap to the list and add its coordinates to the placed set
+                        trap = Trap(x, y, 16, 32)
+                        trap.change_image("Idle")
+                        traps.append(trap)
+                        placed_traps.add((x, y))
+                        break # found an available coordinate, break out of the loop
+            #design
+            objects.append([*floor, 
+                        Block(0, WIN_HEIGHT - block_size * 2, block_size), 
+                        Block(block_size * 3, WIN_HEIGHT - block_size * 4, block_size),
+                        Block(block_size * 4, WIN_HEIGHT - block_size * 4, block_size),
+                        Block(block_size * 5, WIN_HEIGHT - block_size * 4, block_size),
+                        Block(block_size * 6, WIN_HEIGHT - block_size * 4, block_size),
+                        *traps, fire])
+            destinations.append(Destination(1500, WIN_HEIGHT - block_size - 128, 32, 32))
+            collectibles.append([heart1, heart2, speed, collectibles_bullets])
 
     design["objects"] = objects
     design["collectibles"] = collectibles
@@ -923,7 +915,7 @@ def main_game(window):
 def main(window):
     while True:
         window.blit(BG_IMG, (0,0))
-        instruction_image = pygame.image.load("keys.png")
+        instruction_image = pygame.image.load("keys.png").convert_alpha()
         window.blit(instruction_image, (260, 100))
 
         # Set up the font
