@@ -224,8 +224,8 @@ class Player(pygame.sprite.Sprite): #inheriting from sprite for pixel accurate c
         self.rect = self.sprite.get_rect(topleft=(self.rect.x, self.rect.y))
         self.mask = pygame.mask.from_surface(self.sprite)  #sprite uses mask
 
-    def draw(self, window, offset_x):
-        window.blit(self.sprite, (self.rect.x - offset_x, self.rect.y))
+    def draw(self, window, offset_x, offset_y):
+        window.blit(self.sprite, (self.rect.x - offset_x, self.rect.y - offset_y))
 
 class Police(pygame.sprite.Sprite):
     COLOR = (255, 0, 0)
@@ -321,8 +321,8 @@ class Police(pygame.sprite.Sprite):
         self.rect = self.sprite.get_rect(topleft=(self.rect.x, self.rect.y))
         self.mask = pygame.mask.from_surface(self.sprite)  #sprite uses mask
 
-    def draw(self, window, offset_x):
-        window.blit(self.sprite, (self.rect.x - offset_x, self.rect.y))
+    def draw(self, window, offset_x, offset_y):
+        window.blit(self.sprite, (self.rect.x - offset_x, self.rect.y - offset_y))
 
 ###############################################################
 
@@ -337,8 +337,8 @@ class Object(pygame.sprite.Sprite):
         self.height = height
         self.name = name
     
-    def draw(self, window, offset_x):
-        window.blit(self.image, (self.rect.x - offset_x, self.rect.y))
+    def draw(self, window, offset_x, offset_y):
+        window.blit(self.image, (self.rect.x - offset_x, self.rect.y - offset_y))
 
 class Block(Object):
     def __init__(self, x, y, size):
@@ -672,7 +672,7 @@ def level_transition(window, player):
 
 ########################################################
 
-def draw(window, player, objects, offset_x, police, bullets, collectibles, destination):
+def draw(window, player, objects, offset_x, offset_y, police, bullets, collectibles, destination):
     #draw background
     window.blit(BG_IMG, (0,0)) #position 0,0 (top left)
 
@@ -681,18 +681,18 @@ def draw(window, player, objects, offset_x, police, bullets, collectibles, desti
     window.blit(lives_text, (10, 10))
 
     for obj in objects:
-        obj.draw(window, offset_x)
+        obj.draw(window, offset_x, offset_y)
     
     for bullet in bullets:
-        bullet.draw(window, offset_x)
+        bullet.draw(window, offset_x, offset_y)
 
     for collectible in collectibles:
-        collectible.draw(window, offset_x)
+        collectible.draw(window, offset_x, offset_y)
     
-    destination.draw(window, offset_x)
+    destination.draw(window, offset_x, offset_y)
 
-    player.draw(window, offset_x)
-    police.draw(window, offset_x)
+    player.draw(window, offset_x, offset_y)
+    police.draw(window, offset_x, offset_y)
 
     pygame.display.update()
 
@@ -784,10 +784,19 @@ def level_design(block_size):
             #design
             objects.append([*floor, 
                         Block(0, WIN_HEIGHT - block_size * 2, block_size), 
-                        Block(block_size * 1, WIN_HEIGHT - block_size * 4, block_size),
+                        Block(block_size * 3, WIN_HEIGHT - block_size * 4, block_size),
                         Block(block_size * 4, WIN_HEIGHT - block_size * 4, block_size),
-                       
-                        Block(block_size * 6, WIN_HEIGHT - block_size * 5, block_size),
+                        Block(block_size * 4, WIN_HEIGHT - block_size * 4, block_size),
+                        Block(block_size * 5, WIN_HEIGHT - block_size * 5, block_size),
+                        Block(block_size * 6, WIN_HEIGHT - block_size * 6, block_size),
+                        Block(block_size * 7, WIN_HEIGHT - block_size * 8, block_size),
+                        Block(block_size * 8, WIN_HEIGHT - block_size * 10, block_size),
+                        Block(block_size * 9, WIN_HEIGHT - block_size * 12, block_size),
+                        Block(block_size * 10, WIN_HEIGHT - block_size * 13, block_size),
+                        Block(block_size * 11, WIN_HEIGHT - block_size * 15, block_size),
+                        Block(block_size * 12, WIN_HEIGHT - block_size * 16, block_size),
+                        Block(block_size * 13, WIN_HEIGHT - block_size * 17, block_size),
+                        Block(block_size * 14, WIN_HEIGHT - block_size * 18, block_size),
                         *traps, fire])
             destinations.append(Destination(1500, WIN_HEIGHT - block_size - 128, 32, 32))
             collectibles.append([heart1, heart2, speed, collectibles_bullets])
@@ -814,6 +823,9 @@ def main_game(window):
     
     offset_x = 0
     scroll_area_width = 320
+    #vertical scroll
+    offset_y = 0
+    scroll_area_height = 320
     run = True
     level_transition(window, player)
     while run:
@@ -905,12 +917,17 @@ def main_game(window):
         #make bullet disappear after collision
         if collided_bullet:
             bullets.remove(collided_bullet)
-        draw(window, player, objects, offset_x, police, bullets, collectibles, destination)
+        draw(window, player, objects, offset_x,offset_y, police, bullets, collectibles, destination)
 
         if ((player.rect.right - offset_x >= WIN_WIDTH - scroll_area_width) and player.x_vel > 0) or (#moving to the right, off the screen
             (player.rect.left - offset_x <= scroll_area_width) and player.x_vel < 0): #moving to the left, off the screen
             offset_x += player.x_vel
 
+        #vertical scroll
+        if ((player.rect.bottom - offset_y >= WIN_HEIGHT - scroll_area_height) and player.y_vel > 0) or (#moving downwards, off the screen
+            (player.rect.top - offset_y <= scroll_area_height) and player.y_vel < 0): #moving upwards, off the screen
+            offset_y += player.y_vel
+        
     pygame.quit()
     quit()
 
