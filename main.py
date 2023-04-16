@@ -49,6 +49,7 @@ window = pygame.display.set_mode((WIN_WIDTH, WIN_HEIGHT))
 font = pygame.font.SysFont("Arial", 24)
 
 BG_IMG = pygame.transform.scale2x(pygame.image.load(os.path.join("imgs", "bg.jpg")).convert_alpha())
+BG_IMG2 = pygame.image.load(os.path.join("imgs", "a.jpg")).convert_alpha()
 
 
 ################### IMG HANDLING #####################
@@ -520,11 +521,11 @@ class CollectibleBullets(Object):
             self.animation_count = 0
 
 class Pineapple(Object):
-    ANIMATION_DELAY = 5
+    ANIMATION_DELAY = 10
 
     def __init__(self, x, y, width, height):
         super().__init__(x, y, width, height, "pineapple")
-        self.heart = load_sprite_sheets("Items", "Fruits", 32, 32)
+        self.heart = load_sprite_sheets("Items", "Fruits", 24, 24)
         self.image = self.heart["Pineapple"][0]
         self.mask = pygame.mask.from_surface(self.image)
         self.x = x
@@ -711,7 +712,11 @@ def level_transition(window, player):
 
 def draw(window, player, objects, offset_x,offset_y, police, bullets, collectibles, destination):
     #draw background
-    window.blit(BG_IMG, (0,0)) #position 0,0 (top left)
+    if player.level == 2:
+        window.blit(BG_IMG2, (0,0))
+    else:
+        window.blit(BG_IMG, (0,0)) #position 0,0 (top left)
+    
 
     # create text for lives
     lives_text = font.render(f"Lives: {player.lives}", True, (255, 255, 255))
@@ -752,6 +757,8 @@ def level_design(block_size):
             traps = []
             heart1 = Heart(block_size * 3, WIN_HEIGHT - block_size * 5, 16, 16)
             heart2 = Heart(block_size * 7, WIN_HEIGHT - block_size * 5, 16, 16)
+            pineapple = Pineapple(block_size * 4, WIN_HEIGHT - block_size * 5, 12, 12)
+
             speed = Speed(900, WIN_HEIGHT - block_size - 64, 32, 32)
             collectibles_bullets = CollectibleBullets(1100, WIN_HEIGHT - block_size - 64, 32, 32)
             #blocks and traps
@@ -797,7 +804,7 @@ def level_design(block_size):
                         # Block(block_size * 14, WIN_HEIGHT - block_size * 18, block_size),
                         *traps, fire])
             destinations.append(Destination(500, WIN_HEIGHT - block_size * 6 - 128, 32, 32))
-            collectibles.append([heart1, heart2, speed, collectibles_bullets])
+            collectibles.append([heart1, heart2, speed, collectibles_bullets, pineapple])
         if j == 2:
             blocks = []
             traps = []
