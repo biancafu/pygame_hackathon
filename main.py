@@ -42,13 +42,13 @@ FPS = 60
 PLAYER_VEL = 5
 POLICE_VEL = 4
 
-BG_IMG = pygame.transform.scale2x(pygame.image.load(os.path.join("imgs", "bg.jpg")))
 
 window = pygame.display.set_mode((WIN_WIDTH, WIN_HEIGHT))
 
 # define font for the text
 font = pygame.font.SysFont("Arial", 24)
 
+BG_IMG = pygame.transform.scale2x(pygame.image.load(os.path.join("imgs", "bg.jpg")).convert_alpha())
 
 
 ################### IMG HANDLING #####################
@@ -279,6 +279,7 @@ class Police(pygame.sprite.Sprite):
 
     def loop(self, fps, player): #looping for each frame
         self.y_vel += min(1, (self.fall_count / fps) * self.GRAVITY)
+
         #chasing
         self.move_towards_player(player)
 
@@ -696,7 +697,6 @@ def draw(window, player, objects, offset_x, police, bullets, collectibles, desti
 
     pygame.display.update()
 
-
 def level_design(block_size):
     design = {}
     objects = []
@@ -708,47 +708,7 @@ def level_design(block_size):
             collectibles.append(0)
             destinations.append(0)
         if j == 1:
-            blocks = []
-            traps = []
-            heart1 = Heart(block_size * 3, WIN_HEIGHT - block_size * 5, 16, 16)
-            heart2 = Heart(block_size * 5, WIN_HEIGHT - block_size * 5, 16, 16)
-            speed = Speed(900, WIN_HEIGHT - block_size - 64, 32, 32)
-            collectibles_bullets = CollectibleBullets(1100, WIN_HEIGHT - block_size - 64, 32, 32)
-            #blocks and traps
-            fire = Fire(700, WIN_HEIGHT - block_size - 64, 16, 32)
-            fire.on()
-            floor = [Block(i * block_size, WIN_HEIGHT - block_size, block_size) for i in range(-WIN_WIDTH // block_size, (WIN_WIDTH * 20)// block_size)]
-
-            placed_traps = set()  # set to keep track of placed trap coordinates
-        
-            for i in range(5):  # create 5 traps
-                while True:
-                    x = random.randint(block_size * 4, WIN_WIDTH * 5 - block_size * 4)  # generate a random x coordinate within a range
-                    y = WIN_HEIGHT - block_size - 30  # set y-coordinate to floor level
-                    # check if there's a block at this position
-                    for block in blocks:
-                        if block.x <= x <= block.x + block.width and block.y <= y <= block.y + block.height:
-                            # there's a block at this position, adjust y-coordinate
-                            y = block.y - 43
-                            break  # stop iterating over blocks since we found one that overlaps
-                    # check if the coordinates are already taken by another trap
-                    if (x,y) not in placed_traps:        
-                    # add the trap to the list and add its coordinates to the placed set
-                        trap = Trap(x, y, 16, 32)
-                        trap.change_image("Idle")
-                        traps.append(trap)
-                        placed_traps.add((x, y))
-                        break # found an available coordinate, break out of the loop
-            #design
-            objects.append([*floor, 
-                        Block(0, WIN_HEIGHT - block_size * 2, block_size), 
-                        Block(block_size * 3, WIN_HEIGHT - block_size * 4, block_size),
-                        Block(block_size * 4, WIN_HEIGHT - block_size * 4, block_size),
-                        Block(block_size * 5, WIN_HEIGHT - block_size * 4, block_size),
-                        Block(block_size * 6, WIN_HEIGHT - block_size * 4, block_size),
-                        *traps, fire])
-            destinations.append(Destination(1500, WIN_HEIGHT - block_size - 128, 32, 32))
-            collectibles.append([heart1, heart2, speed, collectibles_bullets])
+            pass
         if j == 2:
             blocks = []
             traps = []
@@ -791,6 +751,81 @@ def level_design(block_size):
                         *traps, fire])
             destinations.append(Destination(1500, WIN_HEIGHT - block_size - 128, 32, 32))
             collectibles.append([heart1, heart2, speed, collectibles_bullets])
+        if j == 3:
+            blocks = []
+            traps = []
+            heart1 = Heart(5020, WIN_HEIGHT - block_size * 6.5, 16, 16)
+            heart2 = Heart(7200, WIN_HEIGHT - block_size * 5, 16, 16)
+            speed1 = Speed(900, WIN_HEIGHT - block_size - 64, 32, 32)
+            speed2 = Speed(2500, WIN_HEIGHT - block_size - 64, 32, 32)
+            collectibles_bullets = CollectibleBullets(block_size * 5.2, WIN_HEIGHT - block_size * 6.5, 32, 32)
+            #blocks and traps
+            fire = Fire(3900, WIN_HEIGHT - block_size - 64, 16, 32)
+            fire.on()
+            floor = [Block(i * block_size, WIN_HEIGHT - block_size, block_size) for i in range(-WIN_WIDTH // block_size, (WIN_WIDTH * 11)// block_size)]
+
+            placed_traps = set()  # set to keep track of placed trap coordinates
+
+            #design
+            objects.append([*floor, 
+                        Block(0, WIN_HEIGHT - block_size * 2, block_size), 
+                        Block(block_size * 5, WIN_HEIGHT - block_size * 5.5, block_size), 
+                        #small floating 
+                        Block(block_size * 8, WIN_HEIGHT - block_size * 5, block_size),
+                        Block(block_size * 9, WIN_HEIGHT - block_size * 5, block_size),
+                        Block(block_size * 10, WIN_HEIGHT - block_size * 5, block_size),
+
+                        Block(block_size * 12, WIN_HEIGHT - block_size * 2, block_size),
+                        Block(1200, WIN_HEIGHT - block_size * 2, block_size), 
+                        Block(1350, WIN_HEIGHT - block_size * 5, block_size),
+                        Block(1700, WIN_HEIGHT - block_size * 3.2, block_size), 
+                        Block(1950, WIN_HEIGHT - block_size * 3.2, block_size), 
+
+                        Block(2200, WIN_HEIGHT - block_size * 3.5, block_size), 
+                        Block(2200 + block_size, WIN_HEIGHT - block_size * 3.5, block_size),
+                        Block(2050, WIN_HEIGHT - block_size * 6, block_size),
+                        
+                        Block(2470, WIN_HEIGHT - block_size * 6, block_size),
+                        Block(2470+block_size, WIN_HEIGHT - block_size * 6, block_size),
+
+                        Block(2850, WIN_HEIGHT - block_size * 2, block_size),
+                        Block(2850, WIN_HEIGHT - block_size * 3, block_size),
+                        Block(3100, WIN_HEIGHT - block_size * 5, block_size),
+                        Block(3350, WIN_HEIGHT - block_size * 2, block_size),
+                        Block(3350, WIN_HEIGHT - block_size * 3, block_size),
+
+
+
+                        
+                        #thin blocks
+                        Block(3750, WIN_HEIGHT - block_size * 2, block_size),
+                        Block(3750, WIN_HEIGHT - block_size * 3, block_size),
+                        Block(4170, WIN_HEIGHT - block_size * 2, block_size),
+                        Block(4170, WIN_HEIGHT - block_size * 3, block_size),
+                        #thick blocks
+                        Block(4650, WIN_HEIGHT - block_size * 2, block_size),
+                        Block(4650, WIN_HEIGHT - block_size * 3, block_size),
+                        Block(4650 + block_size, WIN_HEIGHT - block_size * 2, block_size),
+                        Block(4650 + block_size, WIN_HEIGHT - block_size * 3, block_size),
+                        Block(5000, WIN_HEIGHT - block_size * 5.5, block_size),
+                        Block(5300, WIN_HEIGHT - block_size * 2, block_size),
+                        Block(5300, WIN_HEIGHT - block_size * 3, block_size),
+                        Block(5300 + block_size, WIN_HEIGHT - block_size * 2, block_size),
+                        Block(5300 + block_size, WIN_HEIGHT - block_size * 3, block_size),
+
+                        #steps
+                        Block(5600 + block_size, WIN_HEIGHT - block_size * 3, block_size),
+                        Block(5750 + block_size, WIN_HEIGHT - block_size * 4.5, block_size),
+                        Block(5900 + block_size, WIN_HEIGHT - block_size * 6, block_size),
+                        
+                        Block(6050 + block_size, WIN_HEIGHT - block_size * 6, block_size),
+                        Block(6050 + block_size, WIN_HEIGHT - block_size * 6, block_size),
+
+
+
+                        *traps, fire])
+            destinations.append(Destination(10000, WIN_HEIGHT - block_size - 128, 32, 32))
+            collectibles.append([heart1, heart2, speed1, speed2, collectibles_bullets])
 
     design["objects"] = objects
     design["collectibles"] = collectibles
@@ -918,7 +953,7 @@ def main_game(window):
 def main(window):
     while True:
         window.blit(BG_IMG, (0,0))
-        instruction_image = pygame.image.load("keys.png")
+        instruction_image = pygame.image.load("keys.png").convert_alpha()
         window.blit(instruction_image, (260, 100))
 
         # Set up the font
