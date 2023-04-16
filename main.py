@@ -96,7 +96,9 @@ def get_block(size):
 class Player(pygame.sprite.Sprite): #inheriting from sprite for pixel accurate collision (use their methods)
     COLOR = (255, 0, 0)
     GRAVITY = 1
-    SPRITES = [load_sprite_sheets("MainCharacters", "Cat", 32, 32, True), load_sprite_sheets("MainCharacters", "Cat2", 32, 32, True), load_sprite_sheets("MainCharacters", "Cat", 32, 32, True)]
+    SPRITES = [load_sprite_sheets("MainCharacters", "Cat", 32, 32, True), 
+               load_sprite_sheets("MainCharacters", "Cat2", 32, 32, True), 
+               load_sprite_sheets("MainCharacters", "Cat", 32, 32, True)]
     ANIMATION_DELAY = 5
     
     def __init__(self, x, y, width, height) -> None:
@@ -818,7 +820,7 @@ def level_design(block_size):
             floor = [Block(i * block_size, WIN_HEIGHT - block_size, block_size) for i in range(-WIN_WIDTH // block_size, (WIN_WIDTH * 20)// block_size)]
 
             placed_traps = set()  # set to keep track of placed trap coordinates
-        
+
             for i in range(5):  # create 5 traps
                 while True:
                     x = random.randint(block_size * 4, WIN_WIDTH * 5 - block_size * 4)  # generate a random x coordinate within a range
@@ -888,8 +890,8 @@ def level_design(block_size):
                         Block(1950, WIN_HEIGHT - block_size * 3.2, block_size), 
 
                         Block(2200, WIN_HEIGHT - block_size * 3.5, block_size), 
-                        Block(2200 + block_size, WIN_HEIGHT - block_size * 3.5, block_size),
-                        Block(2050, WIN_HEIGHT - block_size * 6, block_size),
+                        Block(2200 + block_size*3, WIN_HEIGHT - block_size * 3.5, block_size),
+                        Block(2100, WIN_HEIGHT - block_size * 6, block_size),
                         
                         Block(2470, WIN_HEIGHT - block_size * 6, block_size),
                         Block(2470+block_size, WIN_HEIGHT - block_size * 6, block_size),
@@ -901,8 +903,6 @@ def level_design(block_size):
                         Block(3350, WIN_HEIGHT - block_size * 3, block_size),
 
 
-
-                        
                         #thin blocks
                         Block(3750, WIN_HEIGHT - block_size * 2, block_size),
                         Block(3750, WIN_HEIGHT - block_size * 3, block_size),
@@ -1064,10 +1064,11 @@ def main_game(window):
             offset_x += player.x_vel
 
         #vertical scroll
-        if (player.rect.bottom - offset_y == WIN_HEIGHT - block_size):
-            offset_y == 0
-        elif ((player.rect.bottom - offset_y >= WIN_HEIGHT - block_size + 5) and player.y_vel > 0) or (#moving downwards, off the screen
-            (player.rect.top - offset_y <= scroll_area_height) and player.y_vel < 0): #moving upwards, off the screen
+        if player.level != 3 and (((player.rect.bottom - offset_y >= WIN_HEIGHT - block_size + 5) and player.y_vel > 0) or (#moving downwards, off the screen
+            (player.rect.top - offset_y <= scroll_area_height) and player.y_vel < 0)): #moving upwards, off the screen
+            offset_y += player.y_vel
+        elif player.level == 3 and (((player.rect.bottom - offset_y >= WIN_HEIGHT - 87) and player.y_vel > 0) or (#moving downwards, off the screen
+            (player.rect.top - offset_y <= 15) and player.y_vel < 0)):
             offset_y += player.y_vel
 
 
