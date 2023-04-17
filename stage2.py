@@ -89,7 +89,7 @@ def get_block(size):
     return pygame.transform.scale2x(surface)
 
 def get_block2(size):
-    path = join("assets", "Terrain", "Test.png")
+    path = join("assets", "Terrain", "test1.jpg")
     image = pygame.image.load(path).convert_alpha()
     surface = pygame.Surface((size, size), pygame.SRCALPHA, 32)
     rect = pygame.Rect(96, 0, size, size)  #96, 0 is position of the part we want (top left)
