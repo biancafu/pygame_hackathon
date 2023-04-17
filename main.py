@@ -1318,7 +1318,7 @@ def main_game(window):
 
             #monster
             for obj in objects:
-                if obj.name == "monster":
+                if obj.name == "monster" or obj.name == "fire":
                     obj.loop()
         else:
             #you win screen
