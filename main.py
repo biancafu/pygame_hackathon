@@ -999,6 +999,12 @@ def level_design(block_size):
                 Pineapple(block_size * 8, WIN_HEIGHT - block_size * 6, 16, 16),
                 Pineapple(block_size * 9, WIN_HEIGHT - block_size * 6, 16, 16),
                 Pineapple(block_size * 10, WIN_HEIGHT - block_size * 6, 16, 16),
+                Pineapple(block_size * 17.5, WIN_HEIGHT - block_size * 4.2, 16, 16),
+                Pineapple(block_size * 18, WIN_HEIGHT - block_size * 4.2, 16, 16),
+                Pineapple(block_size * 18.5, WIN_HEIGHT - block_size * 4.2, 16, 16),
+                Pineapple(block_size * 19.5, WIN_HEIGHT - block_size * 4.2, 16, 16),
+                Pineapple(block_size * 20, WIN_HEIGHT - block_size * 4.2, 16, 16),
+                Pineapple(block_size * 20.5, WIN_HEIGHT - block_size * 4.2, 16, 16),
             ]
             floor = [Block3(i * block_size, WIN_HEIGHT - block_size, block_size) for i in range(-WIN_WIDTH // block_size, (WIN_WIDTH * 11)// block_size)]
 
