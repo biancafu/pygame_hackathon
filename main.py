@@ -1341,7 +1341,7 @@ def main(window):
     while True:
         window.blit(BG_IMG, (0,0))
         instruction_image = pygame.image.load("keys.png").convert_alpha()
-        window.blit(instruction_image, (260, 100))
+        window.blit(instruction_image, (10, 100))
 
         # Set up the font
         font = pygame.font.Font(None, 36)
