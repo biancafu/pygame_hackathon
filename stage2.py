@@ -810,8 +810,10 @@ def level_design(block_size):
         if j == 2:
             blocks = []
             traps = []
-            heart1 = Heart(block_size * 3, WIN_HEIGHT - block_size * 5, 16, 16)
-            heart2 = Heart(block_size * 7, WIN_HEIGHT - block_size * 8, 16, 16)
+            heart1 = Heart(block_size * 13, WIN_HEIGHT - block_size * 5, 16, 16)
+            heart2 = Heart(block_size * 17, WIN_HEIGHT - block_size * 8, 16, 16)
+            heart3 = Heart(block_size * 20, WIN_HEIGHT - block_size * 17, 16, 16)
+            heart4 = Heart(block_size * 25, WIN_HEIGHT - block_size * 10, 16, 16)
             speed = Speed(900, WIN_HEIGHT - block_size - 64, 32, 32)
             collectibles_bullets = CollectibleBullets(1100, WIN_HEIGHT - block_size - 64, 32, 32)
             #blocks and traps
@@ -841,40 +843,47 @@ def level_design(block_size):
                         break # found an available coordinate, break out of the loop
             #design
             pineapples = [
-                Pineapple(block_size * 4, WIN_HEIGHT - block_size * 5, 16, 16),
-                Pineapple(block_size * 4.5, WIN_HEIGHT - block_size * 5.5, 16, 16),
-                Pineapple(block_size * 5, WIN_HEIGHT - block_size * 6, 16, 16)
+                Pineapple(block_size * 14, WIN_HEIGHT - block_size * 5, 16, 16),
+                Pineapple(block_size * 14.5, WIN_HEIGHT - block_size * 5.5, 16, 16),
+                Pineapple(block_size * 15, WIN_HEIGHT - block_size * 6, 16, 16),
+                Pineapple(block_size * 24, WIN_HEIGHT - block_size * 19, 16, 16),
+                Pineapple(block_size * 24.5, WIN_HEIGHT - block_size * 19, 16, 16),
+                Pineapple(block_size * 25, WIN_HEIGHT - block_size * 19, 16, 16),
+                Pineapple(block_size * 24, WIN_HEIGHT - block_size * 19.5, 16, 16),
+                Pineapple(block_size * 24.5, WIN_HEIGHT - block_size * 19.5, 16, 16),
+                Pineapple(block_size * 25, WIN_HEIGHT - block_size * 19.5, 16, 16),
             ]
             objects.append([*floor, 
-                        Block(0, WIN_HEIGHT - block_size * 2, block_size), 
-                        Block(block_size * 3, WIN_HEIGHT - block_size * 4, block_size),
-                        Block(block_size * 5, WIN_HEIGHT - block_size * 5, block_size),
-                        Block(block_size * 7, WIN_HEIGHT - block_size * 6, block_size),
-                        Block(block_size * 7, WIN_HEIGHT - block_size * 7, block_size),
-                        Block(block_size * 9, WIN_HEIGHT - block_size * 7, block_size),
-                        Block(block_size * 11, WIN_HEIGHT - block_size * 7, block_size),
-                        Block(block_size * 13, WIN_HEIGHT - block_size * 8, block_size),
-                        Block(block_size * 15, WIN_HEIGHT - block_size * 9, block_size),
-                        Block(block_size * 17, WIN_HEIGHT - block_size * 10, block_size),
-                        Block(block_size * 15, WIN_HEIGHT - block_size * 12, block_size),
-                        Block(block_size * 13, WIN_HEIGHT - block_size * 14, block_size),
-                        Block(block_size * 11, WIN_HEIGHT - block_size * 16, block_size),
-                        Block(block_size * 9, WIN_HEIGHT - block_size * 16, block_size),
-                        Block(block_size * 7, WIN_HEIGHT - block_size * 18, block_size),
-                        Block(block_size * 9, WIN_HEIGHT - block_size * 20, block_size),
-                        Block(block_size * 7, WIN_HEIGHT - block_size * 22, block_size),
-                        Block(block_size * 5, WIN_HEIGHT - block_size * 22, block_size),
-                        Block(block_size * 4, WIN_HEIGHT - block_size * 22, block_size),
-                        Block(block_size * 3, WIN_HEIGHT - block_size * 24, block_size),
+                        Block(10, WIN_HEIGHT - block_size * 2, block_size), 
+                        Block(block_size * 13, WIN_HEIGHT - block_size * 3, block_size),
+                        Block(block_size * 15, WIN_HEIGHT - block_size * 5, block_size),
+                        Block(block_size * 17, WIN_HEIGHT - block_size * 6, block_size),
+                        Block(block_size * 17, WIN_HEIGHT - block_size * 7, block_size),
+                        Block(block_size * 19, WIN_HEIGHT - block_size * 7, block_size),
+                        Block(block_size * 21, WIN_HEIGHT - block_size * 7, block_size),
+                        Block(block_size * 23, WIN_HEIGHT - block_size * 8, block_size),
+                        Block(block_size * 25, WIN_HEIGHT - block_size * 9, block_size),
+                        Block(block_size * 27, WIN_HEIGHT - block_size * 10, block_size),
+                        Block(block_size * 25, WIN_HEIGHT - block_size * 12, block_size),
+                        Block(block_size * 23, WIN_HEIGHT - block_size * 14, block_size),
+                        Block(block_size * 21, WIN_HEIGHT - block_size * 16, block_size),
+                        Block(block_size * 19, WIN_HEIGHT - block_size * 16, block_size),
+                        Block(block_size * 17, WIN_HEIGHT - block_size * 18, block_size),
+                        Block(block_size * 24, WIN_HEIGHT - block_size * 18, block_size),
+                        Block(block_size * 19, WIN_HEIGHT - block_size * 20, block_size),
+                        Block(block_size * 17, WIN_HEIGHT - block_size * 22, block_size),
+                        Block(block_size * 15, WIN_HEIGHT - block_size * 22, block_size),
+                        Block(block_size * 14, WIN_HEIGHT - block_size * 22, block_size),
+                        Block(block_size * 13, WIN_HEIGHT - block_size * 24, block_size),
                         *traps, fire])
             destinations.append(Destination(260, WIN_HEIGHT - block_size * 24 - 128, 32, 32))
-            collectibles.append([heart1, heart2, speed, collectibles_bullets, *pineapples])
+            collectibles.append([heart1, heart2, heart3,heart4, speed, collectibles_bullets, *pineapples])
 
         if j == 3:
             blocks = []
             traps = []
-            heart1 = Heart(5020, WIN_HEIGHT - block_size * 6.5, 16, 16)
-            heart2 = Heart(7200, WIN_HEIGHT - block_size * 5, 16, 16)
+            heart1 = Heart(block_size * 13, WIN_HEIGHT - block_size * 16.5, 16, 16)
+            heart2 = Heart(block_size * 17, WIN_HEIGHT - block_size * 15, 16, 16)
             speed1 = Speed(900, WIN_HEIGHT - block_size - 64, 32, 32)
             speed2 = Speed(2500, WIN_HEIGHT - block_size - 64, 32, 32)
             collectibles_bullets = CollectibleBullets(block_size * 5.2, WIN_HEIGHT - block_size * 6.5, 32, 32)
