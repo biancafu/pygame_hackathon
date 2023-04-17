@@ -424,7 +424,48 @@ class Projectile(Object):
         if self.animation_count // self.ANIMATION_DELAY > len(sprites):
             self.animation_count = 0
 
-    
+class Monster(Object):
+    ANIMATION_DELAY = 20
+
+    def __init__(self, x, y, width, height, distance):
+        super().__init__(x, y, width, height, "monster")
+        self.moster = load_sprite_sheets("MainCharacters", "Monster", 24, 24, True)
+        self.mask = pygame.mask.from_surface(self.image)
+        self.x = x
+        self.y = y
+        self.start = x
+        self.distance = distance
+        self.vel = 3
+        self.direction = 1
+        self.animation_count = 0
+        self.animation_name = "idle"
+
+    def move(self, dx):
+        self.rect.x += dx
+
+    def loop(self): #looping for each frame 
+        self.move(self.vel * self.direction)
+        if self.rect.right > (self.start + self.distance) or self.rect.left < self.start:
+            self.direction *= -1
+            
+        self.update_sprite()
+
+    def update_sprite(self):
+        if self.direction == 1:
+            facing = "right"
+        else:
+            facing = "left"
+        sprite_sheet_name = self.animation_name + "_" + facing
+        sprites = self.moster[sprite_sheet_name]
+        sprite_index = (self.animation_count // self.ANIMATION_DELAY) % len(sprites)
+        self.image = sprites[sprite_index]
+        self.animation_count += 1
+        #update
+        self.rect = self.image.get_rect(topleft=(self.rect.x, self.rect.y))
+        self.mask = pygame.mask.from_surface(self.image)  #sprite uses mask
+
+        if self.animation_count // self.ANIMATION_DELAY > len(sprites):
+            self.animation_count = 0
 
 class Trap(Object):
     def __init__(self, x, y, width, height):
@@ -635,7 +676,7 @@ def handle_move(player, objects):
     vertical_collide = handle_vertical_collision(player, objects, player.y_vel)
     to_check = [collide_left, collide_right, *vertical_collide]
     for obj in to_check:
-        if obj and obj.name == "fire":
+        if obj and (obj.name == "fire" or obj.name == "monster"):
             player.make_hit()
             player.minus_life()
             if player.lives > 0:
@@ -645,6 +686,7 @@ def handle_move(player, objects):
                 break
         elif obj and obj.name == "trap":
             player.decrease_speed = True
+
 
 
 
@@ -868,6 +910,7 @@ def level_design(block_size):
             speed2 = Speed(2500, WIN_HEIGHT - block_size - 64, 32, 32)
             collectibles_bullets = CollectibleBullets(block_size * 5.2, WIN_HEIGHT - block_size * 6.5, 32, 32)
             #blocks and traps
+            monster = Monster(block_size * 8, WIN_HEIGHT - block_size * 5.5, 24, 24, block_size * 2)
             fire = Fire(3900, WIN_HEIGHT - block_size - 64, 16, 32)
             fire.on()
             floor = [Block(i * block_size, WIN_HEIGHT - block_size, block_size) for i in range(-WIN_WIDTH // block_size, (WIN_WIDTH * 11)// block_size)]
@@ -921,15 +964,31 @@ def level_design(block_size):
 
                         #steps
                         Block(5600 + block_size, WIN_HEIGHT - block_size * 3, block_size),
-                        Block(5750 + block_size, WIN_HEIGHT - block_size * 4.5, block_size),
-                        Block(5900 + block_size, WIN_HEIGHT - block_size * 6, block_size),
+                        Block(5800 + block_size, WIN_HEIGHT - block_size * 4.5, block_size),
+                        Block(6000 + block_size, WIN_HEIGHT - block_size * 6, block_size),
                         
-                        Block(6050 + block_size, WIN_HEIGHT - block_size * 6, block_size),
-                        Block(6050 + block_size, WIN_HEIGHT - block_size * 6, block_size),
+                        Block(6250 + block_size, WIN_HEIGHT - block_size * 6, block_size),
+                        Block(6250 + block_size, WIN_HEIGHT - block_size * 6, block_size),
+
+                        Block(6450 + block_size, WIN_HEIGHT - block_size * 4, block_size),
+
+                        #hidden
+                        Block(6800, WIN_HEIGHT - block_size * 2, block_size),
+                        Block(6800 + block_size, WIN_HEIGHT - block_size * 3, block_size),
+
+                        Block(7100, WIN_HEIGHT - block_size * 2, block_size),
+                        Block(7100 + block_size *1, WIN_HEIGHT - block_size * 3, block_size),
+                        Block(7100 + block_size *2, WIN_HEIGHT - block_size * 3, block_size),
+                        Block(7100 + block_size *3, WIN_HEIGHT - block_size * 3, block_size),
+                        Block(7100 + block_size *4, WIN_HEIGHT - block_size * 3, block_size),
+                        Block(7100 + block_size *5, WIN_HEIGHT - block_size * 3, block_size),
 
 
 
-                        *traps, fire])
+
+
+
+                        *traps, fire, monster])
             destinations.append(Destination(10000, WIN_HEIGHT - block_size - 128, 32, 32))
             collectibles.append([heart1, heart2, speed1, speed2, collectibles_bullets])
 
