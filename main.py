@@ -50,6 +50,7 @@ font = pygame.font.SysFont("Arial", 24)
 
 BG_IMG = pygame.transform.scale2x(pygame.image.load(os.path.join("imgs", "bg.jpg")).convert_alpha())
 BG_IMG2 = pygame.transform.scale2x(pygame.image.load(os.path.join("imgs", "b.jpg")).convert_alpha())
+BG_IMG3 = pygame.transform.scale2x(pygame.image.load(os.path.join("imgs", "c.jpg")).convert_alpha())
 
 
 ################### IMG HANDLING #####################
@@ -788,6 +789,8 @@ def draw(window, player, objects, offset_x,offset_y, police, bullets, collectibl
     #draw background
     if player.level == 2:
         window.blit(BG_IMG2, (0,0))
+    elif player.level == 3:
+        window.blit(BG_IMG3, (0,0))
     else:
         window.blit(BG_IMG, (0,0)) #position 0,0 (top left)
     
@@ -827,6 +830,7 @@ def level_design(block_size):
             collectibles.append(0)
             destinations.append(0)
         if j == 1:
+            continue
             blocks = []
             traps = []
             heart1 = Heart(block_size * 3, WIN_HEIGHT - block_size * 5, 16, 16)
@@ -880,6 +884,7 @@ def level_design(block_size):
             destinations.append(Destination(500, WIN_HEIGHT - block_size * 6 - 128, 32, 32))
             collectibles.append([heart1, heart2, speed, collectibles_bullets, pineapple])
         if j == 2:
+            continue
             blocks = []
             traps = []
             heart1 = Heart(block_size * 13, WIN_HEIGHT - block_size * 5, 16, 16)
@@ -1023,9 +1028,7 @@ def level_design(block_size):
                         Block3(4170, WIN_HEIGHT - block_size * 2, block_size),
                         Block3(4170, WIN_HEIGHT - block_size * 3, block_size),
 
-                        Block3(3980 + block_size , WIN_HEIGHT - block_size * 6.5, block_size),
-                        Block3(3980 + block_size *1, WIN_HEIGHT - block_size * 6.5, block_size),
-                        Block3(3980 + block_size *2, WIN_HEIGHT - block_size * 6.5, block_size),
+                        
                         #thick blocks
                         Block3(4650, WIN_HEIGHT - block_size * 2, block_size),
                         Block3(4650, WIN_HEIGHT - block_size * 3, block_size),
@@ -1062,10 +1065,23 @@ def level_design(block_size):
                         Block3(7300+ block_size * 4, WIN_HEIGHT - block_size * 4, block_size),
                         Block3(7300+ block_size * 4, WIN_HEIGHT - block_size * 4, block_size),
                         Block3(7300+ block_size * 5, WIN_HEIGHT - block_size * 5, block_size),
+
+                        Block3(6870 + block_size *2, WIN_HEIGHT - block_size * 5.5, block_size),
                         Block3(7100 + block_size *2, WIN_HEIGHT - block_size * 6.5, block_size),
                         Block3(7100 + block_size *3, WIN_HEIGHT - block_size * 6.5, block_size),
-                        Block3(7100 + block_size *4, WIN_HEIGHT - block_size * 6.5, block_size),
-                        Block3(7100 + block_size *5, WIN_HEIGHT - block_size * 6.5, block_size),
+
+                        Block3(7300 + block_size *2, WIN_HEIGHT - block_size * 3.5, block_size),
+                        Block3(7300 + block_size *5, WIN_HEIGHT - block_size * 5, block_size),
+                        Block3(7300 + block_size *7.5, WIN_HEIGHT - block_size * 6, block_size),
+                        Block3(7300 + block_size *8.5, WIN_HEIGHT - block_size * 5, block_size),
+                        Block3(7300 + block_size *9.5, WIN_HEIGHT - block_size * 4, block_size),
+                        Block3(7300 + block_size *10.5, WIN_HEIGHT - block_size * 4, block_size),
+                        Block3(8400, WIN_HEIGHT - block_size * 5.5, block_size),
+                        Block3(8400 + block_size *1, WIN_HEIGHT - block_size * 5.5, block_size),
+                        Block3(8400 + block_size *3, WIN_HEIGHT - block_size * 4, block_size),
+
+
+
 
 
 
@@ -1206,10 +1222,10 @@ def main_game(window):
             offset_x += player.x_vel
 
         #vertical scroll
-        if player.level != 3 and (((player.rect.bottom - offset_y >= WIN_HEIGHT - block_size + 5) and player.y_vel > 0) or (#moving downwards, off the screen
+        if player.level == 2 and (((player.rect.bottom - offset_y >= WIN_HEIGHT - block_size + 5) and player.y_vel > 0) or (#moving downwards, off the screen
             (player.rect.top - offset_y <= scroll_area_height) and player.y_vel < 0)): #moving upwards, off the screen
             offset_y += player.y_vel
-        elif player.level == 3 and (((player.rect.bottom - offset_y >= WIN_HEIGHT - 87) and player.y_vel > 0) or (#moving downwards, off the screen
+        elif (((player.rect.bottom - offset_y >= WIN_HEIGHT - 87) and player.y_vel > 0) or (#moving downwards, off the screen
             (player.rect.top - offset_y <= 15) and player.y_vel < 0)):
             offset_y += player.y_vel
 
