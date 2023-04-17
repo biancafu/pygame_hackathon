@@ -454,6 +454,8 @@ class Projectile(Object):
         self.vel = 8 * facing
         self.animation_count = 0
         self.animation_name = "Ice_Particle"
+        self.projectile_sound = pygame.mixer.Sound("pew.mp3")
+        self.audio_played = False
 
     def move(self, dx):
         self.rect.x += dx
@@ -461,6 +463,9 @@ class Projectile(Object):
     def loop(self, fps): #looping for each frame
         self.move(self.vel)
         self.update_sprite()
+        if not self.audio_played:
+            self.projectile_sound.play()
+            self.audio_played = True
 
     def update_sprite(self):
         sprites = self.projectile[self.animation_name]
