@@ -849,7 +849,6 @@ def level_design(block_size):
             collectibles.append(0)
             destinations.append(0)
         if j == 1:
-            continue
             blocks = []
             traps = []
             heart1 = Heart(block_size * 3, WIN_HEIGHT - block_size * 5, 16, 16)
@@ -903,7 +902,6 @@ def level_design(block_size):
             destinations.append(Destination(500, WIN_HEIGHT - block_size * 6 - 128, 32, 32))
             collectibles.append([heart1, heart2, speed, collectibles_bullets, pineapple])
         if j == 2:
-            continue
             blocks = []
             traps = []
             heart1 = Heart(block_size * 13, WIN_HEIGHT - block_size * 5, 16, 16)
@@ -996,7 +994,12 @@ def level_design(block_size):
             #blocks and traps
             monster = Monster(block_size * 8 + 25, WIN_HEIGHT - block_size * 5.5, 24, 24, 200)
             fire = Fire(3900, WIN_HEIGHT - block_size - 64, 16, 32)
-            # fire.on()
+
+            pineapples = [
+                Pineapple(block_size * 8, WIN_HEIGHT - block_size * 6, 16, 16),
+                Pineapple(block_size * 9, WIN_HEIGHT - block_size * 6, 16, 16),
+                Pineapple(block_size * 10, WIN_HEIGHT - block_size * 6, 16, 16),
+            ]
             floor = [Block3(i * block_size, WIN_HEIGHT - block_size, block_size) for i in range(-WIN_WIDTH // block_size, (WIN_WIDTH * 11)// block_size)]
 
             placed_traps = set()  # set to keep track of placed trap coordinates
@@ -1012,8 +1015,8 @@ def level_design(block_size):
 
                         Block3(1200, WIN_HEIGHT - block_size * 2, block_size), 
                         Block3(1350, WIN_HEIGHT - block_size * 5, block_size),
-                        Block3(1700, WIN_HEIGHT - block_size * 3.2, block_size), 
-                        Block3(1950, WIN_HEIGHT - block_size * 3.2, block_size), 
+                        Block3(1700, WIN_HEIGHT - block_size * 3.5, block_size), 
+                        Block3(1950, WIN_HEIGHT - block_size * 3.5, block_size), 
 
                         Block3(2200, WIN_HEIGHT - block_size * 3.5, block_size), 
                         Block3(2200 + block_size*3, WIN_HEIGHT - block_size * 3.5, block_size),
@@ -1077,28 +1080,35 @@ def level_design(block_size):
                         Block3(6800, WIN_HEIGHT - block_size * 2, block_size),
                         Block3(6800 + block_size, WIN_HEIGHT - block_size * 3, block_size),
 
-                        Block3(7100, WIN_HEIGHT - block_size * 2, block_size),
                         Block3(7400, WIN_HEIGHT - block_size * 2, block_size),
                         
-                        Block3(7300+ block_size * 3, WIN_HEIGHT - block_size * 4, block_size),
-                        Block3(7300+ block_size * 4, WIN_HEIGHT - block_size * 4, block_size),
-                        Block3(7300+ block_size * 4, WIN_HEIGHT - block_size * 4, block_size),
-                        Block3(7300+ block_size * 5, WIN_HEIGHT - block_size * 5, block_size),
+                        Block3(7300+ block_size * 3, WIN_HEIGHT - block_size * 4.5, block_size),
+                        Block3(7300+ block_size * 4, WIN_HEIGHT - block_size * 4.5, block_size),
+                        Block3(7300+ block_size * 5, WIN_HEIGHT - block_size * 5.5, block_size),
 
                         Block3(6870 + block_size *2, WIN_HEIGHT - block_size * 5.5, block_size),
                         Block3(7100 + block_size *2, WIN_HEIGHT - block_size * 6.5, block_size),
                         Block3(7100 + block_size *3, WIN_HEIGHT - block_size * 6.5, block_size),
 
                         Block3(7300 + block_size *2, WIN_HEIGHT - block_size * 3.5, block_size),
-                        Block3(7300 + block_size *5, WIN_HEIGHT - block_size * 5, block_size),
-                        Block3(7300 + block_size *7.5, WIN_HEIGHT - block_size * 6, block_size),
-                        Block3(7300 + block_size *8.5, WIN_HEIGHT - block_size * 5, block_size),
-                        Block3(7300 + block_size *9.5, WIN_HEIGHT - block_size * 4, block_size),
-                        Block3(7300 + block_size *10.5, WIN_HEIGHT - block_size * 4, block_size),
-                        Block3(8400, WIN_HEIGHT - block_size * 5.5, block_size),
-                        Block3(8400 + block_size *1, WIN_HEIGHT - block_size * 5.5, block_size),
-                        Block3(8400 + block_size *3, WIN_HEIGHT - block_size * 4, block_size),
+              
+                        #big gap
 
+                        Block3(7500 + block_size *7.5, WIN_HEIGHT - block_size * 6, block_size),
+                        Block3(7500 + block_size *8.5, WIN_HEIGHT - block_size * 5, block_size),
+                        Block3(7500 + block_size *9.5, WIN_HEIGHT - block_size * 4, block_size),
+
+                        Block3(9100, WIN_HEIGHT - block_size * 3.5, block_size),
+                        Block3(8450 + block_size *3, WIN_HEIGHT - block_size * 4.8, block_size),
+                        Block3(8450 + block_size *4, WIN_HEIGHT - block_size * 4.8, block_size),
+
+                        Block3(8950 + block_size *3, WIN_HEIGHT - block_size * 6.5, block_size),
+                        Block3(8950 + block_size *5, WIN_HEIGHT - block_size * 3, block_size),
+                        Block3(8950 + block_size *7, WIN_HEIGHT - block_size * 5, block_size),
+                        Block3(8950 + block_size *8, WIN_HEIGHT - block_size * 5, block_size),
+
+                        Block3(9900, WIN_HEIGHT - block_size * 3.7, block_size),
+                        Block3(9900 + block_size, WIN_HEIGHT - block_size * 3.7, block_size),
 
 
 
@@ -1107,8 +1117,8 @@ def level_design(block_size):
 
 
                         *traps, fire, monster])
-            destinations.append(Destination(10000, WIN_HEIGHT - block_size - 128, 32, 32))
-            collectibles.append([heart1, heart2, speed1, speed2, collectibles_bullets])
+            destinations.append(Destination(10000, WIN_HEIGHT - block_size*3.7 - 128, 32, 32))
+            collectibles.append([heart1, heart2, speed1, speed2, collectibles_bullets, *pineapples])
 
     design["objects"] = objects
     design["collectibles"] = collectibles
