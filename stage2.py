@@ -806,6 +806,7 @@ def level_design(block_size):
                         *traps, fire])
             destinations.append(Destination(500, WIN_HEIGHT - block_size * 6 - 128, 32, 32))
             collectibles.append([heart1, heart2, speed, collectibles_bullets, pineapple])
+
         if j == 2:
             blocks = []
             traps = []
@@ -852,9 +853,21 @@ def level_design(block_size):
                         Block(block_size * 7, WIN_HEIGHT - block_size * 7, block_size),
                         Block(block_size * 9, WIN_HEIGHT - block_size * 7, block_size),
                         Block(block_size * 11, WIN_HEIGHT - block_size * 7, block_size),
-                        Block(block_size * 14, WIN_HEIGHT - block_size * 18, block_size),
+                        Block(block_size * 13, WIN_HEIGHT - block_size * 8, block_size),
+                        Block(block_size * 15, WIN_HEIGHT - block_size * 9, block_size),
+                        Block(block_size * 17, WIN_HEIGHT - block_size * 10, block_size),
+                        Block(block_size * 15, WIN_HEIGHT - block_size * 12, block_size),
+                        Block(block_size * 13, WIN_HEIGHT - block_size * 14, block_size),
+                        Block(block_size * 11, WIN_HEIGHT - block_size * 16, block_size),
+                        Block(block_size * 9, WIN_HEIGHT - block_size * 16, block_size),
+                        Block(block_size * 7, WIN_HEIGHT - block_size * 18, block_size),
+                        Block(block_size * 9, WIN_HEIGHT - block_size * 20, block_size),
+                        Block(block_size * 7, WIN_HEIGHT - block_size * 22, block_size),
+                        Block(block_size * 5, WIN_HEIGHT - block_size * 22, block_size),
+                        Block(block_size * 4, WIN_HEIGHT - block_size * 22, block_size),
+                        Block(block_size * 3, WIN_HEIGHT - block_size * 24, block_size),
                         *traps, fire])
-            destinations.append(Destination(20000, WIN_HEIGHT - block_size * 20 - 128, 32, 32))
+            destinations.append(Destination(260, WIN_HEIGHT - block_size * 24 - 128, 32, 32))
             collectibles.append([heart1, heart2, speed, collectibles_bullets, *pineapples])
 
         if j == 3:
@@ -964,7 +977,7 @@ def main_game(window):
     scroll_area_width = 320
     #vertical scroll
     offset_y = 0
-    scroll_area_height = 320
+    scroll_area_height = 260
     run = True
     level_transition(window, player)
     while run:
