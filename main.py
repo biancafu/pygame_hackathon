@@ -49,7 +49,7 @@ window = pygame.display.set_mode((WIN_WIDTH, WIN_HEIGHT))
 font = pygame.font.SysFont("Arial", 24)
 
 BG_IMG = pygame.transform.scale2x(pygame.image.load(os.path.join("imgs", "bg.jpg")).convert_alpha())
-BG_IMG2 = pygame.transform.scale2x(pygame.image.load(os.path.join("imgs", "b.jpg")).convert_alpha())
+BG_IMG2 = pygame.transform.scale2x(pygame.image.load(os.path.join("imgs", "black.jpg")).convert_alpha())
 
 
 ################### IMG HANDLING #####################
