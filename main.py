@@ -49,9 +49,9 @@ window = pygame.display.set_mode((WIN_WIDTH, WIN_HEIGHT))
 # define font for the text
 font = pygame.font.SysFont("Arial", 24)
 
-# BG_IMG = pygame.transform.scale2x(pygame.image.load(os.path.join("imgs", "bg.jpg")).convert_alpha())
+BG_IMG = pygame.transform.scale2x(pygame.image.load(os.path.join("imgs", "bg.jpg")).convert_alpha())
 BG_IMG2 = pygame.transform.scale2x(pygame.image.load(os.path.join("imgs", "black.jpg")).convert_alpha())
-BG_IMG = pygame.transform.scale2x(pygame.image.load(os.path.join("imgs", "c.jpg")).convert_alpha())
+BG_IMG3 = pygame.transform.scale2x(pygame.image.load(os.path.join("imgs", "c.jpg")).convert_alpha())
 
 
 
@@ -988,7 +988,7 @@ def level_design(block_size):
             traps = []
             heart1 = Heart(block_size * 5.2, WIN_HEIGHT - block_size * 6.5, 16, 16)
             heart2 = Heart(7200, WIN_HEIGHT - block_size * 5, 16, 16)
-            heart3 = Heart(3500, WIN_HEIGHT - block_size * 5, 16, 16)
+            heart3 = Heart(3560, WIN_HEIGHT - block_size * 5, 16, 16)
             hearts = [heart1, heart2, heart3]
             speed1 = Speed(900, WIN_HEIGHT - block_size - 64, 32, 32)
             speed2 = Speed(4300, WIN_HEIGHT - block_size*6.5 - 64, 32, 32)
@@ -997,8 +997,8 @@ def level_design(block_size):
             monster = Monster(block_size * 8 + 25, WIN_HEIGHT - block_size * 5.5, 24, 24, 200)
             monster2 = Monster(4000, WIN_HEIGHT - block_size * 7, 24, 24, 320)
             monster3 = Monster(4320, WIN_HEIGHT - block_size * 1.8, 24, 24, 320)
-            monster3 = Monster(3000, WIN_HEIGHT - block_size * 1.8, 24, 24, 320)
-            monsters = [monster, monster2, monster3]
+            monster4 = Monster(3000, WIN_HEIGHT - block_size * 1.8, 24, 24, 320)
+            monsters = [monster, monster2, monster3, monster4]
 
             fire = Fire(3900, WIN_HEIGHT - block_size - 64, 16, 32)
 
@@ -1033,6 +1033,8 @@ def level_design(block_size):
                 Pineapple(3400, WIN_HEIGHT - block_size * 7, 16, 16),
                 Pineapple(3400 + block_size * 0.5, WIN_HEIGHT - block_size * 7, 16, 16),
                 Pineapple(3400 + block_size * 1, WIN_HEIGHT - block_size * 7, 16, 16),
+                Pineapple(3580 + block_size * 0.5, WIN_HEIGHT - block_size * 7, 16, 16),
+                Pineapple(3580 + block_size * 1, WIN_HEIGHT - block_size * 7, 16, 16),
                 Pineapple(3800, WIN_HEIGHT - block_size * 8, 16, 16),
                 Pineapple(3800 + block_size * 0.5, WIN_HEIGHT - block_size * 8, 16, 16),
                 Pineapple(3800 + block_size * 1, WIN_HEIGHT - block_size * 8, 16, 16),
