@@ -30,6 +30,7 @@ import math
 import sys
 from os import listdir
 from os.path import isfile, join
+from pygame import mixer
 
 clock = pygame.time.Clock()
 pygame.init()
@@ -51,6 +52,23 @@ font = pygame.font.SysFont("Arial", 24)
 BG_IMG = pygame.transform.scale2x(pygame.image.load(os.path.join("imgs", "bg.jpg")).convert_alpha())
 BG_IMG2 = pygame.transform.scale2x(pygame.image.load(os.path.join("imgs", "black.jpg")).convert_alpha())
 BG_IMG3 = pygame.transform.scale2x(pygame.image.load(os.path.join("imgs", "c.jpg")).convert_alpha())
+
+
+
+#Instantiate mixer
+mixer.init()
+
+#Load audio file
+mixer.music.load('song.mp3')
+
+print("music started playing....")
+
+#Set preferred volume
+mixer.music.set_volume(0.2)
+
+#Play the music
+mixer.music.play()
+
 
 
 
