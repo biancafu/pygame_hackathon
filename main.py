@@ -542,13 +542,13 @@ class CollectibleBullets(Object):
 
     def __init__(self, x, y, width, height):
         super().__init__(x, y, width, height, "collectibles_bullets")
-        self.speed = load_sprite_sheets("Items", "Potion", 32, 32)
-        self.image = self.speed["poison"][0]
+        self.speed = load_sprite_sheets("Items", "Potion", 24, 24)
+        self.image = self.speed["gun"][0]
         self.mask = pygame.mask.from_surface(self.image)
         self.x = x
         self.y = y
         self.animation_count = 0
-        self.animation_name = "poison"
+        self.animation_name = "gun"
 
     def loop(self): #looping for each frame
 
@@ -568,13 +568,13 @@ class Pineapple(Object):
 
     def __init__(self, x, y, width, height):
         super().__init__(x, y, width, height, "pineapple")
-        self.heart = load_sprite_sheets("Items", "Fruits", 16, 16)
-        self.image = self.heart["Pineapple"][0]
+        self.heart = load_sprite_sheets("Items", "Treasures", 16, 16)
+        self.image = self.heart["diamond"][0]
         self.mask = pygame.mask.from_surface(self.image)
         self.x = x
         self.y = y
         self.animation_count = 0
-        self.animation_name = "Pineapple"
+        self.animation_name = "diamond"
 
     def loop(self): #looping for each frame
 
