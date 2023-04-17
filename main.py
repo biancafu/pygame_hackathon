@@ -49,9 +49,9 @@ window = pygame.display.set_mode((WIN_WIDTH, WIN_HEIGHT))
 # define font for the text
 font = pygame.font.SysFont("Arial", 24)
 
-BG_IMG = pygame.transform.scale2x(pygame.image.load(os.path.join("imgs", "bg.jpg")).convert_alpha())
+# BG_IMG = pygame.transform.scale2x(pygame.image.load(os.path.join("imgs", "bg.jpg")).convert_alpha())
 BG_IMG2 = pygame.transform.scale2x(pygame.image.load(os.path.join("imgs", "black.jpg")).convert_alpha())
-BG_IMG3 = pygame.transform.scale2x(pygame.image.load(os.path.join("imgs", "c.jpg")).convert_alpha())
+BG_IMG = pygame.transform.scale2x(pygame.image.load(os.path.join("imgs", "c.jpg")).convert_alpha())
 
 
 
@@ -117,10 +117,10 @@ def get_block2(size):
     return pygame.transform.scale2x(surface)
 
 def get_block3(size):
-    path = join("assets", "Terrain", "Test.png")
+    path = join("assets", "Terrain", "Terrain.png")
     image = pygame.image.load(path).convert_alpha()
     surface = pygame.Surface((size, size), pygame.SRCALPHA, 32)
-    rect = pygame.Rect(96, 0, size, size)  #96, 0 is position of the part we want (top left)
+    rect = pygame.Rect(272, 63, size, size)  #192, 130
     surface.blit(image, (0, 0), rect)
     return pygame.transform.scale2x(surface)
 
@@ -849,6 +849,7 @@ def level_design(block_size):
             collectibles.append(0)
             destinations.append(0)
         if j == 1:
+            continue
             blocks = []
             traps = []
             heart1 = Heart(block_size * 3, WIN_HEIGHT - block_size * 5, 16, 16)
@@ -902,6 +903,7 @@ def level_design(block_size):
             destinations.append(Destination(500, WIN_HEIGHT - block_size * 6 - 128, 32, 32))
             collectibles.append([heart1, heart2, speed, collectibles_bullets, pineapple])
         if j == 2:
+            continue
             blocks = []
             traps = []
             heart1 = Heart(block_size * 13, WIN_HEIGHT - block_size * 5, 16, 16)
