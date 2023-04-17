@@ -849,7 +849,6 @@ def level_design(block_size):
             collectibles.append(0)
             destinations.append(0)
         if j == 1:
-            continue
             blocks = []
             traps = []
             heart1 = Heart(block_size * 3, WIN_HEIGHT - block_size * 5, 16, 16)
@@ -903,7 +902,6 @@ def level_design(block_size):
             destinations.append(Destination(500, WIN_HEIGHT - block_size * 6 - 128, 32, 32))
             collectibles.append([heart1, heart2, speed, collectibles_bullets, pineapple])
         if j == 2:
-            continue
             blocks = []
             traps = []
             heart1 = Heart(block_size * 13, WIN_HEIGHT - block_size * 5, 16, 16)
@@ -988,13 +986,20 @@ def level_design(block_size):
         if j == 3:
             blocks = []
             traps = []
-            heart1 = Heart(5020, WIN_HEIGHT - block_size * 6.5, 16, 16)
+            heart1 = Heart(block_size * 5.2, WIN_HEIGHT - block_size * 6.5, 16, 16)
             heart2 = Heart(7200, WIN_HEIGHT - block_size * 5, 16, 16)
+            heart3 = Heart(3500, WIN_HEIGHT - block_size * 5, 16, 16)
+            hearts = [heart1, heart2, heart3]
             speed1 = Speed(900, WIN_HEIGHT - block_size - 64, 32, 32)
-            speed2 = Speed(2500, WIN_HEIGHT - block_size - 64, 32, 32)
-            collectibles_bullets = CollectibleBullets(block_size * 5.2, WIN_HEIGHT - block_size * 6.5, 32, 32)
+            speed2 = Speed(4300, WIN_HEIGHT - block_size*6.5 - 64, 32, 32)
+            collectibles_bullets = CollectibleBullets(3120, WIN_HEIGHT - block_size * 5.5, 32, 32)
             #blocks and traps
             monster = Monster(block_size * 8 + 25, WIN_HEIGHT - block_size * 5.5, 24, 24, 200)
+            monster2 = Monster(4000, WIN_HEIGHT - block_size * 7, 24, 24, 320)
+            monster3 = Monster(4320, WIN_HEIGHT - block_size * 1.8, 24, 24, 320)
+            monster3 = Monster(3000, WIN_HEIGHT - block_size * 1.8, 24, 24, 320)
+            monsters = [monster, monster2, monster3]
+
             fire = Fire(3900, WIN_HEIGHT - block_size - 64, 16, 32)
 
             pineapples = [
@@ -1004,9 +1009,70 @@ def level_design(block_size):
                 Pineapple(block_size * 17.5, WIN_HEIGHT - block_size * 4.2, 16, 16),
                 Pineapple(block_size * 18, WIN_HEIGHT - block_size * 4.2, 16, 16),
                 Pineapple(block_size * 18.5, WIN_HEIGHT - block_size * 4.2, 16, 16),
-                Pineapple(block_size * 19.5, WIN_HEIGHT - block_size * 4.2, 16, 16),
-                Pineapple(block_size * 20, WIN_HEIGHT - block_size * 4.2, 16, 16),
-                Pineapple(block_size * 20.5, WIN_HEIGHT - block_size * 4.2, 16, 16),
+                Pineapple(block_size * 19.5, WIN_HEIGHT - block_size * 6, 16, 16),
+                Pineapple(block_size * 20, WIN_HEIGHT - block_size * 6, 16, 16),
+                Pineapple(block_size * 20.5, WIN_HEIGHT - block_size * 6, 16, 16),
+
+                Pineapple(2850, WIN_HEIGHT - block_size * 6, 16, 16),
+                Pineapple(2850, WIN_HEIGHT - block_size * 5.5, 16, 16),
+                Pineapple(block_size * 20, WIN_HEIGHT - block_size * 6, 16, 16),
+                Pineapple(block_size * 20.5, WIN_HEIGHT - block_size * 6, 16, 16),
+
+                Pineapple(2850 + 150, WIN_HEIGHT - block_size * 2, 16, 16),
+                Pineapple(2900 + 150, WIN_HEIGHT - block_size * 2, 16, 16),
+                Pineapple(2950 + 150, WIN_HEIGHT - block_size * 2, 16, 16),
+                Pineapple(3000 + 150, WIN_HEIGHT - block_size * 2, 16, 16),
+                Pineapple(3050 + 150, WIN_HEIGHT - block_size * 2, 16, 16),
+                Pineapple(2850 + 150, WIN_HEIGHT - block_size * 2.5, 16, 16),
+                Pineapple(2900 + 150, WIN_HEIGHT - block_size * 2.5, 16, 16),
+                Pineapple(2950 + 150, WIN_HEIGHT - block_size * 2.5, 16, 16),
+                Pineapple(3000 + 150, WIN_HEIGHT - block_size * 2.5, 16, 16),
+                Pineapple(3050 + 150, WIN_HEIGHT - block_size * 2.5, 16, 16),
+                
+                #upper
+                Pineapple(3400, WIN_HEIGHT - block_size * 7, 16, 16),
+                Pineapple(3400 + block_size * 0.5, WIN_HEIGHT - block_size * 7, 16, 16),
+                Pineapple(3400 + block_size * 1, WIN_HEIGHT - block_size * 7, 16, 16),
+                Pineapple(3800, WIN_HEIGHT - block_size * 8, 16, 16),
+                Pineapple(3800 + block_size * 0.5, WIN_HEIGHT - block_size * 8, 16, 16),
+                Pineapple(3800 + block_size * 1, WIN_HEIGHT - block_size * 8, 16, 16),
+                Pineapple(3800 + block_size * 2, WIN_HEIGHT - block_size * 7, 16, 16),
+                Pineapple(3800 + block_size * 2.5, WIN_HEIGHT - block_size * 7, 16, 16),
+
+                #lower (thin blocks)
+                Pineapple(3950, WIN_HEIGHT - block_size * 4.5, 16, 16),
+                Pineapple(4000, WIN_HEIGHT - block_size * 4.5, 16, 16),
+                Pineapple(4050, WIN_HEIGHT - block_size * 4.5, 16, 16),
+                Pineapple(3950, WIN_HEIGHT - block_size * 4, 16, 16),
+                Pineapple(4000, WIN_HEIGHT - block_size * 4, 16, 16),
+                Pineapple(4050, WIN_HEIGHT - block_size * 4, 16, 16),
+
+                Pineapple(4340, WIN_HEIGHT - block_size * 1.8, 16, 16),
+                Pineapple(4380, WIN_HEIGHT - block_size * 1.8, 16, 16),
+                Pineapple(4420, WIN_HEIGHT - block_size * 1.8, 16, 16),
+
+                #thickblock
+                Pineapple(4650, WIN_HEIGHT - block_size * 4, 16, 16),
+                Pineapple(4700, WIN_HEIGHT - block_size * 4, 16, 16),
+
+                Pineapple(4950, WIN_HEIGHT - block_size * 2.5, 16, 16),
+                Pineapple(4990, WIN_HEIGHT - block_size * 2.5, 16, 16),
+                Pineapple(5030, WIN_HEIGHT - block_size * 2.5, 16, 16),
+                Pineapple(5070, WIN_HEIGHT - block_size * 2.5, 16, 16),
+                Pineapple(5110, WIN_HEIGHT - block_size * 2.5, 16, 16),
+                Pineapple(4950, WIN_HEIGHT - block_size * 3, 16, 16),
+                Pineapple(4990, WIN_HEIGHT - block_size * 3, 16, 16),
+                Pineapple(5030, WIN_HEIGHT - block_size * 3, 16, 16),
+                Pineapple(5070, WIN_HEIGHT - block_size * 3, 16, 16),
+                Pineapple(5110, WIN_HEIGHT - block_size * 3, 16, 16),
+
+
+
+                Pineapple(5800 + block_size * 1, WIN_HEIGHT - block_size * 5.5, 16, 16),
+                Pineapple(5800 + block_size * 1,WIN_HEIGHT - block_size * 6, 16, 16),
+                Pineapple(6100 + block_size * 1,WIN_HEIGHT - block_size * 4, 16, 16),
+                Pineapple(6300 + block_size * 1,WIN_HEIGHT - block_size * 6.5, 16, 16),
+
             ]
             floor = [Block3(i * block_size, WIN_HEIGHT - block_size, block_size) for i in range(-WIN_WIDTH // block_size, (WIN_WIDTH * 11)// block_size)]
 
@@ -1085,7 +1151,7 @@ def level_design(block_size):
                         Block3(6450 + block_size, WIN_HEIGHT - block_size * 4, block_size),
 
                         #hidden
-                        Block3(6800, WIN_HEIGHT - block_size * 2, block_size),
+                        Block3(6800, WIN_HEIGHT - block_size * 2.5, block_size),
                         Block3(6800 + block_size, WIN_HEIGHT - block_size * 3, block_size),
 
                         Block3(7400, WIN_HEIGHT - block_size * 2, block_size),
@@ -1124,9 +1190,9 @@ def level_design(block_size):
 
 
 
-                        *traps, fire, monster])
+                        *traps, fire, *monsters])
             destinations.append(Destination(10000, WIN_HEIGHT - block_size*3.7 - 128, 32, 32))
-            collectibles.append([heart1, heart2, speed1, speed2, collectibles_bullets, *pineapples])
+            collectibles.append([*hearts, speed1, speed2, collectibles_bullets, *pineapples])
 
     design["objects"] = objects
     design["collectibles"] = collectibles
