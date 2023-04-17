@@ -853,6 +853,15 @@ def level_design(block_size):
                 Pineapple(block_size * 24, WIN_HEIGHT - block_size * 19.5, 16, 16),
                 Pineapple(block_size * 24.5, WIN_HEIGHT - block_size * 19.5, 16, 16),
                 Pineapple(block_size * 25, WIN_HEIGHT - block_size * 19.5, 16, 16),
+                Pineapple(block_size * 17, WIN_HEIGHT - block_size * 23, 16, 16),
+                Pineapple(block_size * 16.5, WIN_HEIGHT - block_size * 23, 16, 16),
+                Pineapple(block_size * 16, WIN_HEIGHT - block_size * 23, 16, 16),
+                Pineapple(block_size * 23.5, WIN_HEIGHT - block_size * 9, 16, 16),
+                Pineapple(block_size * 26, WIN_HEIGHT - block_size * 10, 16, 16),
+                Pineapple(block_size * 27, WIN_HEIGHT - block_size * 11, 16, 16),
+                Pineapple(block_size * 17, WIN_HEIGHT - block_size * 19, 16, 16),
+                Pineapple(block_size * 17.5, WIN_HEIGHT - block_size * 19, 16, 16),
+                Pineapple(block_size * 18, WIN_HEIGHT - block_size * 19, 16, 16),
             ]
             objects.append([*floor, 
                         Block(10, WIN_HEIGHT - block_size * 2, block_size), 
@@ -877,7 +886,7 @@ def level_design(block_size):
                         Block(block_size * 14, WIN_HEIGHT - block_size * 22, block_size),
                         Block(block_size * 13, WIN_HEIGHT - block_size * 24, block_size),
                         *traps, fire])
-            destinations.append(Destination(block_size * 13, WIN_HEIGHT - block_size * 24 - 128, 32, 32))
+            destinations.append(Destination(block_size * 12.5, WIN_HEIGHT - block_size * 24 - 128, 32, 32))
             collectibles.append([heart1, heart2, heart3,heart4, speed, speed1, collectibles_bullets, *pineapples])
 
         if j == 3:
