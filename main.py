@@ -67,7 +67,7 @@ print("music started playing....")
 mixer.music.set_volume(0.2)
 
 #Play the music
-mixer.music.play()
+mixer.music.play(4)
 
 
 
@@ -1016,7 +1016,15 @@ def level_design(block_size):
 
         if j == 3:
             blocks = []
-            traps = []
+            traps = [
+                Trap(1350, WIN_HEIGHT - block_size - 30, 16, 32),
+                Trap(1450, WIN_HEIGHT - block_size - 30, 16, 32),
+                Trap(3000, WIN_HEIGHT - block_size - 30, 16, 32),
+                Trap(3680, WIN_HEIGHT - block_size*6.5 - 30, 16, 32),
+                Trap(4350, WIN_HEIGHT - block_size - 30, 16, 32),
+                Trap(6000, WIN_HEIGHT - block_size - 30, 16, 32),
+                Trap(9000, WIN_HEIGHT - block_size - 30, 16, 32),
+            ]
             heart1 = Heart(block_size * 5.2, WIN_HEIGHT - block_size * 6.5, 16, 16)
             heart2 = Heart(7200, WIN_HEIGHT - block_size * 5, 16, 16)
             heart3 = Heart(3560, WIN_HEIGHT - block_size * 5, 16, 16)
@@ -1027,27 +1035,52 @@ def level_design(block_size):
             #blocks and traps
             monster = Monster(block_size * 8 + 25, WIN_HEIGHT - block_size * 5.5, 24, 24, 200)
             monster2 = Monster(4000, WIN_HEIGHT - block_size * 7, 24, 24, 320)
-            monster3 = Monster(4320, WIN_HEIGHT - block_size * 1.8, 24, 24, 320)
+            monster3 = Monster(4900, WIN_HEIGHT - block_size * 1.8, 24, 24, 320)
             monster4 = Monster(3000, WIN_HEIGHT - block_size * 1.8, 24, 24, 320)
             monsters = [monster, monster2, monster3, monster4]
 
-            fire = Fire(3900, WIN_HEIGHT - block_size - 64, 16, 32)
+            fires = [
+                Fire(3900, WIN_HEIGHT - block_size - 64, 16, 32),
+                Fire(3500, WIN_HEIGHT - block_size - 64, 16, 32),
+                Fire(3700, WIN_HEIGHT - block_size - 64, 16, 32),
+            ]
 
             pineapples = [
+                Pineapple(block_size * 3, WIN_HEIGHT - block_size * 2, 16, 16),
+                Pineapple(block_size * 3.5, WIN_HEIGHT - block_size * 2, 16, 16),
+                Pineapple(block_size * 4, WIN_HEIGHT - block_size * 2, 16, 16),
+                Pineapple(block_size * 5.5, WIN_HEIGHT - block_size * 2, 16, 16),
+                Pineapple(block_size * 6, WIN_HEIGHT - block_size * 2, 16, 16),
+                Pineapple(block_size * 6.5, WIN_HEIGHT - block_size * 2, 16, 16),
+
                 Pineapple(block_size * 8, WIN_HEIGHT - block_size * 6, 16, 16),
                 Pineapple(block_size * 9, WIN_HEIGHT - block_size * 6, 16, 16),
                 Pineapple(block_size * 10, WIN_HEIGHT - block_size * 6, 16, 16),
                 Pineapple(block_size * 17.5, WIN_HEIGHT - block_size * 4.2, 16, 16),
                 Pineapple(block_size * 18, WIN_HEIGHT - block_size * 4.2, 16, 16),
                 Pineapple(block_size * 18.5, WIN_HEIGHT - block_size * 4.2, 16, 16),
-                Pineapple(block_size * 19.5, WIN_HEIGHT - block_size * 6, 16, 16),
-                Pineapple(block_size * 20, WIN_HEIGHT - block_size * 6, 16, 16),
-                Pineapple(block_size * 20.5, WIN_HEIGHT - block_size * 6, 16, 16),
+                Pineapple(block_size * 26, WIN_HEIGHT - block_size * 6.5, 16, 16),
+
+                Pineapple(2200 + block_size *0.7, WIN_HEIGHT - block_size * 1.7, 16, 16),
+                Pineapple(2200 + block_size *2.2, WIN_HEIGHT - block_size * 1.7, 16, 16),
+                Pineapple(2200 + block_size *2.7, WIN_HEIGHT - block_size * 1.7, 16, 16),
+
+                Pineapple(block_size * 19.5, WIN_HEIGHT - block_size * 1.7, 16, 16),
+                Pineapple(block_size * 20, WIN_HEIGHT - block_size * 1.7, 16, 16),
+                Pineapple(block_size * 20.5, WIN_HEIGHT - block_size * 1.7, 16, 16),
+
+                Pineapple(2150, WIN_HEIGHT - block_size * 5.5, 16, 16),
+                Pineapple(2150, WIN_HEIGHT - block_size * 6, 16, 16),
+                Pineapple(2150, WIN_HEIGHT - block_size * 6.5, 16, 16),
+
+                Pineapple(2250, WIN_HEIGHT - block_size * 5.5, 16, 16),
+                Pineapple(2250, WIN_HEIGHT - block_size * 6, 16, 16),
+                Pineapple(2250, WIN_HEIGHT - block_size * 6.5, 16, 16),
+
 
                 Pineapple(2850, WIN_HEIGHT - block_size * 6, 16, 16),
                 Pineapple(2850, WIN_HEIGHT - block_size * 5.5, 16, 16),
-                Pineapple(block_size * 20, WIN_HEIGHT - block_size * 6, 16, 16),
-                Pineapple(block_size * 20.5, WIN_HEIGHT - block_size * 6, 16, 16),
+
 
                 Pineapple(2850 + 150, WIN_HEIGHT - block_size * 2, 16, 16),
                 Pineapple(2900 + 150, WIN_HEIGHT - block_size * 2, 16, 16),
@@ -1099,17 +1132,21 @@ def level_design(block_size):
                 Pineapple(5070, WIN_HEIGHT - block_size * 3, 16, 16),
                 Pineapple(5110, WIN_HEIGHT - block_size * 3, 16, 16),
 
+                Pineapple(5170, WIN_HEIGHT - block_size * 7, 16, 16),
+                Pineapple(5210, WIN_HEIGHT - block_size * 7, 16, 16),
+                Pineapple(5250, WIN_HEIGHT - block_size * 7, 16, 16),
 
 
-                Pineapple(5800 + block_size * 1, WIN_HEIGHT - block_size * 5.5, 16, 16),
-                Pineapple(5800 + block_size * 1,WIN_HEIGHT - block_size * 6, 16, 16),
-                Pineapple(6100 + block_size * 1,WIN_HEIGHT - block_size * 4, 16, 16),
-                Pineapple(6300 + block_size * 1,WIN_HEIGHT - block_size * 6.5, 16, 16),
+
+                Pineapple(5830 + block_size * 1, WIN_HEIGHT - block_size * 5.5, 16, 16),
+                Pineapple(5830 + block_size * 1,WIN_HEIGHT - block_size * 6, 16, 16),
+                Pineapple(6130 + block_size * 1,WIN_HEIGHT - block_size * 4, 16, 16),
+                Pineapple(6130 + block_size * 1,WIN_HEIGHT - block_size * 6.5, 16, 16),
+                Pineapple(6170 + block_size * 1,WIN_HEIGHT - block_size * 6.5, 16, 16),
+                Pineapple(6270 + block_size * 1,WIN_HEIGHT - block_size * 6.5, 16, 16),
 
             ]
             floor = [Block3(i * block_size, WIN_HEIGHT - block_size, block_size) for i in range(-WIN_WIDTH // block_size, (WIN_WIDTH * 11)// block_size)]
-
-            placed_traps = set()  # set to keep track of placed trap coordinates
 
             #design
             objects.append([*floor, 
@@ -1127,8 +1164,7 @@ def level_design(block_size):
 
                         Block3(2200, WIN_HEIGHT - block_size * 3.5, block_size), 
                         Block3(2200 + block_size*3, WIN_HEIGHT - block_size * 3.5, block_size),
-                        Block3(2100, WIN_HEIGHT - block_size * 6, block_size),
-                        
+ 
                         Block3(2470, WIN_HEIGHT - block_size * 6, block_size),
                         Block3(2470+block_size, WIN_HEIGHT - block_size * 6, block_size),
 
@@ -1184,8 +1220,8 @@ def level_design(block_size):
                         Block3(6450 + block_size, WIN_HEIGHT - block_size * 4, block_size),
 
                         #hidden
-                        Block3(6800, WIN_HEIGHT - block_size * 2.5, block_size),
-                        Block3(6800 + block_size, WIN_HEIGHT - block_size * 3, block_size),
+                        Block3(6800, WIN_HEIGHT - block_size * 3.5, block_size),
+                        Block3(6800 + block_size, WIN_HEIGHT - block_size * 3.5, block_size),
 
                         Block3(7400, WIN_HEIGHT - block_size * 2, block_size),
                         
@@ -1223,7 +1259,7 @@ def level_design(block_size):
 
 
 
-                        *traps, fire, *monsters])
+                        *traps, *fires, *monsters])
             destinations.append(Destination(10000, WIN_HEIGHT - block_size*3.7 - 128, 32, 32))
             collectibles.append([*hearts, speed1, speed2, collectibles_bullets, *pineapples])
 
@@ -1269,8 +1305,10 @@ def main_game(window):
             collectibles = all_collectibles[player.level]
             destination = all_destinations[player.level]
 
-            #fire
-            objects[-1].loop()
+            #monster
+            for obj in objects:
+                if obj.name == "monster":
+                    obj.loop()
         else:
             #you win screen
             objects = []
