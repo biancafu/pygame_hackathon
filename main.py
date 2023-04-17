@@ -940,7 +940,7 @@ def level_design(block_size):
             speed2 = Speed(2500, WIN_HEIGHT - block_size - 64, 32, 32)
             collectibles_bullets = CollectibleBullets(block_size * 5.2, WIN_HEIGHT - block_size * 6.5, 32, 32)
             #blocks and traps
-            monster = Monster(block_size * 8, WIN_HEIGHT - block_size * 5.5, 24, 24, block_size * 2)
+            monster = Monster(block_size * 8 + 25, WIN_HEIGHT - block_size * 5.5, 24, 24, 200)
             fire = Fire(3900, WIN_HEIGHT - block_size - 64, 16, 32)
             fire.on()
             floor = [Block(i * block_size, WIN_HEIGHT - block_size, block_size) for i in range(-WIN_WIDTH // block_size, (WIN_WIDTH * 11)// block_size)]
@@ -1002,11 +1002,16 @@ def level_design(block_size):
                         Block(4650, WIN_HEIGHT - block_size * 3, block_size),
                         Block(4650 + block_size, WIN_HEIGHT - block_size * 2, block_size),
                         Block(4650 + block_size, WIN_HEIGHT - block_size * 3, block_size),
-                        Block(5000, WIN_HEIGHT - block_size * 5.5, block_size),
                         Block(5300, WIN_HEIGHT - block_size * 2, block_size),
                         Block(5300, WIN_HEIGHT - block_size * 3, block_size),
                         Block(5300 + block_size, WIN_HEIGHT - block_size * 2, block_size),
                         Block(5300 + block_size, WIN_HEIGHT - block_size * 3, block_size),
+
+
+                        Block(5000 + block_size , WIN_HEIGHT - block_size * 6.5, block_size),
+                        Block(5000 + block_size *2, WIN_HEIGHT - block_size * 6.5, block_size),
+                        Block(5000 + block_size *3, WIN_HEIGHT - block_size * 6.5, block_size),
+                        Block(5000, WIN_HEIGHT - block_size * 5.5, block_size),
 
                         #steps
                         Block(5600 + block_size, WIN_HEIGHT - block_size * 3, block_size),
@@ -1021,8 +1026,16 @@ def level_design(block_size):
                         Block(6800 + block_size, WIN_HEIGHT - block_size * 3, block_size),
 
                         Block(7100, WIN_HEIGHT - block_size * 2, block_size),
+                        Block(7400, WIN_HEIGHT - block_size * 2, block_size),
                         
-
+                        Block(7300+ block_size * 3, WIN_HEIGHT - block_size * 4, block_size),
+                        Block(7300+ block_size * 4, WIN_HEIGHT - block_size * 4, block_size),
+                        Block(7300+ block_size * 4, WIN_HEIGHT - block_size * 4, block_size),
+                        Block(7300+ block_size * 5, WIN_HEIGHT - block_size * 5, block_size),
+                        Block(7100 + block_size *2, WIN_HEIGHT - block_size * 6.5, block_size),
+                        Block(7100 + block_size *3, WIN_HEIGHT - block_size * 6.5, block_size),
+                        Block(7100 + block_size *4, WIN_HEIGHT - block_size * 6.5, block_size),
+                        Block(7100 + block_size *5, WIN_HEIGHT - block_size * 6.5, block_size),
 
 
 
