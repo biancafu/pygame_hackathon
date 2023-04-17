@@ -454,6 +454,8 @@ class Projectile(Object):
         self.vel = 8 * facing
         self.animation_count = 0
         self.animation_name = "Ice_Particle"
+        self.projectile_sound = pygame.mixer.Sound("pew.mp3")
+        self.audio_played = False
 
     def move(self, dx):
         self.rect.x += dx
@@ -461,6 +463,9 @@ class Projectile(Object):
     def loop(self, fps): #looping for each frame
         self.move(self.vel)
         self.update_sprite()
+        if not self.audio_played:
+            self.projectile_sound.play()
+            self.audio_played = True
 
     def update_sprite(self):
         sprites = self.projectile[self.animation_name]
@@ -792,10 +797,16 @@ def game_over(window):
 
 def level_transition(window, player):
 
+    # load the audio file
+    level_transition_sound = pygame.mixer.Sound("levelup.mp3")
+
     window.fill((0, 0, 0))
     level_text = font.render("Level {}".format(player.level), True, (255, 255, 255))
     level_rect = level_text.get_rect(center=(WIN_WIDTH/2, WIN_HEIGHT/2))
     window.blit(level_text, level_rect)
+
+    # play the audio
+    level_transition_sound.play()
 
     pygame.display.update()
     # Wait for a moment
