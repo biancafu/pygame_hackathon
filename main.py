@@ -568,13 +568,13 @@ class Pineapple(Object):
 
     def __init__(self, x, y, width, height):
         super().__init__(x, y, width, height, "pineapple")
-        self.heart = load_sprite_sheets("Items", "Fruits", 16, 16)
-        self.image = self.heart["Pineapple"][0]
+        self.heart = load_sprite_sheets("Items", "Treasures", 16, 16)
+        self.image = self.heart["diamond"][0]
         self.mask = pygame.mask.from_surface(self.image)
         self.x = x
         self.y = y
         self.animation_count = 0
-        self.animation_name = "Pineapple"
+        self.animation_name = "diamond"
 
     def loop(self): #looping for each frame
 
