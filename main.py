@@ -381,17 +381,17 @@ class Fire(Object):
 
     def __init__(self, x, y, width, height):
         super().__init__(x, y, width, height, "fire")
-        self.fire = load_sprite_sheets("Traps", "Fire", width, height)
-        self.image = self.fire["off"][0]
+        self.fire = load_sprite_sheets("Traps", "Alien", 32, 32)
+        self.image = self.fire["Idle"][0]
         self.mask = pygame.mask.from_surface(self.image)
         self.animation_count = 0
-        self.animation_name = "off"
+        self.animation_name = "Idle"
 
-    def on(self):
-        self.animation_name = "on"
+    # def on(self):
+    #     self.animation_name = "on"
     
-    def off(self):
-        self.animation_name = "off"
+    # def off(self):
+    #     self.animation_name = "off"
 
     def loop(self):
         sprites = self.fire[self.animation_name]
@@ -822,7 +822,7 @@ def level_design(block_size):
             collectibles_bullets = CollectibleBullets(1100, WIN_HEIGHT - block_size - 64, 32, 32)
             #blocks and traps
             fire = Fire(700, WIN_HEIGHT - block_size - 64, 16, 32)
-            fire.on()
+            # fire.on()
             floor = [Block(i * block_size, WIN_HEIGHT - block_size, block_size) for i in range(-WIN_WIDTH // block_size, (WIN_WIDTH * 20)// block_size)]
 
             placed_traps = set()  # set to keep track of placed trap coordinates
@@ -876,7 +876,7 @@ def level_design(block_size):
             collectibles_bullets = CollectibleBullets(1100, WIN_HEIGHT - block_size - 64, 32, 32)
             #blocks and traps
             fire = Fire(700, WIN_HEIGHT - block_size - 64, 16, 32)
-            fire.on()
+            # fire.on()
             floor = [Block(i * block_size, WIN_HEIGHT - block_size, block_size) for i in range(-WIN_WIDTH // block_size, (WIN_WIDTH * 20)// block_size)]
 
             placed_traps = set()  # set to keep track of placed trap coordinates
@@ -957,7 +957,7 @@ def level_design(block_size):
             #blocks and traps
             monster = Monster(block_size * 8, WIN_HEIGHT - block_size * 5.5, 24, 24, block_size * 2)
             fire = Fire(3900, WIN_HEIGHT - block_size - 64, 16, 32)
-            fire.on()
+            # fire.on()
             floor = [Block(i * block_size, WIN_HEIGHT - block_size, block_size) for i in range(-WIN_WIDTH // block_size, (WIN_WIDTH * 11)// block_size)]
 
             placed_traps = set()  # set to keep track of placed trap coordinates
