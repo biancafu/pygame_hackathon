@@ -797,10 +797,16 @@ def game_over(window):
 
 def level_transition(window, player):
 
+    # load the audio file
+    level_transition_sound = pygame.mixer.Sound("levelup.mp3")
+
     window.fill((0, 0, 0))
     level_text = font.render("Level {}".format(player.level), True, (255, 255, 255))
     level_rect = level_text.get_rect(center=(WIN_WIDTH/2, WIN_HEIGHT/2))
     window.blit(level_text, level_rect)
+
+    # play the audio
+    level_transition_sound.play()
 
     pygame.display.update()
     # Wait for a moment
