@@ -435,7 +435,7 @@ class Monster(Object):
         self.y = y
         self.start = x
         self.distance = distance
-        self.vel = 3
+        self.vel = 2
         self.direction = 1
         self.animation_count = 0
         self.animation_name = "idle"
@@ -945,12 +945,28 @@ def level_design(block_size):
                         Block(3350, WIN_HEIGHT - block_size * 2, block_size),
                         Block(3350, WIN_HEIGHT - block_size * 3, block_size),
 
+                        #upper level
+                        Block(3200 + block_size *1, WIN_HEIGHT - block_size * 6.5, block_size),
+                        Block(3200 + block_size *2, WIN_HEIGHT - block_size * 6.5, block_size),
+                        Block(3200 + block_size *3, WIN_HEIGHT - block_size * 6.5, block_size),
+                        Block(3200 + block_size *4, WIN_HEIGHT - block_size * 6.5, block_size),
+                        Block(3200 + block_size *5, WIN_HEIGHT - block_size * 6.5, block_size),
+                        
+                        Block(3200 + block_size *8, WIN_HEIGHT - block_size * 6.5, block_size),
+                        Block(3200 + block_size *9, WIN_HEIGHT - block_size * 6.5, block_size),
+                        Block(3200 + block_size *10, WIN_HEIGHT - block_size * 6.5, block_size),
+                        Block(3200 + block_size *11, WIN_HEIGHT - block_size * 6.5, block_size),
 
+                        Block(3000 + block_size *14, WIN_HEIGHT - block_size * 6.5, block_size),
                         #thin blocks
                         Block(3750, WIN_HEIGHT - block_size * 2, block_size),
                         Block(3750, WIN_HEIGHT - block_size * 3, block_size),
                         Block(4170, WIN_HEIGHT - block_size * 2, block_size),
                         Block(4170, WIN_HEIGHT - block_size * 3, block_size),
+
+                        Block(3980 + block_size , WIN_HEIGHT - block_size * 6.5, block_size),
+                        Block(3980 + block_size *1, WIN_HEIGHT - block_size * 6.5, block_size),
+                        Block(3980 + block_size *2, WIN_HEIGHT - block_size * 6.5, block_size),
                         #thick blocks
                         Block(4650, WIN_HEIGHT - block_size * 2, block_size),
                         Block(4650, WIN_HEIGHT - block_size * 3, block_size),
@@ -966,10 +982,8 @@ def level_design(block_size):
                         Block(5600 + block_size, WIN_HEIGHT - block_size * 3, block_size),
                         Block(5800 + block_size, WIN_HEIGHT - block_size * 4.5, block_size),
                         Block(6000 + block_size, WIN_HEIGHT - block_size * 6, block_size),
-                        
+                        Block(6100 + block_size, WIN_HEIGHT - block_size * 3.5, block_size),
                         Block(6250 + block_size, WIN_HEIGHT - block_size * 6, block_size),
-                        Block(6250 + block_size, WIN_HEIGHT - block_size * 6, block_size),
-
                         Block(6450 + block_size, WIN_HEIGHT - block_size * 4, block_size),
 
                         #hidden
@@ -977,11 +991,7 @@ def level_design(block_size):
                         Block(6800 + block_size, WIN_HEIGHT - block_size * 3, block_size),
 
                         Block(7100, WIN_HEIGHT - block_size * 2, block_size),
-                        Block(7100 + block_size *1, WIN_HEIGHT - block_size * 3, block_size),
-                        Block(7100 + block_size *2, WIN_HEIGHT - block_size * 3, block_size),
-                        Block(7100 + block_size *3, WIN_HEIGHT - block_size * 3, block_size),
-                        Block(7100 + block_size *4, WIN_HEIGHT - block_size * 3, block_size),
-                        Block(7100 + block_size *5, WIN_HEIGHT - block_size * 3, block_size),
+                        
 
 
 
