@@ -814,14 +814,15 @@ def level_design(block_size):
         if j == 1:
             blocks = []
             traps = []
-            heart1 = Heart(block_size * 3, WIN_HEIGHT - block_size * 5, 16, 16)
-            heart2 = Heart(block_size * 7, WIN_HEIGHT - block_size * 5, 16, 16)
-            pineapple = Pineapple(block_size * 4, WIN_HEIGHT - block_size * 5, 12, 12)
+            heart1 = Heart(block_size * 7, WIN_HEIGHT - block_size * 4, 16, 16)
+            heart2 = Heart(block_size * 32, WIN_HEIGHT - block_size * 5, 16, 16)
+            pineapple = Pineapple(block_size * 17, WIN_HEIGHT - block_size * 7, 12, 12)
 
-            speed = Speed(900, WIN_HEIGHT - block_size - 64, 32, 32)
-            collectibles_bullets = CollectibleBullets(1100, WIN_HEIGHT - block_size - 64, 32, 32)
+            speed = Speed(4000, WIN_HEIGHT - block_size - 64, 32, 32)
+            collectibles_bullets = CollectibleBullets(3200, WIN_HEIGHT - block_size - 64, 32, 32)
             #blocks and traps
-            fire = Fire(700, WIN_HEIGHT - block_size - 64, 16, 32)
+            fire = Fire(2500, WIN_HEIGHT - block_size - 64, 16, 32)
+            fire = Fire(3500, WIN_HEIGHT - block_size - 64, 16, 32)
             # fire.on()
             floor = [Block(i * block_size, WIN_HEIGHT - block_size, block_size) for i in range(-WIN_WIDTH // block_size, (WIN_WIDTH * 20)// block_size)]
 
@@ -849,20 +850,18 @@ def level_design(block_size):
             objects.append([*floor, 
                         Block(0, WIN_HEIGHT - block_size * 2, block_size), 
                         Block(block_size * 3, WIN_HEIGHT - block_size * 4, block_size),
-                        Block(block_size * 4, WIN_HEIGHT - block_size * 4, block_size),
-                        Block(block_size * 4, WIN_HEIGHT - block_size * 4, block_size),
-                        Block(block_size * 5, WIN_HEIGHT - block_size * 5, block_size),
-                        Block(block_size * 6, WIN_HEIGHT - block_size * 6, block_size),
-                        # Block(block_size * 7, WIN_HEIGHT - block_size * 8, block_size),
-                        # Block(block_size * 8, WIN_HEIGHT - block_size * 10, block_size),
-                        # Block(block_size * 9, WIN_HEIGHT - block_size * 12, block_size),
-                        # Block(block_size * 10, WIN_HEIGHT - block_size * 13, block_size),
-                        # Block(block_size * 11, WIN_HEIGHT - block_size * 15, block_size),
-                        # Block(block_size * 12, WIN_HEIGHT - block_size * 16, block_size),
-                        # Block(block_size * 13, WIN_HEIGHT - block_size * 17, block_size),
-                        # Block(block_size * 14, WIN_HEIGHT - block_size * 18, block_size),
+                        Block(block_size * 5, WIN_HEIGHT - block_size * 3, block_size),
+                        Block(block_size * 6, WIN_HEIGHT - block_size * 3, block_size),
+                        Block(block_size * 7, WIN_HEIGHT - block_size * 3, block_size),
+                        Block(block_size * 14, WIN_HEIGHT - block_size * 3, block_size),
+                        Block(block_size * 15, WIN_HEIGHT - block_size * 3, block_size),
+                        Block(block_size * 16, WIN_HEIGHT - block_size * 4, block_size),
+                        Block(block_size * 17, WIN_HEIGHT - block_size * 5, block_size),
+                        Block(block_size * 30, WIN_HEIGHT - block_size * 3, block_size),
+                        Block(block_size * 31, WIN_HEIGHT - block_size * 3, block_size),
+                        Block(block_size * 32, WIN_HEIGHT - block_size * 3, block_size),
                         *traps, fire])
-            destinations.append(Destination(500, WIN_HEIGHT - block_size * 6 - 128, 32, 32))
+            destinations.append(Destination(5000, WIN_HEIGHT - block_size * 3, 32, 32))
             collectibles.append([heart1, heart2, speed, collectibles_bullets, pineapple])
         if j == 2:
             blocks = []
@@ -1178,10 +1177,10 @@ def main_game(window):
             offset_x += player.x_vel
 
         #vertical scroll
-        if player.level != 3 and (((player.rect.bottom - offset_y >= WIN_HEIGHT - block_size + 5) and player.y_vel > 0) or (#moving downwards, off the screen
+        if player.level == 2 and (((player.rect.bottom - offset_y >= WIN_HEIGHT - block_size + 5) and player.y_vel > 0) or (#moving downwards, off the screen
             (player.rect.top - offset_y <= scroll_area_height) and player.y_vel < 0)): #moving upwards, off the screen
             offset_y += player.y_vel
-        elif player.level == 3 and (((player.rect.bottom - offset_y >= WIN_HEIGHT - 87) and player.y_vel > 0) or (#moving downwards, off the screen
+        elif (((player.rect.bottom - offset_y >= WIN_HEIGHT - 87) and player.y_vel > 0) or (#moving downwards, off the screen
             (player.rect.top - offset_y <= 15) and player.y_vel < 0)):
             offset_y += player.y_vel
 
