@@ -613,7 +613,7 @@ class Destination(Object):
 
     def __init__(self, x, y, width, height):
         super().__init__(x, y, width, height, "destination")
-        self.speed = load_sprite_sheets("Items", "Destination", 64, 64)
+        self.speed = load_sprite_sheets("Items", "Destination", 32, 32)
         self.image = self.speed["idle"][0]
         self.mask = pygame.mask.from_surface(self.image)
         self.x = x
