@@ -876,7 +876,7 @@ def level_design(block_size):
                         Block(block_size * 14, WIN_HEIGHT - block_size * 22, block_size),
                         Block(block_size * 13, WIN_HEIGHT - block_size * 24, block_size),
                         *traps, fire])
-            destinations.append(Destination(260, WIN_HEIGHT - block_size * 24 - 128, 32, 32))
+            destinations.append(Destination(block_size * 13, WIN_HEIGHT - block_size * 24 - 128, 32, 32))
             collectibles.append([heart1, heart2, heart3,heart4, speed, collectibles_bullets, *pineapples])
 
         if j == 3:
