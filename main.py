@@ -1061,24 +1061,31 @@ def level_design(block_size):
                         Block3(7100, WIN_HEIGHT - block_size * 2, block_size),
                         Block3(7400, WIN_HEIGHT - block_size * 2, block_size),
                         
-                        Block3(7300+ block_size * 3, WIN_HEIGHT - block_size * 4, block_size),
-                        Block3(7300+ block_size * 4, WIN_HEIGHT - block_size * 4, block_size),
-                        Block3(7300+ block_size * 4, WIN_HEIGHT - block_size * 4, block_size),
-                        Block3(7300+ block_size * 5, WIN_HEIGHT - block_size * 5, block_size),
+                        Block3(7300+ block_size * 3, WIN_HEIGHT - block_size * 4.5, block_size),
+                        Block3(7300+ block_size * 4, WIN_HEIGHT - block_size * 4.5, block_size),
+                        Block3(7300+ block_size * 5, WIN_HEIGHT - block_size * 5.5, block_size),
 
                         Block3(6870 + block_size *2, WIN_HEIGHT - block_size * 5.5, block_size),
                         Block3(7100 + block_size *2, WIN_HEIGHT - block_size * 6.5, block_size),
                         Block3(7100 + block_size *3, WIN_HEIGHT - block_size * 6.5, block_size),
 
                         Block3(7300 + block_size *2, WIN_HEIGHT - block_size * 3.5, block_size),
-                        Block3(7300 + block_size *5, WIN_HEIGHT - block_size * 5, block_size),
-                        Block3(7300 + block_size *7.5, WIN_HEIGHT - block_size * 6, block_size),
-                        Block3(7300 + block_size *8.5, WIN_HEIGHT - block_size * 5, block_size),
-                        Block3(7300 + block_size *9.5, WIN_HEIGHT - block_size * 4, block_size),
-                        Block3(7300 + block_size *10.5, WIN_HEIGHT - block_size * 4, block_size),
-                        Block3(8400, WIN_HEIGHT - block_size * 5.5, block_size),
-                        Block3(8400 + block_size *1, WIN_HEIGHT - block_size * 5.5, block_size),
-                        Block3(8400 + block_size *3, WIN_HEIGHT - block_size * 4, block_size),
+                        Block3(7300 + block_size *4, WIN_HEIGHT - block_size * 3, block_size),
+
+                        Block3(7500 + block_size *7.5, WIN_HEIGHT - block_size * 6, block_size),
+                        Block3(7500 + block_size *8.5, WIN_HEIGHT - block_size * 5, block_size),
+                        Block3(7500 + block_size *9.5, WIN_HEIGHT - block_size * 4, block_size),
+                        Block3(7500 + block_size *10.5, WIN_HEIGHT - block_size * 4, block_size),
+
+                        Block3(8550, WIN_HEIGHT - block_size * 5.5, block_size),
+                        Block3(8550 + block_size *1, WIN_HEIGHT - block_size * 5.5, block_size),
+                        Block3(8550 + block_size *3, WIN_HEIGHT - block_size * 4, block_size),
+
+                        Block3(8800 + block_size *1, WIN_HEIGHT - block_size * 2, block_size),
+                        Block3(8800 + block_size *3, WIN_HEIGHT - block_size * 4, block_size),
+                        Block3(8800 + block_size *5, WIN_HEIGHT - block_size * 2, block_size),
+                        Block3(8800 + block_size *7, WIN_HEIGHT - block_size * 4, block_size),
+
 
 
 
