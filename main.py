@@ -49,7 +49,7 @@ window = pygame.display.set_mode((WIN_WIDTH, WIN_HEIGHT))
 # define font for the text
 font = pygame.font.SysFont("Arial", 24)
 
-BG_IMG = pygame.transform.scale2x(pygame.image.load(os.path.join("imgs", "bg.jpg")).convert_alpha())
+BG_IMG = (pygame.image.load(os.path.join("imgs", "1.png")).convert_alpha())
 BG_IMG2 = pygame.transform.scale2x(pygame.image.load(os.path.join("imgs", "black.jpg")).convert_alpha())
 BG_IMG3 = pygame.transform.scale2x(pygame.image.load(os.path.join("imgs", "c.jpg")).convert_alpha())
 
@@ -822,7 +822,7 @@ def draw(window, player, objects, offset_x,offset_y, police, bullets, collectibl
     elif player.level == 3:
         window.blit(BG_IMG3, (0,0))
     else:
-        window.blit(BG_IMG, (0,0)) #position 0,0 (top left)
+        window.blit(BG_IMG2, (0,0)) #position 0,0 (top left)
     
 
     # create text for lives
@@ -1411,15 +1411,15 @@ def main_game(window):
 def main(window):
     while True:
         window.blit(BG_IMG, (0,0))
-        instruction_image = pygame.image.load("keys.png").convert_alpha()
-        window.blit(instruction_image, (10, 100))
+        # instruction_image = pygame.image.load("keys.png").convert_alpha()
+        # window.blit(instruction_image, (10, 100))
 
         # Set up the font
         font = pygame.font.Font(None, 36)
 
 
         mx, my = pygame.mouse.get_pos()
-        button_1 = pygame.Rect(400, 490, 200, 50)
+        button_1 = pygame.Rect(400, 590, 200, 50)
         # draw button rectangle
         pygame.draw.rect(window, (255, 255, 255), button_1)
 
