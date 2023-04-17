@@ -783,7 +783,11 @@ def draw(window, player, objects, offset_x,offset_y, police, bullets, collectibl
 
     # create text for score
     score_text = font.render(f"Score: {player.score}", True, (255, 255, 255))
-    window.blit(score_text, (100, 10))
+    window.blit(score_text, (250, 10))
+
+    # create text for bullets
+    bullets_text = font.render(f"Ammo: {player.bullets}", True, (255, 255, 255))
+    window.blit(bullets_text, (125, 10))
 
     for obj in objects:
         obj.draw(window, offset_x, offset_y)
