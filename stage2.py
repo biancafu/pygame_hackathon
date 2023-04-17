@@ -815,6 +815,7 @@ def level_design(block_size):
             heart3 = Heart(block_size * 20, WIN_HEIGHT - block_size * 17, 16, 16)
             heart4 = Heart(block_size * 25, WIN_HEIGHT - block_size * 10, 16, 16)
             speed = Speed(900, WIN_HEIGHT - block_size - 64, 32, 32)
+            speed1 = Speed(block_size * 19, WIN_HEIGHT - block_size * 7 - 64, 32, 32)
             collectibles_bullets = CollectibleBullets(1100, WIN_HEIGHT - block_size - 64, 32, 32)
             #blocks and traps
             fire = Fire(700, WIN_HEIGHT - block_size - 64, 16, 32)
@@ -877,7 +878,7 @@ def level_design(block_size):
                         Block(block_size * 13, WIN_HEIGHT - block_size * 24, block_size),
                         *traps, fire])
             destinations.append(Destination(block_size * 13, WIN_HEIGHT - block_size * 24 - 128, 32, 32))
-            collectibles.append([heart1, heart2, heart3,heart4, speed, collectibles_bullets, *pineapples])
+            collectibles.append([heart1, heart2, heart3,heart4, speed, speed1, collectibles_bullets, *pineapples])
 
         if j == 3:
             blocks = []
