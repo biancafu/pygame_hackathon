@@ -49,7 +49,7 @@ window = pygame.display.set_mode((WIN_WIDTH, WIN_HEIGHT))
 font = pygame.font.SysFont("Arial", 24)
 
 BG_IMG = pygame.transform.scale2x(pygame.image.load(os.path.join("imgs", "bg.jpg")).convert_alpha())
-BG_IMG2 = pygame.image.load(os.path.join("imgs", "a.jpg")).convert_alpha()
+BG_IMG2 = pygame.transform.scale2x(pygame.image.load(os.path.join("imgs", "b.jpg")).convert_alpha())
 
 
 ################### IMG HANDLING #####################
@@ -85,6 +85,22 @@ def get_block(size):
     image = pygame.image.load(path).convert_alpha()
     surface = pygame.Surface((size, size), pygame.SRCALPHA, 32)
     rect = pygame.Rect(0, 0, size, size)  #96, 0 is position of the part we want (top left)
+    surface.blit(image, (0, 0), rect)
+    return pygame.transform.scale2x(surface)
+
+def get_block2(size):
+    path = join("assets", "Terrain", "test1.jpg")
+    image = pygame.image.load(path).convert_alpha()
+    surface = pygame.Surface((size, size), pygame.SRCALPHA, 32)
+    rect = pygame.Rect(96, 0, size, size)  #96, 0 is position of the part we want (top left)
+    surface.blit(image, (0, 0), rect)
+    return pygame.transform.scale2x(surface)
+
+def get_block3(size):
+    path = join("assets", "Terrain", "Test.jpg")
+    image = pygame.image.load(path).convert_alpha()
+    surface = pygame.Surface((size, size), pygame.SRCALPHA, 32)
+    rect = pygame.Rect(96, 0, size, size)  #96, 0 is position of the part we want (top left)
     surface.blit(image, (0, 0), rect)
     return pygame.transform.scale2x(surface)
 
@@ -361,22 +377,29 @@ class Block(Object):
         self.image.blit(block, (0, 0))
         self.mask = pygame.mask.from_surface(self.image)
 
+class Block2(Object):
+    def __init__(self, x, y, size):
+        super().__init__(x, y, size, size)
+        block = get_block2(size)
+        self.image.blit(block, (0, 0))
+        self.mask = pygame.mask.from_surface(self.image)
+
 class Fire(Object):
     ANIMATION_DELAY = 3
 
     def __init__(self, x, y, width, height):
         super().__init__(x, y, width, height, "fire")
-        self.fire = load_sprite_sheets("Traps", "Fire", width, height)
-        self.image = self.fire["off"][0]
+        self.fire = load_sprite_sheets("Traps", "Alien", 32, 32)
+        self.image = self.fire["Idle"][0]
         self.mask = pygame.mask.from_surface(self.image)
         self.animation_count = 0
-        self.animation_name = "off"
+        self.animation_name = "Idle"
 
-    def on(self):
-        self.animation_name = "on"
+    # def on(self):
+    #     self.animation_name = "on"
     
-    def off(self):
-        self.animation_name = "off"
+    # def off(self):
+    #     self.animation_name = "off"
 
     def loop(self):
         sprites = self.fire[self.animation_name]
@@ -807,7 +830,7 @@ def level_design(block_size):
             collectibles_bullets = CollectibleBullets(1100, WIN_HEIGHT - block_size - 64, 32, 32)
             #blocks and traps
             fire = Fire(700, WIN_HEIGHT - block_size - 64, 16, 32)
-            fire.on()
+            # fire.on()
             floor = [Block(i * block_size, WIN_HEIGHT - block_size, block_size) for i in range(-WIN_WIDTH // block_size, (WIN_WIDTH * 20)// block_size)]
 
             placed_traps = set()  # set to keep track of placed trap coordinates
@@ -861,8 +884,8 @@ def level_design(block_size):
             collectibles_bullets = CollectibleBullets(1100, WIN_HEIGHT - block_size - 64, 32, 32)
             #blocks and traps
             fire = Fire(700, WIN_HEIGHT - block_size - 64, 16, 32)
-            fire.on()
-            floor = [Block(i * block_size, WIN_HEIGHT - block_size, block_size) for i in range(-WIN_WIDTH // block_size, (WIN_WIDTH * 20)// block_size)]
+            # fire.on()
+            floor = [Block2(i * block_size, WIN_HEIGHT - block_size, block_size) for i in range(-WIN_WIDTH // block_size, (WIN_WIDTH * 20)// block_size)]
 
             placed_traps = set()  # set to keep track of placed trap coordinates
         
@@ -906,27 +929,27 @@ def level_design(block_size):
                 Pineapple(block_size * 18, WIN_HEIGHT - block_size * 19, 16, 16),
             ]
             objects.append([*floor, 
-                        Block(10, WIN_HEIGHT - block_size * 2, block_size), 
-                        Block(block_size * 13, WIN_HEIGHT - block_size * 3, block_size),
-                        Block(block_size * 15, WIN_HEIGHT - block_size * 5, block_size),
-                        Block(block_size * 17, WIN_HEIGHT - block_size * 6, block_size),
-                        Block(block_size * 17, WIN_HEIGHT - block_size * 7, block_size),
-                        Block(block_size * 19, WIN_HEIGHT - block_size * 7, block_size),
-                        Block(block_size * 21, WIN_HEIGHT - block_size * 7, block_size),
-                        Block(block_size * 23, WIN_HEIGHT - block_size * 8, block_size),
-                        Block(block_size * 25, WIN_HEIGHT - block_size * 9, block_size),
-                        Block(block_size * 27, WIN_HEIGHT - block_size * 10, block_size),
-                        Block(block_size * 25, WIN_HEIGHT - block_size * 12, block_size),
-                        Block(block_size * 23, WIN_HEIGHT - block_size * 14, block_size),
-                        Block(block_size * 21, WIN_HEIGHT - block_size * 16, block_size),
-                        Block(block_size * 19, WIN_HEIGHT - block_size * 16, block_size),
-                        Block(block_size * 17, WIN_HEIGHT - block_size * 18, block_size),
-                        Block(block_size * 24, WIN_HEIGHT - block_size * 18, block_size),
-                        Block(block_size * 19, WIN_HEIGHT - block_size * 20, block_size),
-                        Block(block_size * 17, WIN_HEIGHT - block_size * 22, block_size),
-                        Block(block_size * 15, WIN_HEIGHT - block_size * 22, block_size),
-                        Block(block_size * 14, WIN_HEIGHT - block_size * 22, block_size),
-                        Block(block_size * 13, WIN_HEIGHT - block_size * 24, block_size),
+                        Block2(10, WIN_HEIGHT - block_size * 2, block_size), 
+                        Block2(block_size * 13, WIN_HEIGHT - block_size * 3, block_size),
+                        Block2(block_size * 15, WIN_HEIGHT - block_size * 5, block_size),
+                        Block2(block_size * 17, WIN_HEIGHT - block_size * 6, block_size),
+                        Block2(block_size * 17, WIN_HEIGHT - block_size * 7, block_size),
+                        Block2(block_size * 19, WIN_HEIGHT - block_size * 7, block_size),
+                        Block2(block_size * 21, WIN_HEIGHT - block_size * 7, block_size),
+                        Block2(block_size * 23, WIN_HEIGHT - block_size * 8, block_size),
+                        Block2(block_size * 25, WIN_HEIGHT - block_size * 9, block_size),
+                        Block2(block_size * 27, WIN_HEIGHT - block_size * 10, block_size),
+                        Block2(block_size * 25, WIN_HEIGHT - block_size * 12, block_size),
+                        Block2(block_size * 23, WIN_HEIGHT - block_size * 14, block_size),
+                        Block2(block_size * 21, WIN_HEIGHT - block_size * 16, block_size),
+                        Block2(block_size * 19, WIN_HEIGHT - block_size * 16, block_size),
+                        Block2(block_size * 17, WIN_HEIGHT - block_size * 18, block_size),
+                        Block2(block_size * 24, WIN_HEIGHT - block_size * 18, block_size),
+                        Block2(block_size * 19, WIN_HEIGHT - block_size * 20, block_size),
+                        Block2(block_size * 17, WIN_HEIGHT - block_size * 22, block_size),
+                        Block2(block_size * 15, WIN_HEIGHT - block_size * 22, block_size),
+                        Block2(block_size * 14, WIN_HEIGHT - block_size * 22, block_size),
+                        Block2(block_size * 13, WIN_HEIGHT - block_size * 24, block_size),
                         *traps, fire])
             destinations.append(Destination(block_size * 12.5, WIN_HEIGHT - block_size * 24 - 128, 32, 32))
             collectibles.append([heart1, heart2, heart3,heart4, speed, speed1, collectibles_bullets, *pineapples])
@@ -942,7 +965,7 @@ def level_design(block_size):
             #blocks and traps
             monster = Monster(block_size * 8 + 25, WIN_HEIGHT - block_size * 5.5, 24, 24, 200)
             fire = Fire(3900, WIN_HEIGHT - block_size - 64, 16, 32)
-            fire.on()
+            # fire.on()
             floor = [Block(i * block_size, WIN_HEIGHT - block_size, block_size) for i in range(-WIN_WIDTH // block_size, (WIN_WIDTH * 11)// block_size)]
 
             placed_traps = set()  # set to keep track of placed trap coordinates
