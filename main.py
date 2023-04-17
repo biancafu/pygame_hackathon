@@ -49,7 +49,9 @@ window = pygame.display.set_mode((WIN_WIDTH, WIN_HEIGHT))
 # define font for the text
 font = pygame.font.SysFont("Arial", 24)
 
-BG_IMG = (pygame.image.load(os.path.join("imgs", "2.png")).convert_alpha())
+
+BG_IMG = pygame.transform.scale2x(pygame.image.load(os.path.join("imgs", "bg.jpg")).convert_alpha())
+BG_IMG1 = pygame.transform.scale2x(pygame.image.load(os.path.join("imgs", "bg.jpg")).convert_alpha())
 BG_IMG2 = pygame.transform.scale2x(pygame.image.load(os.path.join("imgs", "black.jpg")).convert_alpha())
 BG_IMG3 = pygame.transform.scale2x(pygame.image.load(os.path.join("imgs", "c.jpg")).convert_alpha())
 
@@ -455,6 +457,7 @@ class Projectile(Object):
         self.animation_count = 0
         self.animation_name = "Ice_Particle"
         self.projectile_sound = pygame.mixer.Sound("pew.mp3")
+        self.projectile_sound.set_volume(0.2)
         self.audio_played = False
 
     def move(self, dx):
@@ -799,6 +802,7 @@ def level_transition(window, player):
 
     # load the audio file
     level_transition_sound = pygame.mixer.Sound("levelup.mp3")
+    level_transition_sound.set_volume(0.2)
 
     window.fill((0, 0, 0))
     level_text = font.render("Level {}".format(player.level), True, (255, 255, 255))
@@ -817,7 +821,9 @@ def level_transition(window, player):
 
 def draw(window, player, objects, offset_x,offset_y, police, bullets, collectibles, destination):
     #draw background
-    if player.level == 2:
+    if player.level == 1:
+        window.blit(BG_IMG1, (0,0))
+    elif player.level == 2:
         window.blit(BG_IMG2, (0,0))
     elif player.level == 3:
         window.blit(BG_IMG3, (0,0))
@@ -864,6 +870,7 @@ def level_design(block_size):
             collectibles.append(0)
             destinations.append(0)
         if j == 1:
+            # continue
             blocks = []
             traps = []
             heart1 = Heart(block_size * 7, WIN_HEIGHT - block_size * 4, 16, 16)
@@ -933,6 +940,7 @@ def level_design(block_size):
             destinations.append(Destination(5500, WIN_HEIGHT - block_size - 128, 32, 32))
             collectibles.append([heart1, heart2, heart3, heart4, heart5, heart6, heart7, speed1, speed2, collectibles_bullets, *pineapples])
         if j == 2:
+            # continue
             blocks = []
             traps = []
             heart1 = Heart(block_size * 13, WIN_HEIGHT - block_size * 5, 16, 16)
@@ -1020,7 +1028,7 @@ def level_design(block_size):
                 Trap(1350, WIN_HEIGHT - block_size - 30, 16, 32),
                 Trap(1450, WIN_HEIGHT - block_size - 30, 16, 32),
                 Trap(3000, WIN_HEIGHT - block_size - 30, 16, 32),
-                Trap(3680, WIN_HEIGHT - block_size*6.5 - 30, 16, 32),
+                Trap(3600, WIN_HEIGHT - block_size*6.5 - 30, 16, 32),
                 Trap(4350, WIN_HEIGHT - block_size - 30, 16, 32),
                 Trap(6000, WIN_HEIGHT - block_size - 30, 16, 32),
                 Trap(9000, WIN_HEIGHT - block_size - 30, 16, 32),
@@ -1031,7 +1039,10 @@ def level_design(block_size):
             hearts = [heart1, heart2, heart3]
             speed1 = Speed(900, WIN_HEIGHT - block_size - 64, 32, 32)
             speed2 = Speed(4300, WIN_HEIGHT - block_size*6.5 - 64, 32, 32)
-            collectibles_bullets = CollectibleBullets(3120, WIN_HEIGHT - block_size * 5.5, 32, 32)
+            collectibles_bullets = [
+                CollectibleBullets(3120, WIN_HEIGHT - block_size * 5.5, 32, 32),
+                CollectibleBullets(3700, WIN_HEIGHT - block_size * 1.5, 32, 32)
+                                    ]
             #blocks and traps
             monster = Monster(block_size * 8 + 25, WIN_HEIGHT - block_size * 5.5, 24, 24, 200)
             monster2 = Monster(4000, WIN_HEIGHT - block_size * 7, 24, 24, 320)
@@ -1042,7 +1053,7 @@ def level_design(block_size):
             fires = [
                 Fire(3900, WIN_HEIGHT - block_size - 64, 16, 32),
                 Fire(3500, WIN_HEIGHT - block_size - 64, 16, 32),
-                Fire(3700, WIN_HEIGHT - block_size - 64, 16, 32),
+                Fire(3650, WIN_HEIGHT - block_size - 64, 16, 32),
             ]
 
             pineapples = [
@@ -1073,9 +1084,9 @@ def level_design(block_size):
                 Pineapple(2150, WIN_HEIGHT - block_size * 6, 16, 16),
                 Pineapple(2150, WIN_HEIGHT - block_size * 6.5, 16, 16),
 
-                Pineapple(2250, WIN_HEIGHT - block_size * 5.5, 16, 16),
-                Pineapple(2250, WIN_HEIGHT - block_size * 6, 16, 16),
-                Pineapple(2250, WIN_HEIGHT - block_size * 6.5, 16, 16),
+                Pineapple(2320, WIN_HEIGHT - block_size * 5.5, 16, 16),
+                Pineapple(2320, WIN_HEIGHT - block_size * 6, 16, 16),
+                Pineapple(2320, WIN_HEIGHT - block_size * 6.5, 16, 16),
 
 
                 Pineapple(2850, WIN_HEIGHT - block_size * 6, 16, 16),
@@ -1260,8 +1271,8 @@ def level_design(block_size):
 
 
                         *traps, *fires, *monsters])
-            destinations.append(Destination(10000, WIN_HEIGHT - block_size*3.7 - 128, 32, 32))
-            collectibles.append([*hearts, speed1, speed2, collectibles_bullets, *pineapples])
+            destinations.append(Destination(10000, WIN_HEIGHT - block_size*3.7, 32, 32))
+            collectibles.append([*hearts, speed1, speed2, *collectibles_bullets, *pineapples])
 
     design["objects"] = objects
     design["collectibles"] = collectibles
