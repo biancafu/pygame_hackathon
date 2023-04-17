@@ -49,7 +49,7 @@ window = pygame.display.set_mode((WIN_WIDTH, WIN_HEIGHT))
 font = pygame.font.SysFont("Arial", 24)
 
 BG_IMG = pygame.transform.scale2x(pygame.image.load(os.path.join("imgs", "bg.jpg")).convert_alpha())
-BG_IMG2 = pygame.image.load(os.path.join("imgs", "a.jpg")).convert_alpha()
+BG_IMG2 = pygame.transform.scale2x(pygame.image.load(os.path.join("imgs", "b.jpg")).convert_alpha())
 
 
 ################### IMG HANDLING #####################
@@ -877,7 +877,7 @@ def level_design(block_size):
             #blocks and traps
             fire = Fire(700, WIN_HEIGHT - block_size - 64, 16, 32)
             # fire.on()
-            floor = [Block(i * block_size, WIN_HEIGHT - block_size, block_size) for i in range(-WIN_WIDTH // block_size, (WIN_WIDTH * 20)// block_size)]
+            floor = [Block2(i * block_size, WIN_HEIGHT - block_size, block_size) for i in range(-WIN_WIDTH // block_size, (WIN_WIDTH * 20)// block_size)]
 
             placed_traps = set()  # set to keep track of placed trap coordinates
         
