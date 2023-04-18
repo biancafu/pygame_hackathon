@@ -816,6 +816,25 @@ def level_transition(window, player):
     # Wait for a moment
     pygame.time.wait(1500)
 
+def ending_scene(window, player):
+
+    # # load the audio file
+    # level_transition_sound = pygame.mixer.Sound("levelup.mp3")
+    # level_transition_sound.set_volume(0.2)
+
+    window.fill((0, 0, 0))
+    level_text = font.render("Total Score: {}".format(player.score), True, (255, 255, 255))
+    level_rect = level_text.get_rect(center=(WIN_WIDTH/2, WIN_HEIGHT/2))
+    window.blit(level_text, level_rect)
+
+    # play the audio
+    # level_transition_sound.play()
+
+    pygame.display.update()
+    # Wait for a moment
+    pygame.time.wait(2500)
+    #quit()
+
 
 ########################################################
 
@@ -1389,7 +1408,10 @@ def main_game(window):
             police.rect.x = -200
             police.rect.y = 500
 
-            level_transition(window, player)
+            if player.level <= 3:
+                level_transition(window, player)
+            else:
+                ending_screen(window, player)
 
 
         player.loop(FPS)
