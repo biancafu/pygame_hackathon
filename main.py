@@ -718,8 +718,12 @@ def handle_move(player, objects):
     collide_left = collide(player, objects, -PLAYER_VEL* 2)
     collide_right = collide(player, objects, PLAYER_VEL* 2)
 
+    # audio for zoom
+    speed_sound = pygame.mixer.Sound("zoom.mp3")
+
     if player.add_speed:
         player_velocity = 15
+        speed_sound.play()
     elif player.decrease_speed:
         player_velocity = 3
     else:
@@ -729,7 +733,6 @@ def handle_move(player, objects):
         player.move_left(player_velocity)
     if keys[pygame.K_RIGHT] and not collide_right:
         player.move_right(player_velocity)
-
 
     vertical_collide = handle_vertical_collision(player, objects, player.y_vel)
     to_check = [collide_left, collide_right, *vertical_collide]
