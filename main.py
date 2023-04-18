@@ -816,7 +816,7 @@ def level_transition(window, player):
     # Wait for a moment
     pygame.time.wait(1500)
 
-def ending_scene(window, player):
+def ending_screen(window, player):
 
     # # load the audio file
     # level_transition_sound = pygame.mixer.Sound("levelup.mp3")
