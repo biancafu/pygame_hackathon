@@ -187,6 +187,10 @@ class Player(pygame.sprite.Sprite): #inheriting from sprite for pixel accurate c
     def minus_life(self):
         if self.lives > 0:
             self.lives -= 1
+            # load audio file
+            lose_life_sound = pygame.mixer.Sound("loselife1.mp3")
+            # play the sound
+            lose_life_sound.play()
 
     def move(self, dx, dy):
         self.rect.x += dx
@@ -718,8 +722,12 @@ def handle_move(player, objects):
     collide_left = collide(player, objects, -PLAYER_VEL* 2)
     collide_right = collide(player, objects, PLAYER_VEL* 2)
 
+    # audio for zoom
+    speed_sound = pygame.mixer.Sound("zoom.mp3")
+
     if player.add_speed:
         player_velocity = 15
+        speed_sound.play()
     elif player.decrease_speed:
         player_velocity = 3
     else:
@@ -729,7 +737,6 @@ def handle_move(player, objects):
         player.move_left(player_velocity)
     if keys[pygame.K_RIGHT] and not collide_right:
         player.move_right(player_velocity)
-
 
     vertical_collide = handle_vertical_collision(player, objects, player.y_vel)
     to_check = [collide_left, collide_right, *vertical_collide]
@@ -804,13 +811,23 @@ def level_transition(window, player):
     level_transition_sound = pygame.mixer.Sound("levelup.mp3")
     level_transition_sound.set_volume(0.2)
 
-    window.fill((0, 0, 0))
+    # Load the image that you want to use as the background
+    bg_image = pygame.image.load("vortex.png")
+
+    # Scale the image to fit the window size
+    bg_image = pygame.transform.scale(bg_image, (WIN_WIDTH, WIN_HEIGHT))
+
+    # Blit the image onto the window surface
+    window.blit(bg_image, (0, 0))
+
+    # window.fill((0, 0, 0))
     level_text = font.render("Level {}".format(player.level), True, (255, 255, 255))
     level_rect = level_text.get_rect(center=(WIN_WIDTH/2, WIN_HEIGHT/2))
     window.blit(level_text, level_rect)
 
     # play the audio
-    level_transition_sound.play()
+    if player.level != 1:
+      level_transition_sound.play()
 
     pygame.display.update()
     # Wait for a moment
@@ -893,7 +910,7 @@ def level_design(block_size):
             collectibles.append(0)
             destinations.append(0)
         if j == 1:
-            # continue
+            continue
             blocks = []
             traps = []
             heart1 = Heart(block_size * 7, WIN_HEIGHT - block_size * 4, 16, 16)
@@ -963,7 +980,7 @@ def level_design(block_size):
             destinations.append(Destination(5500, WIN_HEIGHT - block_size - 128, 32, 32))
             collectibles.append([heart1, heart2, heart3, heart4, heart5, heart6, heart7, speed1, speed2, collectibles_bullets, *pineapples])
         if j == 2:
-            # continue
+            continue
             blocks = []
             traps = []
             heart1 = Heart(block_size * 13, WIN_HEIGHT - block_size * 5, 16, 16)
@@ -1398,6 +1415,11 @@ def main_game(window):
     #initialize score variable
     score = 0
 
+    # load audio file for collectibles
+    collect_item_sound = pygame.mixer.Sound("itemcollect.mp3")
+
+    # load audio file for game_over
+    game_over_sound = pygame.mixer.Sound("gameover.mp3")
 
     #instantiate objects (same for every level)
 
@@ -1438,6 +1460,7 @@ def main_game(window):
 
         if player.lives <= 0:
           # game over
+          game_over_sound.play()
           if game_over(window):
             main_game(window)
           else:
@@ -1475,6 +1498,7 @@ def main_game(window):
             collectible.loop()
             if player.rect.colliderect(collectible.rect):
                 collectibles.remove(collectible)
+                collect_item_sound.play()
                 if collectible.name == "heart":
                     player.lives += 1
                 elif collectible.name == "speed":
