@@ -1332,6 +1332,8 @@ def main_game(window):
     #initialize score variable
     score = 0
 
+    # load audio file for collectibles
+    collect_item_sound = pygame.mixer.Sound("itemcollect.mp3")
 
     #instantiate objects (same for every level)
 
@@ -1409,6 +1411,7 @@ def main_game(window):
             collectible.loop()
             if player.rect.colliderect(collectible.rect):
                 collectibles.remove(collectible)
+                collect_item_sound.play()
                 if collectible.name == "heart":
                     player.lives += 1
                 elif collectible.name == "speed":
