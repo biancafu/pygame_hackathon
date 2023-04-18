@@ -810,7 +810,8 @@ def level_transition(window, player):
     window.blit(level_text, level_rect)
 
     # play the audio
-    level_transition_sound.play()
+    if player.level != 1:
+      level_transition_sound.play()
 
     pygame.display.update()
     # Wait for a moment
