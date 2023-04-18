@@ -187,6 +187,10 @@ class Player(pygame.sprite.Sprite): #inheriting from sprite for pixel accurate c
     def minus_life(self):
         if self.lives > 0:
             self.lives -= 1
+            # load audio file
+            lose_life_sound = pygame.mixer.Sound("loselife1.mp3")
+            # play the sound
+            lose_life_sound.play()
 
     def move(self, dx, dy):
         self.rect.x += dx
