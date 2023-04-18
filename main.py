@@ -910,7 +910,6 @@ def level_design(block_size):
             collectibles.append(0)
             destinations.append(0)
         if j == 1:
-            continue
             blocks = []
             traps = []
             heart1 = Heart(block_size * 7, WIN_HEIGHT - block_size * 4, 16, 16)
@@ -980,7 +979,6 @@ def level_design(block_size):
             destinations.append(Destination(5500, WIN_HEIGHT - block_size - 128, 32, 32))
             collectibles.append([heart1, heart2, heart3, heart4, heart5, heart6, heart7, speed1, speed2, collectibles_bullets, *pineapples])
         if j == 2:
-            continue
             blocks = []
             traps = []
             heart1 = Heart(block_size * 13, WIN_HEIGHT - block_size * 5, 16, 16)
