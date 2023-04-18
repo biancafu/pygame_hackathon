@@ -816,6 +816,29 @@ def level_transition(window, player):
     # Wait for a moment
     pygame.time.wait(1500)
 
+def ending_screen(window, player):
+
+    # # load the audio file
+    # level_transition_sound = pygame.mixer.Sound("levelup.mp3")
+    # level_transition_sound.set_volume(0.2)
+
+    window.fill((0, 0, 0))
+    text = font.render("Congratulations! You have escaped the police!", True, (255, 255, 255))
+    text_rect = text.get_rect(center=(WIN_WIDTH/2, WIN_HEIGHT/2 - 40))
+    score_text = font.render("And you snatched {} gems on the way".format(player.score), True, (255, 255, 255))
+    score_rect = score_text.get_rect(center=(WIN_WIDTH/2, WIN_HEIGHT/2+50))
+    window.blit(text, text_rect)
+    window.blit(score_text, score_rect)
+
+    # play the audio
+    # level_transition_sound.play()
+
+    pygame.display.update()
+    # Wait for a moment
+    pygame.time.wait(8000)
+    pygame.quit()
+    sys.exit()
+
 
 ########################################################
 
@@ -1030,30 +1053,42 @@ def level_design(block_size):
                 Trap(3000, WIN_HEIGHT - block_size - 30, 16, 32),
                 Trap(3600, WIN_HEIGHT - block_size*6.5 - 30, 16, 32),
                 Trap(4350, WIN_HEIGHT - block_size - 30, 16, 32),
+                Trap(5750, WIN_HEIGHT - block_size*3 - 30, 16, 32),
+                Trap(5800, WIN_HEIGHT - block_size - 30, 16, 32),
                 Trap(6000, WIN_HEIGHT - block_size - 30, 16, 32),
+                Trap(7700 + block_size *7, WIN_HEIGHT - block_size*5 - 30, 16, 32),
                 Trap(9000, WIN_HEIGHT - block_size - 30, 16, 32),
             ]
             heart1 = Heart(block_size * 5.2, WIN_HEIGHT - block_size * 6.5, 16, 16)
             heart2 = Heart(7200, WIN_HEIGHT - block_size * 5, 16, 16)
             heart3 = Heart(3560, WIN_HEIGHT - block_size * 5, 16, 16)
-            hearts = [heart1, heart2, heart3]
+            heart4 = Heart(6900, WIN_HEIGHT - block_size*2.2, 16, 16)
+            hearts = [heart1, heart2, heart3, heart4]
             speed1 = Speed(900, WIN_HEIGHT - block_size - 64, 32, 32)
             speed2 = Speed(4300, WIN_HEIGHT - block_size*6.5 - 64, 32, 32)
+            speed3 = Speed(7500, WIN_HEIGHT - block_size - 64, 32, 32)
+            speed4 = Speed(7500 + block_size *10, WIN_HEIGHT - block_size - 64, 32, 32)
+            
             collectibles_bullets = [
                 CollectibleBullets(3120, WIN_HEIGHT - block_size * 5.5, 32, 32),
-                CollectibleBullets(3700, WIN_HEIGHT - block_size * 1.5, 32, 32)
+                CollectibleBullets(4000, WIN_HEIGHT - block_size * 1.5, 32, 32)
                                     ]
             #blocks and traps
             monster = Monster(block_size * 8 + 25, WIN_HEIGHT - block_size * 5.5, 24, 24, 200)
             monster2 = Monster(4000, WIN_HEIGHT - block_size * 7, 24, 24, 320)
             monster3 = Monster(4900, WIN_HEIGHT - block_size * 1.8, 24, 24, 320)
             monster4 = Monster(3000, WIN_HEIGHT - block_size * 1.8, 24, 24, 320)
-            monsters = [monster, monster2, monster3, monster4]
+            monster5 = Monster(6770, WIN_HEIGHT - block_size * 1.8, 24, 24, 400)
+            monster6 = Monster(7550, WIN_HEIGHT - block_size * 1.8, 24, 24, 500)
+            monster7 = Monster(8000, WIN_HEIGHT - block_size * 1.8, 24, 24, 500)
+            monsters = [monster, monster2, monster3, monster4, monster5, monster6, monster7]
 
             fires = [
                 Fire(3900, WIN_HEIGHT - block_size - 64, 16, 32),
                 Fire(3500, WIN_HEIGHT - block_size - 64, 16, 32),
                 Fire(3650, WIN_HEIGHT - block_size - 64, 16, 32),
+                Fire(5200, WIN_HEIGHT - block_size*6.5 - 64, 16, 32),
+                Fire(5750, WIN_HEIGHT - block_size - 64, 16, 32),
             ]
 
             pineapples = [
@@ -1127,6 +1162,8 @@ def level_design(block_size):
                 Pineapple(4340, WIN_HEIGHT - block_size * 1.8, 16, 16),
                 Pineapple(4380, WIN_HEIGHT - block_size * 1.8, 16, 16),
                 Pineapple(4420, WIN_HEIGHT - block_size * 1.8, 16, 16),
+                Pineapple(4460, WIN_HEIGHT - block_size * 1.8, 16, 16),
+                Pineapple(4500, WIN_HEIGHT - block_size * 1.8, 16, 16),
 
                 #thickblock
                 Pineapple(4650, WIN_HEIGHT - block_size * 4, 16, 16),
@@ -1143,10 +1180,13 @@ def level_design(block_size):
                 Pineapple(5070, WIN_HEIGHT - block_size * 3, 16, 16),
                 Pineapple(5110, WIN_HEIGHT - block_size * 3, 16, 16),
 
-                Pineapple(5170, WIN_HEIGHT - block_size * 7, 16, 16),
-                Pineapple(5210, WIN_HEIGHT - block_size * 7, 16, 16),
-                Pineapple(5250, WIN_HEIGHT - block_size * 7, 16, 16),
+                Pineapple(5170, WIN_HEIGHT - block_size * 7.7, 16, 16),
+                Pineapple(5210, WIN_HEIGHT - block_size * 7.7, 16, 16),
+                Pineapple(5250, WIN_HEIGHT - block_size * 7.7, 16, 16),
 
+                Pineapple(5700, WIN_HEIGHT - block_size * 6.5, 16, 16),
+                Pineapple(5740, WIN_HEIGHT - block_size * 6.5, 16, 16),
+                Pineapple(5810, WIN_HEIGHT - block_size * 6.5, 16, 16),
 
 
                 Pineapple(5830 + block_size * 1, WIN_HEIGHT - block_size * 5.5, 16, 16),
@@ -1155,6 +1195,76 @@ def level_design(block_size):
                 Pineapple(6130 + block_size * 1,WIN_HEIGHT - block_size * 6.5, 16, 16),
                 Pineapple(6170 + block_size * 1,WIN_HEIGHT - block_size * 6.5, 16, 16),
                 Pineapple(6270 + block_size * 1,WIN_HEIGHT - block_size * 6.5, 16, 16),
+
+                Pineapple(6800 ,WIN_HEIGHT - block_size * 4, 16, 16),
+                Pineapple(6840 ,WIN_HEIGHT - block_size * 4, 16, 16),
+                Pineapple(6880 ,WIN_HEIGHT - block_size * 4, 16, 16),
+
+                Pineapple(7300 ,WIN_HEIGHT - block_size * 4, 16, 16),
+                Pineapple(7300 + block_size * 0.5,WIN_HEIGHT - block_size * 4, 16, 16),
+
+                #cheeto
+                Pineapple(block_size * 68,WIN_HEIGHT - block_size * 5, 16, 16),
+                Pineapple(block_size * 68.5,WIN_HEIGHT - block_size * 5, 16, 16),
+                Pineapple(block_size * 69,WIN_HEIGHT - block_size * 5, 16, 16),
+
+                Pineapple(block_size * 71.5,WIN_HEIGHT - block_size * 4.5, 16, 16),
+                Pineapple(block_size * 72,WIN_HEIGHT - block_size * 4.5, 16, 16),
+                Pineapple(block_size * 72.5,WIN_HEIGHT - block_size * 4.5, 16, 16),
+                Pineapple(block_size * 71.5,WIN_HEIGHT - block_size * 5.5, 16, 16),
+                Pineapple(block_size * 72,WIN_HEIGHT - block_size * 5.5, 16, 16),
+                Pineapple(block_size * 72.5,WIN_HEIGHT - block_size * 5.5, 16, 16),
+
+                Pineapple(block_size * 74,WIN_HEIGHT - block_size * 6.5, 16, 16),
+                Pineapple(block_size * 74.5,WIN_HEIGHT - block_size * 6.5, 16, 16),
+
+                #Hi
+                Pineapple(block_size * 78.7,WIN_HEIGHT - block_size * 5, 16, 16),
+                Pineapple(block_size * 78.7,WIN_HEIGHT - block_size * 5.5, 16, 16),
+                Pineapple(block_size * 78.7,WIN_HEIGHT - block_size * 6, 16, 16),
+                Pineapple(block_size * 79.2,WIN_HEIGHT - block_size * 5.5, 16, 16),
+                Pineapple(block_size * 79.7,WIN_HEIGHT - block_size * 5, 16, 16),
+                Pineapple(block_size * 79.7,WIN_HEIGHT - block_size * 5.5, 16, 16),
+                Pineapple(block_size * 79.7,WIN_HEIGHT - block_size * 6, 16, 16),
+                Pineapple(block_size * 80.5,WIN_HEIGHT - block_size * 5, 16, 16),
+                Pineapple(block_size * 80.5,WIN_HEIGHT - block_size * 5.5, 16, 16),
+                Pineapple(block_size * 80.5,WIN_HEIGHT - block_size * 6, 16, 16),
+
+                #morecheeto
+                Pineapple(block_size * 79,WIN_HEIGHT - block_size * 7, 16, 16),
+                Pineapple(block_size * 78.5,WIN_HEIGHT - block_size * 6.5, 16, 16),
+                Pineapple(block_size * 79,WIN_HEIGHT - block_size * 6.5, 16, 16),
+                Pineapple(block_size * 79.5,WIN_HEIGHT - block_size * 6.5, 16, 16),
+
+
+                Pineapple(block_size * 85,WIN_HEIGHT - block_size * 7.5, 16, 16),
+                Pineapple(block_size * 85.5,WIN_HEIGHT - block_size * 7, 16, 16),
+                Pineapple(block_size * 86,WIN_HEIGHT - block_size * 6.5, 16, 16),
+
+                Pineapple(block_size * 89,WIN_HEIGHT - block_size * 7, 16, 16),
+                Pineapple(block_size * 89.5,WIN_HEIGHT - block_size * 7, 16, 16),
+
+                Pineapple(block_size * 91.5,WIN_HEIGHT - block_size * 6, 16, 16),
+                Pineapple(block_size * 92,WIN_HEIGHT - block_size * 6, 16, 16),
+
+                Pineapple(block_size * 94.5,WIN_HEIGHT - block_size * 4.5, 16, 16),
+                Pineapple(block_size * 94.5,WIN_HEIGHT - block_size * 4, 16, 16),
+                Pineapple(block_size * 95,WIN_HEIGHT - block_size * 4.5, 16, 16),
+                Pineapple(block_size * 95,WIN_HEIGHT - block_size * 4, 16, 16),
+
+                Pineapple(block_size * 96,WIN_HEIGHT - block_size * 7, 16, 16),
+                Pineapple(block_size * 96.5,WIN_HEIGHT - block_size * 7, 16, 16),
+                Pineapple(block_size * 97,WIN_HEIGHT - block_size * 7, 16, 16),
+                Pineapple(block_size * 97.5,WIN_HEIGHT - block_size * 6.5, 16, 16),
+                Pineapple(block_size * 98,WIN_HEIGHT - block_size * 6, 16, 16),
+                Pineapple(block_size * 98.5,WIN_HEIGHT - block_size * 5.5, 16, 16),
+                Pineapple(block_size * 99,WIN_HEIGHT - block_size * 5, 16, 16),
+                Pineapple(block_size * 99.5,WIN_HEIGHT - block_size * 4.5, 16, 16),
+                Pineapple(block_size * 100,WIN_HEIGHT - block_size * 6, 16, 16),
+                Pineapple(block_size * 100.5,WIN_HEIGHT - block_size * 6, 16, 16),
+                Pineapple(block_size * 101,WIN_HEIGHT - block_size * 6, 16, 16),
+                Pineapple(block_size * 101.5,WIN_HEIGHT - block_size * 6, 16, 16),
+                
 
             ]
             floor = [Block3(i * block_size, WIN_HEIGHT - block_size, block_size) for i in range(-WIN_WIDTH // block_size, (WIN_WIDTH * 11)// block_size)]
@@ -1234,7 +1344,7 @@ def level_design(block_size):
                         Block3(6800, WIN_HEIGHT - block_size * 3.5, block_size),
                         Block3(6800 + block_size, WIN_HEIGHT - block_size * 3.5, block_size),
 
-                        Block3(7400, WIN_HEIGHT - block_size * 2, block_size),
+                        Block3(7370, WIN_HEIGHT - block_size * 2, block_size),
                         
                         Block3(7300+ block_size * 3, WIN_HEIGHT - block_size * 4.5, block_size),
                         Block3(7300+ block_size * 4, WIN_HEIGHT - block_size * 4.5, block_size),
@@ -1256,7 +1366,7 @@ def level_design(block_size):
                         Block3(8450 + block_size *3, WIN_HEIGHT - block_size * 4.8, block_size),
                         Block3(8450 + block_size *4, WIN_HEIGHT - block_size * 4.8, block_size),
 
-                        Block3(8950 + block_size *3, WIN_HEIGHT - block_size * 6.5, block_size),
+                        Block3(8950 + block_size *3, WIN_HEIGHT - block_size * 6, block_size),
                         Block3(8950 + block_size *5, WIN_HEIGHT - block_size * 3, block_size),
                         Block3(8950 + block_size *7, WIN_HEIGHT - block_size * 5, block_size),
                         Block3(8950 + block_size *8, WIN_HEIGHT - block_size * 5, block_size),
@@ -1271,8 +1381,8 @@ def level_design(block_size):
 
 
                         *traps, *fires, *monsters])
-            destinations.append(Destination(10000, WIN_HEIGHT - block_size*3.7, 32, 32))
-            collectibles.append([*hearts, speed1, speed2, *collectibles_bullets, *pineapples])
+            destinations.append(Destination(10000, WIN_HEIGHT - block_size*4.5, 32, 32))
+            collectibles.append([*hearts, speed1, speed2, speed3, speed4, *collectibles_bullets, *pineapples])
 
     design["objects"] = objects
     design["collectibles"] = collectibles
@@ -1389,7 +1499,10 @@ def main_game(window):
             police.rect.x = -200
             police.rect.y = 500
 
-            level_transition(window, player)
+            if player.level <= 3:
+                level_transition(window, player)
+            else:
+                ending_screen(window, player)
 
 
         player.loop(FPS)
