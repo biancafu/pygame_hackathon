@@ -9,6 +9,14 @@ This is a game that can be enjoyed by players of all experience levels.
 In this game, players collect items and reach their destination while navigating a multitude of challenges and obstacles. 
 With fast-paced platform runner mechanics, the game requires quick reflexes, strategic thinking, and precise timing to traverse each level successfully.
 
+## Demo + Screenshots
+
+![Gif](docs/ontherun.gif)
+
+![Screenshot](docs/instruction.png)
+![Screenshot](docs/lvl1.png)
+![Screenshot](docs/lvl2.png)
+![Screenshot](docs/lvl3.png)
 
 ## Installation Steps:
 
