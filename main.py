@@ -804,7 +804,16 @@ def level_transition(window, player):
     level_transition_sound = pygame.mixer.Sound("levelup.mp3")
     level_transition_sound.set_volume(0.2)
 
-    window.fill((0, 0, 0))
+    # Load the image that you want to use as the background
+    bg_image = pygame.image.load("vortex.png")
+
+    # Scale the image to fit the window size
+    bg_image = pygame.transform.scale(bg_image, (WIN_WIDTH, WIN_HEIGHT))
+
+    # Blit the image onto the window surface
+    window.blit(bg_image, (0, 0))
+
+    # window.fill((0, 0, 0))
     level_text = font.render("Level {}".format(player.level), True, (255, 255, 255))
     level_rect = level_text.get_rect(center=(WIN_WIDTH/2, WIN_HEIGHT/2))
     window.blit(level_text, level_rect)
