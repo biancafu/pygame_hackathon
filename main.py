@@ -1347,6 +1347,9 @@ def main_game(window):
     # load audio file for collectibles
     collect_item_sound = pygame.mixer.Sound("itemcollect.mp3")
 
+    # load audio file for game_over
+    game_over_sound = pygame.mixer.Sound("gameover.mp3")
+
     #instantiate objects (same for every level)
 
     player = Player(block_size * 3, WIN_HEIGHT - block_size * 4, 50, 50)
@@ -1386,6 +1389,7 @@ def main_game(window):
 
         if player.lives <= 0:
           # game over
+          game_over_sound.play()
           if game_over(window):
             main_game(window)
           else:
