@@ -43,3 +43,9 @@ cd pygame_hackathon
 ```
 python3 main.py
 ```
+
+## Package with Pyinstaller
+
+```
+pyinstaller main.spec
+```
