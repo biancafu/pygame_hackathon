@@ -22,6 +22,9 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
+if getattr(sys, 'frozen', False):
+    os.chdir(sys._MEIPASS)
+
 import pygame
 import os
 import time
@@ -61,7 +64,7 @@ BG_IMG3 = pygame.transform.scale2x(pygame.image.load(os.path.join("imgs", "c.jpg
 mixer.init()
 
 #Load audio file
-mixer.music.load('song.mp3')
+mixer.music.load(os.path.join('assets', 'song.mp3'))
 
 print("music started playing....")
 
@@ -188,7 +191,7 @@ class Player(pygame.sprite.Sprite): #inheriting from sprite for pixel accurate c
         if self.lives > 0:
             self.lives -= 1
             # load audio file
-            lose_life_sound = pygame.mixer.Sound("loselife1.mp3")
+            lose_life_sound = pygame.mixer.Sound(os.path.join("assets", "loselife1.mp3"))
             # play the sound
             lose_life_sound.play()
 
@@ -460,7 +463,7 @@ class Projectile(Object):
         self.vel = 8 * facing
         self.animation_count = 0
         self.animation_name = "Ice_Particle"
-        self.projectile_sound = pygame.mixer.Sound("pew.mp3")
+        self.projectile_sound = pygame.mixer.Sound(os.path.join("assets", "pew.mp3"))
         self.projectile_sound.set_volume(0.2)
         self.audio_played = False
 
@@ -723,7 +726,7 @@ def handle_move(player, objects):
     collide_right = collide(player, objects, PLAYER_VEL* 2)
 
     # audio for zoom
-    speed_sound = pygame.mixer.Sound("zoom.mp3")
+    speed_sound = pygame.mixer.Sound(os.path.join("assets", "zoom.mp3"))
 
     if player.add_speed:
         player_velocity = 15
@@ -808,11 +811,11 @@ def game_over(window):
 def level_transition(window, player):
 
     # load the audio file
-    level_transition_sound = pygame.mixer.Sound("levelup.mp3")
+    level_transition_sound = pygame.mixer.Sound(os.path.join("assets", "levelup.mp3"))
     level_transition_sound.set_volume(0.2)
 
     # Load the image that you want to use as the background
-    bg_image = pygame.image.load("vortex.png")
+    bg_image = pygame.image.load(os.path.join("assets", "vortex.png"))
 
     # Scale the image to fit the window size
     bg_image = pygame.transform.scale(bg_image, (WIN_WIDTH, WIN_HEIGHT))
@@ -836,7 +839,7 @@ def level_transition(window, player):
 def ending_screen(window, player):
 
     # # load the audio file
-    # level_transition_sound = pygame.mixer.Sound("levelup.mp3")
+    # level_transition_sound = pygame.mixer.Sound(os.path.join("assets", "levelup.mp3")
     # level_transition_sound.set_volume(0.2)
 
     window.fill((0, 0, 0))
@@ -1414,10 +1417,10 @@ def main_game(window):
     score = 0
 
     # load audio file for collectibles
-    collect_item_sound = pygame.mixer.Sound("itemcollect.mp3")
+    collect_item_sound = pygame.mixer.Sound(os.path.join("assets", "itemcollect.mp3"))
 
     # load audio file for game_over
-    game_over_sound = pygame.mixer.Sound("gameover.mp3")
+    game_over_sound = pygame.mixer.Sound(os.path.join("assets", "gameover.mp3"))
 
     #instantiate objects (same for every level)
 
@@ -1557,7 +1560,7 @@ def main_game(window):
 def main(window):
     while True:
         window.blit(BG_IMG, (0,0))
-        # instruction_image = pygame.image.load("keys.png").convert_alpha()
+        # instruction_image = pygame.image.load(os.path.join("assets", "keys.png")).convert_alpha()
         # window.blit(instruction_image, (10, 100))
 
         # Set up the font
